@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Star, ArrowLeft, ShoppingCart, CheckCircle2, ShieldCheck, Truck } from 'lucide-react';
 import productsData from '../data/simba_products.json';
 import { useCartStore, Product } from '../store/useCartStore';
+import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 
@@ -31,6 +32,9 @@ export default function ProductPage() {
     addItem(product, quantity);
   };
 
+  const localizedName = getLocalizedProductName(product);
+  const localizedCategory = getLocalizedProductCategory(product);
+
   return (
     <div className="bg-muted/30 dark:bg-background min-h-screen py-8 text-foreground">
       <div className="container mx-auto px-4">
@@ -44,14 +48,14 @@ export default function ProductPage() {
           <div className="md:w-1/2 p-4 md:p-8 bg-white dark:bg-card border-r dark:border-border hidden md:flex items-center justify-center">
             <img 
               src={product.image} 
-              alt={product.name} 
+              alt={localizedName} 
               className="max-h-[500px] object-contain rounded-xl"
             />
           </div>
           <div className="md:hidden p-4 bg-white dark:bg-card">
               <img 
                 src={product.image} 
-                alt={product.name} 
+                alt={localizedName} 
                 className="w-full aspect-square object-cover rounded-2xl"
               />
           </div>
@@ -59,11 +63,11 @@ export default function ProductPage() {
           {/* Product Details */}
           <div className="md:w-1/2 p-6 md:p-12 flex flex-col">
             <div className="text-sm font-bold tracking-widest text-primary uppercase mb-2 bg-primary/10 w-max px-3 py-1 rounded-full">
-              {product.category}
+              {localizedCategory}
             </div>
             
             <h1 className="text-3xl md:text-5xl font-bold font-serif mb-4 leading-tight text-foreground">
-              {product.name}
+              {localizedName}
             </h1>
             
             <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-muted-foreground">
@@ -71,18 +75,18 @@ export default function ProductPage() {
                 <div className="flex items-center gap-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500 px-2 py-1 rounded-md">
                   <Star className="w-4 h-4 fill-current" />
                   <span className="font-bold">{product.rating}</span>
-                  <span>({product.reviews || 0} reviews)</span>
+                  <span>({product.reviews || 0} {t('reviews')})</span>
                 </div>
               )}
               {product.brand && (
                 <>
                   <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30"></span>
-                  <span className="font-medium">Brand: <span className="text-foreground">{product.brand}</span></span>
+                  <span className="font-medium">{t('brand')}: <span className="text-foreground">{product.brand}</span></span>
                 </>
               )}
               <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30"></span>
               <span className="flex items-center gap-1 text-green-600 dark:text-green-500 font-bold">
-                <CheckCircle2 className="w-4 h-4" /> {product.inStock === false ? 'Out of Stock' : 'In Stock'} {product.stock ? `(${product.stock})` : ''}
+                <CheckCircle2 className="w-4 h-4" /> {product.inStock === false ? t('outOfStock') : t('inStock')} {product.stock ? `(${product.stock})` : ''}
               </span>
             </div>
 
@@ -124,10 +128,10 @@ export default function ProductPage() {
                
                <div className="grid grid-cols-2 gap-4 pt-6 border-t dark:border-border text-sm text-muted-foreground font-medium">
                   <div className="flex items-center gap-2">
-                    <Truck className="w-5 h-5 text-primary" /> Delivery in Kigali (1-2 Hrs)
+                    <Truck className="w-5 h-5 text-primary" /> {t('deliveryInKigali')}
                   </div>
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-primary" /> Freshness Guarantee
+                    <ShieldCheck className="w-5 h-5 text-primary" /> {t('freshnessGuarantee')}
                   </div>
                </div>
             </div>

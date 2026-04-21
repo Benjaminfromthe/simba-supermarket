@@ -47,7 +47,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
           </div>
           <div className="flex gap-4 items-center">
              <div className="flex items-center gap-3">
-               <span>Track Order</span>
+               <span>{t('trackOrder')}</span>
                <span className="text-gray-300">|</span>
                <span>Help & FAQs</span>
              </div>
@@ -55,10 +55,10 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
              {/* Language Dropdown */}
              <div className="group relative cursor-pointer flex items-center gap-1 hover:text-primary transition-colors">
                 <Globe className="w-3 h-3" /> {i18n.language.toUpperCase()}
-                <div className="absolute top-full right-0 mt-1 bg-white dark:bg-card border dark:border-border text-foreground rounded shadow-lg hidden group-hover:block z-50 overflow-hidden w-24">
-                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('en')}>EN</button>
-                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('fr')}>FR</button>
-                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('rw')}>RW</button>
+                <div className="absolute top-full right-0 mt-1 bg-white dark:bg-card border dark:border-border text-foreground rounded shadow-lg hidden group-hover:block z-50 overflow-hidden w-32">
+                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('en')}>{t('english')}</button>
+                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('fr')}>{t('french')}</button>
+                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('rw')}>{t('kinyarwanda')}</button>
                 </div>
              </div>
              
@@ -84,19 +84,19 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
             />
             <div className="flex flex-col text-primary leading-none uppercase">
                <span className="font-extrabold text-2xl tracking-tighter">Simba</span>
-               <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400">Supermarket</span>
+               <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400">{t('supermarket')}</span>
             </div>
           </Link>
 
           {/* Big Search Bar */}
           <div className="hidden lg:flex flex-1 max-w-2xl relative">
             <form onSubmit={handleSearch} className="w-full flex rounded-full border-2 border-primary overflow-hidden h-12 shadow-sm">
-              <span className="bg-gray-50 dark:bg-muted text-sm font-semibold px-4 flex items-center text-gray-600 dark:text-gray-300 border-r dark:border-gray-700 w-44 shrink-0">
-                All Categories
+              <span className="bg-gray-50 dark:bg-muted text-sm font-semibold px-4 flex items-center text-gray-600 dark:text-gray-300 border-r dark:border-gray-700 w-44 shrink-0 transition-colors">
+                {t('allCategories')}
               </span>
               <input
                 type="text"
-                placeholder="Search for groceries, drinks, home..."
+                placeholder={t('search')}
                 className="w-full px-4 text-sm focus:outline-none dark:bg-background"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -112,8 +112,8 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
             <div className="hidden md:flex items-center gap-2 cursor-pointer hover:text-primary transition">
                <User className="w-7 h-7 text-gray-500 dark:text-gray-400" />
                <div className="flex flex-col text-left">
-                 <span className="text-xs text-gray-500">Sign In</span>
-                 <span className="text-sm font-bold">Account</span>
+                 <span className="text-xs text-gray-500">{t('signIn')}</span>
+                 <span className="text-sm font-bold">{t('account')}</span>
                </div>
             </div>
 
@@ -127,7 +127,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                 </span>
               </div>
               <div className="hidden sm:flex flex-col text-left">
-                 <span className="text-xs text-gray-500">My Cart</span>
+                 <span className="text-xs text-gray-500">{t('myCart')}</span>
                  <span className="text-sm font-bold text-primary">{t('priceRwf', { price: useCartStore.getState().getCartTotal().toLocaleString() })}</span>
               </div>
             </button>
@@ -144,21 +144,21 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
       <div className="hidden lg:block bg-primary text-white shadow-md">
          <div className="container mx-auto px-4 flex justify-between h-14 items-center">
             
-            <div className="flex items-center gap-2 bg-black/20 h-full px-6 font-bold cursor-pointer hover:bg-black/30 transition">
+            <div className="flex items-center gap-2 bg-black/20 h-full px-6 font-bold cursor-pointer hover:bg-black/30 transition uppercase">
                <Grid className="w-5 h-5" /> 
-               <span>BROWSE DEPARTMENTS</span>
+               <span>{t('browseDepartments')}</span>
             </div>
 
-            <nav className="flex items-center gap-8 font-semibold text-sm">
-               <Link to="/" className="hover:text-yellow-300 transition">HOME</Link>
-               <Link to="/shop" className="hover:text-yellow-300 transition">SHOP</Link>
-               <Link to="/shop?category=Food Products" className="hover:text-yellow-300 transition">FRESH FOOD</Link>
-               <Link to="/shop?category=Alcoholic Drinks" className="hover:text-yellow-300 transition">BEVERAGES</Link>
-               <Link to="/shop?category=Cosmetics & Personal Care" className="hover:text-yellow-300 transition">BEAUTY & HEALTH</Link>
+            <nav className="flex items-center gap-8 font-semibold text-sm uppercase">
+               <Link to="/" className="hover:text-yellow-300 transition">{t('home')}</Link>
+               <Link to="/shop" className="hover:text-yellow-300 transition">{t('shop')}</Link>
+               <Link to="/shop?category=Food Products" className="hover:text-yellow-300 transition">{t('freshFood')}</Link>
+               <Link to="/shop?category=Alcoholic Drinks" className="hover:text-yellow-300 transition">{t('beverages')}</Link>
+               <Link to="/shop?category=Cosmetics & Personal Care" className="hover:text-yellow-300 transition">{t('beautyHealth')}</Link>
             </nav>
             
-            <div className="text-sm font-bold text-yellow-300 animate-pulse">
-               ⚡ WEEKEND SALE - 20% OFF!
+            <div className="text-sm font-bold text-yellow-300 animate-pulse uppercase">
+               ⚡ {t('weekendSale')}
             </div>
          </div>
       </div>
@@ -180,16 +180,16 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
           </form>
           
           <nav className="flex flex-col gap-3 mt-2 font-semibold">
-             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">Home</Link>
-             <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">Shop</Link>
-             <Link to="/shop?category=Food Products" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">Food Products</Link>
-             <Link to="/shop?category=Alcoholic Drinks" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">Beverages</Link>
+             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('home')}</Link>
+             <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('shop')}</Link>
+             <Link to="/shop?category=Food Products" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('freshFood')}</Link>
+             <Link to="/shop?category=Alcoholic Drinks" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('beverages')}</Link>
           </nav>
 
           <div className="flex gap-4 mt-2 mb-2">
-             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('en'); setIsMobileMenuOpen(false)}}>English</button>
-             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('fr'); setIsMobileMenuOpen(false)}}>Français</button>
-             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('rw'); setIsMobileMenuOpen(false)}}>Kinyarwa</button>
+             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('en'); setIsMobileMenuOpen(false)}}>{t('english')}</button>
+             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('fr'); setIsMobileMenuOpen(false)}}>{t('french')}</button>
+             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('rw'); setIsMobileMenuOpen(false)}}>{t('kinyarwanda')}</button>
           </div>
         </div>
       )}

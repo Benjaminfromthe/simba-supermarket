@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useNavigate } from 'react-router-dom';
+import { getLocalizedProductName } from '../lib/localize';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -53,10 +54,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           ) : (
             items.map((item) => (
               <div key={item.id} className="flex gap-4 border dark:border-border p-3 rounded-xl bg-card">
-                <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg border dark:border-border" />
+                <img src={item.image} alt={getLocalizedProductName(item)} className="w-20 h-20 object-cover rounded-lg border dark:border-border" />
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-bold text-sm leading-tight text-foreground line-clamp-2">{item.name}</h3>
+                    <h3 className="font-bold text-sm leading-tight text-foreground line-clamp-2">{getLocalizedProductName(item)}</h3>
                     <p className="text-primary font-bold mt-1 text-sm">{t('priceRwf', { price: item.price.toLocaleString() })}</p>
                   </div>
                   <div className="flex items-center justify-between mt-2">

@@ -14,12 +14,12 @@ export default function Footer() {
              <span className="font-bold text-lg">Simba Supermarket</span>
           </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-4">
-            Rwanda's most popular online supermarket. We deliver fresh groceries and household essentials directly to your doorstep.
+            {t('footerDesc')}
           </p>
         </div>
         
         <div>
-          <h3 className="font-bold text-lg mb-4 text-primary">Quick Links</h3>
+          <h3 className="font-bold text-lg mb-4 text-primary">{t('quickLinks')}</h3>
           <ul className="space-y-2 text-sm text-gray-400">
             <li><Link to="/" className="hover:text-white transition-colors">{t('home')}</Link></li>
             <li><Link to="/shop" className="hover:text-white transition-colors">{t('shop')}</Link></li>
@@ -29,18 +29,18 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="font-bold text-lg mb-4 text-primary">Categories</h3>
+          <h3 className="font-bold text-lg mb-4 text-primary">{t('categories')}</h3>
           <ul className="space-y-2 text-sm text-gray-400">
-            <li><Link to="/shop?category=Fresh Produce" className="hover:text-white transition-colors">Fresh Produce</Link></li>
-            <li><Link to="/shop?category=Beverages" className="hover:text-white transition-colors">Beverages</Link></li>
-            <li><Link to="/shop?category=Dairy & Eggs" className="hover:text-white transition-colors">Dairy & Eggs</Link></li>
-            <li><Link to="/shop?category=Bakery" className="hover:text-white transition-colors">Bakery</Link></li>
+            <li><Link to="/shop?category=Fresh Produce" className="hover:text-white transition-colors">{t('freshProduce', 'Fresh Produce')}</Link></li>
+            <li><Link to="/shop?category=Beverages" className="hover:text-white transition-colors">{t('beverages')}</Link></li>
+            <li><Link to="/shop?category=Dairy & Eggs" className="hover:text-white transition-colors">{t('dairyEggs', 'Dairy & Eggs')}</Link></li>
+            <li><Link to="/shop?category=Bakery" className="hover:text-white transition-colors">{t('bakery', 'Bakery')}</Link></li>
             <li><Link to="/shop" className="hover:text-white underline transition-colors w-max mt-2 block">{t('allCategories')}</Link></li>
           </ul>
         </div>
 
         <div>
-          <h3 className="font-bold text-lg mb-4 text-primary">Contact Us</h3>
+          <h3 className="font-bold text-lg mb-4 text-primary">{t('contactUs')}</h3>
           <ul className="space-y-2 text-sm text-gray-400">
             <li>Kigali, Rwanda</li>
             <li>Email: info@simba.rw</li>

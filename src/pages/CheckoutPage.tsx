@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ChevronRight, Lock, Loader2 } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
+import { getLocalizedProductName } from '../lib/localize';
 
 export default function CheckoutPage() {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ export default function CheckoutPage() {
         </div>
         <h1 className="text-4xl font-bold font-serif mb-4">{t('orderSuccess')}</h1>
         <p className="text-muted-foreground text-lg max-w-md mx-auto mb-8">
-          Thank you for exploring Simba 2.0. In a real scenario, your order would be on its way to your address!
+          {t('thankYouShopping')}
         </p>
         <button 
           onClick={() => navigate('/')} 
@@ -72,14 +73,14 @@ export default function CheckoutPage() {
             
             {/* Shipping Address */}
             <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4">Delivery Details</h2>
+              <h2 className="text-xl font-bold mb-4">{t('deliveryDetails')}</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold mb-1 text-muted-foreground">Full Name</label>
+                  <label className="block text-sm font-semibold mb-1 text-muted-foreground">{t('fullName')}</label>
                   <input type="text" className="w-full border dark:border-border rounded-xl p-3 bg-transparent" placeholder="John Doe" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1 text-muted-foreground">Delivery Address (Kigali)</label>
+                  <label className="block text-sm font-semibold mb-1 text-muted-foreground">{t('deliveryAddressKigali')}</label>
                   <input 
                     type="text" 
                     className="w-full border dark:border-border rounded-xl p-3 bg-transparent" 
@@ -95,7 +96,7 @@ export default function CheckoutPage() {
             {/* Payment Method */}
             <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                Payment Method 
+                {t('paymentMethod')}
                 <Lock className="w-4 h-4 text-muted-foreground" />
               </h2>
               
@@ -103,7 +104,7 @@ export default function CheckoutPage() {
                 <input type="radio" checked readOnly className="mt-1" />
                 <div>
                   <h3 className="font-bold">MTN Mobile Money (MoMo)</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Pay quickly using your MoMo account.</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t('payQuickly')}</p>
                 </div>
                 {/* Mock momo badge */}
                 <div className="absolute top-4 right-4 bg-yellow-400 text-blue-900 font-bold text-xs px-2 py-1 rounded">MoMo</div>
@@ -143,18 +144,18 @@ export default function CheckoutPage() {
           {/* Order Summary */}
           <div className="md:col-span-1">
             <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm sticky top-28">
-              <h2 className="text-xl font-bold mb-4 border-b dark:border-border pb-4">Order Summary</h2>
+              <h2 className="text-xl font-bold mb-4 border-b dark:border-border pb-4">{t('orderSummary')}</h2>
               <div className="space-y-4 mb-6">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3">
                     <div className="w-12 h-12 bg-muted rounded border dark:border-border shrink-0 flex items-center justify-center relative">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded" />
+                      <img src={item.image} alt={getLocalizedProductName(item)} className="w-full h-full object-cover rounded" />
                       <span className="absolute -top-2 -right-2 bg-muted-foreground text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                         {item.quantity}
                       </span>
                     </div>
                     <div className="flex-1 text-sm">
-                      <p className="line-clamp-2 font-medium leading-tight">{item.name}</p>
+                      <p className="line-clamp-2 font-medium leading-tight">{getLocalizedProductName(item)}</p>
                       <p className="text-muted-foreground mt-1">{t('priceRwf', { price: (item.price * item.quantity).toLocaleString() })}</p>
                     </div>
                   </div>
@@ -163,12 +164,12 @@ export default function CheckoutPage() {
               
               <div className="space-y-3 text-sm border-t dark:border-border pt-4 text-muted-foreground">
                  <div className="flex justify-between">
-                   <span>Subtotal</span>
+                   <span>{t('subtotal')}</span>
                    <span>{t('priceRwf', { price: getCartTotal().toLocaleString() })}</span>
                  </div>
                  <div className="flex justify-between">
-                   <span>Delivery</span>
-                   <span>Free</span>
+                   <span>{t('delivery')}</span>
+                   <span>{t('free')}</span>
                  </div>
                  <div className="flex justify-between text-lg font-bold text-foreground border-t dark:border-border pt-4">
                    <span>{t('total')}</span>

@@ -5,10 +5,17 @@ import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
 import { Filter } from 'lucide-react';
 import { Product } from '../store/useCartStore';
+import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 
 const CATEGORIES = ["All", ...Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean)] as string[];
+
+const getLocalizedCat = (catName: string) => {
+  if (catName === 'All') return catName;
+  const p = productsList.find((p: any) => p.category === catName);
+  return p ? getLocalizedProductCategory(p) : catName;
+}
 
 export default function ShopPage() {
   const { t } = useTranslation();
@@ -30,10 +37,10 @@ export default function ShopPage() {
     
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name?.toLowerCase().includes(q) || 
-        (p.description && p.description.toLowerCase().includes(q))
-      );
+      filtered = filtered.filter(p => {
+        const localizedName = getLocalizedProductName(p).toLowerCase();
+        return localizedName.includes(q) || p.name?.toLowerCase().includes(q) || ((p as any).description && (p as any).description.toLowerCase().includes(q));
+      });
     }
     
     if (sortBy === 'price-low') {
@@ -62,7 +69,7 @@ export default function ShopPage() {
       <div className="flex flex-col md:flex-row gap-6 mb-8 items-start md:items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2">{t('shop')}</h1>
-          <p className="text-muted-foreground">{filteredProducts.length} products found</p>
+          <p className="text-muted-foreground">{filteredProducts.length} {t('productsFoundText')}</p>
         </div>
       </div>
 
@@ -74,7 +81,7 @@ export default function ShopPage() {
           <div className="bg-white dark:bg-card border dark:border-border p-5 rounded-2xl shadow-sm">
             <h3 className="font-bold text-lg mb-4 flex items-center gap-2 border-b dark:border-border pb-2">
               <Filter className="w-5 h-5 text-primary" />
-              Categories
+              {t('categories')}
             </h3>
             <ul className="space-y-2">
               {CATEGORIES.map(cat => (
@@ -87,7 +94,7 @@ export default function ShopPage() {
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                   >
-                    {cat}
+                    {cat === 'All' ? t('allCategories') : getLocalizedCat(cat)}
                   </button>
                 </li>
               ))}
@@ -95,15 +102,15 @@ export default function ShopPage() {
           </div>
           
           <div className="bg-white dark:bg-card border dark:border-border p-5 rounded-2xl shadow-sm">
-             <h3 className="font-bold text-lg mb-4 border-b dark:border-border pb-2">Sort By</h3>
+             <h3 className="font-bold text-lg mb-4 border-b dark:border-border pb-2">{t('sortBy')}</h3>
              <select 
                className="w-full bg-muted border dark:border-border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
                value={sortBy}
                onChange={(e) => setSortBy(e.target.value)}
              >
-               <option value="featured">Featured</option>
-               <option value="price-low">Price: Low to High</option>
-               <option value="price-high">Price: High to Low</option>
+               <option value="featured">{t('featured')}</option>
+               <option value="price-low">{t('priceLowHigh')}</option>
+               <option value="price-high">{t('priceHighLow')}</option>
              </select>
           </div>
 
@@ -116,8 +123,8 @@ export default function ShopPage() {
               <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
                 <Filter className="w-10 h-10" />
               </div>
-              <h2 className="text-xl font-bold mb-2">No products found</h2>
-              <p className="text-muted-foreground">Try adjusting your filters or search query.</p>
+              <h2 className="text-xl font-bold mb-2">{t('noProductsFound')}</h2>
+              <p className="text-muted-foreground">{t('tryAdjustingFilters')}</p>
               <button 
                 onClick={() => {
                   setSearchQuery('');
@@ -125,7 +132,7 @@ export default function ShopPage() {
                 }}
                 className="mt-6 border dark:border-border px-6 py-2 rounded-lg font-semibold hover:bg-muted transition"
               >
-                Clear all filters
+                {t('clearFilters')}
               </button>
             </div>
           ) : (
