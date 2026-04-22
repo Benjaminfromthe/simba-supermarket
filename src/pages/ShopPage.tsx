@@ -78,8 +78,8 @@ export default function ShopPage() {
         {/* Sidebar Filters */}
         <div className="w-full lg:w-64 shrink-0 space-y-8">
           
-          <div className="bg-white dark:bg-card border dark:border-border p-5 rounded-2xl shadow-sm">
-            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 border-b dark:border-border pb-2">
+          <div className="bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-500 p-5 rounded-2xl shadow-sm">
+            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
               <Filter className="w-5 h-5 text-primary" />
               {t('categories')}
             </h3>
@@ -88,10 +88,10 @@ export default function ShopPage() {
                 <li key={cat}>
                   <button 
                     onClick={() => handleCategoryChange(cat)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`w-full text-left px-4 py-3 rounded-lg text-base font-bold transition-colors ${
                       activeCategory === cat 
-                        ? 'bg-primary/10 text-primary font-bold' 
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? 'bg-orange-600 text-white shadow-sm' 
+                        : 'text-gray-900 dark:text-white hover:bg-orange-500 hover:text-white'
                     }`}
                   >
                     {cat === 'All' ? t('allCategories') : getLocalizedCat(cat)}
@@ -101,16 +101,16 @@ export default function ShopPage() {
             </ul>
           </div>
           
-          <div className="bg-white dark:bg-card border dark:border-border p-5 rounded-2xl shadow-sm">
-             <h3 className="font-bold text-lg mb-4 border-b dark:border-border pb-2">{t('sortBy')}</h3>
+          <div className="bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-500 p-5 rounded-2xl shadow-sm">
+             <h3 className="font-bold text-lg mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">{t('sortBy')}</h3>
              <select 
-               className="w-full bg-muted border dark:border-border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+               className="w-full bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-500 rounded-xl p-3 text-base font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
                value={sortBy}
                onChange={(e) => setSortBy(e.target.value)}
              >
-               <option value="featured">{t('featured')}</option>
-               <option value="price-low">{t('priceLowHigh')}</option>
-               <option value="price-high">{t('priceHighLow')}</option>
+               <option value="featured" className="text-gray-900 bg-white checked:bg-orange-500 checked:text-white">{t('featured')}</option>
+               <option value="price-low" className="text-gray-900 bg-white checked:bg-orange-500 checked:text-white">{t('priceLowHigh')}</option>
+               <option value="price-high" className="text-gray-900 bg-white checked:bg-orange-500 checked:text-white">{t('priceHighLow')}</option>
              </select>
           </div>
 

@@ -28,14 +28,14 @@ async function run() {
     console.log(`Loaded ${data.products.length} products.`);
 
     // 1. Gather unique categories and subcategories
-    const categories = new Set();
+    const categories = new Set<string>();
     for (const p of data.products) {
-        if (p.category) categories.add(p.category);
+        if (p.category) categories.add(p.category as string);
     }
     
     // 2. Translate categories
     console.log('Translating categories...');
-    const catTranslations = {};
+    const catTranslations: Record<string, any> = {};
     for (const cat of categories) {
         catTranslations[cat] = {
             fr: await translateText(cat, 'fr'),

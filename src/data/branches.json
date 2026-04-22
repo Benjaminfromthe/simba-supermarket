@@ -1,0 +1,65 @@
+[
+  {
+    "id": "simba_town",
+    "name": "Simba UTC (Town)",
+    "latitude": -1.9458424,
+    "longitude": 30.0615536,
+    "locationNote": "KN 4 Ave, Union Trade Center"
+  },
+  {
+    "id": "simba_gishushu",
+    "name": "Simba Gishushu",
+    "latitude": -1.9536577,
+    "longitude": 30.0981838,
+    "locationNote": "KG 8 Ave, KGL Business Center"
+  },
+  {
+    "id": "simba_kisimenti",
+    "name": "Simba Kisimenti",
+    "latitude": -1.9604659,
+    "longitude": 30.1075648,
+    "locationNote": "Kisimenti Area, Remera"
+  },
+  {
+    "id": "simba_gacuriro",
+    "name": "Simba Gacuriro",
+    "latitude": -1.9235083,
+    "longitude": 30.0948917,
+    "locationNote": "KG 14 Ave, Simba Center Gacuriro"
+  },
+  {
+    "id": "simba_kigali_heights",
+    "name": "Simba Kigali Heights",
+    "latitude": -1.9519,
+    "longitude": 30.0914,
+    "locationNote": "KG 2 Rd, Opposite Convention Center"
+  },
+  {
+    "id": "simba_kimironko",
+    "name": "Simba Kimironko",
+    "latitude": -1.9361,
+    "longitude": 30.1268,
+    "locationNote": "KG 11 Ave, Near Kimironko Market"
+  },
+  {
+    "id": "simba_centenary",
+    "name": "Simba Centenary House",
+    "latitude": -1.9444,
+    "longitude": 30.0617,
+    "locationNote": "KN 3 St, Centenary House Building"
+  },
+  {
+    "id": "simba_kanombe",
+    "name": "Simba Kanombe",
+    "latitude": -1.9678,
+    "longitude": 30.1412,
+    "locationNote": "Near Kigali International Airport"
+  },
+  {
+    "id": "simba_chic",
+    "name": "Simba CHIC City Market",
+    "latitude": -1.9461,
+    "longitude": 30.0575,
+    "locationNote": "KN 2 St, CHIC Building Ground Floor"
+  }
+]

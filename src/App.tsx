@@ -11,6 +11,12 @@ import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ProductPage from './pages/ProductPage';
 import CheckoutPage from './pages/CheckoutPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import OrdersPage from './pages/OrdersPage';
+import AdminOrdersPage from './pages/AdminOrdersPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 
 export default function App() {
   return (
@@ -21,7 +27,13 @@ export default function App() {
           <Route path="shop" element={<ShopPage />} />
           <Route path="product/:id" element={<ProductPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="admin/orders" element={<AdminOrdersPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
         </Route>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
       </Routes>
     </Router>
   );

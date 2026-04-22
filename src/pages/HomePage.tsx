@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
-import { ChevronRight, Percent, Truck, ShieldCheck, Clock } from 'lucide-react';
-import { getLocalizedProductCategory } from '../lib/localize';
+import BranchLocator from '../components/BranchLocator';
+import CategoryGrid from '../components/CategoryGrid';
+import { ChevronRight, Percent, Truck, ShieldCheck, Clock, Search as SearchIcon, X, Filter, ShoppingCart, MessageCircle, Phone } from 'lucide-react';
+import { getLocalizedProductCategory, getLocalizedProductName } from '../lib/localize';
+import { Product } from '../store/useCartStore';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 
 const CATEGORIES = Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean).slice(0, 10) as string[];
 
-// Helper to get localized category string based on the English category key
 const getLocalizedCat = (catName: string) => {
   const p = productsList.find((p: any) => p.category === catName);
   return p ? getLocalizedProductCategory(p) : catName;
@@ -18,136 +20,200 @@ const getLocalizedCat = (catName: string) => {
 
 export default function HomePage() {
   const { t } = useTranslation();
-  const [popularProducts, setPopularProducts] = useState(productsList.slice(0, 8));
+  const [searchParams, setSearchParams] = useSearchParams();
   
+  const categoryParam = searchParams.get('category');
+  const queryParam = searchParams.get('q');
+  
+  const isFiltered = !!(categoryParam || queryParam);
+
+  const filteredProducts = useMemo(() => {
+    let filtered = [...productsList] as Product[];
+    
+    if (categoryParam) {
+      filtered = filtered.filter(p => p.category === categoryParam);
+    }
+    
+    if (queryParam) {
+      const q = queryParam.toLowerCase();
+      filtered = filtered.filter(p => {
+        const localizedName = getLocalizedProductName(p).toLowerCase();
+        return localizedName.includes(q) || p.name?.toLowerCase().includes(q);
+      });
+    }
+    
+    return isFiltered ? filtered : productsList.slice(0, 8);
+  }, [categoryParam, queryParam, isFiltered]);
+
+  const clearFilters = () => {
+    setSearchParams({});
+  };
+
   return (
-    <div className="flex flex-col gap-8 pb-12 text-foreground bg-gray-50 dark:bg-background">
+    <div className="flex flex-col gap-8 pb-12 text-foreground bg-gray-50 dark:bg-background min-h-screen">
       
-      {/* Main Hero with Sidebar Layout */}
-      <section className="container mx-auto px-4 mt-8">
-        <div className="flex gap-8 items-stretch h-[450px]">
-           {/* Sidebar Categories (Desktop) */}
-           <div className="hidden lg:flex w-64 shrink-0 flex-col bg-white dark:bg-card border dark:border-border rounded-lg shadow-sm overflow-hidden">
-             <div className="bg-primary text-white p-4 font-bold uppercase text-sm flex items-center">
-                {t('allCategories')}
-             </div>
-             <div className="flex flex-col py-2 overflow-y-auto">
-               {CATEGORIES.map(cat => (
-                 <Link 
-                   key={cat} 
-                   to={`/shop?category=${encodeURIComponent(cat)}`}
-                   className="px-5 py-3 hover:bg-muted text-sm font-medium border-b border-gray-50 dark:border-gray-800 flex justify-between items-center group text-gray-700 dark:text-gray-300"
-                 >
-                   <span className="group-hover:text-primary transition-colors">{getLocalizedCat(cat)}</span>
-                   <ChevronRight className="w-4 h-4 opacity-30 group-hover:opacity-100 transition-opacity" />
-                 </Link>
-               ))}
-               <Link to="/shop" className="px-5 py-3 text-sm font-bold text-primary hover:opacity-80">{t('allCategories')}</Link>
-             </div>
-           </div>
+      {/* Show regular HomePage content only if NOT filtered */}
+      {!isFiltered && (
+        <>
+          {/* Main Hero with Sidebar Layout */}
+          <section className="container mx-auto px-4 mt-8">
+            <div className="flex gap-8 items-stretch lg:h-[600px]">
+               {/* Sidebar Workspace (Desktop) */}
+               <div className="hidden lg:flex w-[21rem] shrink-0 flex-col gap-6">
+                 <BranchLocator />
+                 
+                 {/* Main Categories Menu */}
+                 <div className="bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-500 rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
+                   <div className="bg-primary text-white p-4 font-bold uppercase text-base flex items-center">
+                      {t('allCategories')}
+                   </div>
+                   <div className="flex flex-col py-2 overflow-y-auto">
+                     {CATEGORIES.map(cat => (
+                       <button 
+                         key={cat} 
+                         onClick={() => setSearchParams({ category: cat })}
+                         className="px-5 py-4 hover:bg-orange-500 hover:text-white text-left text-base font-bold border-b border-gray-200 dark:border-gray-700 flex justify-between items-center group text-gray-900 dark:text-white transition-colors"
+                       >
+                         <span>{getLocalizedCat(cat)}</span>
+                         <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                       </button>
+                     ))}
+                     <Link to="/shop" className="px-5 py-4 text-base font-bold text-primary hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors uppercase tracking-wider text-center">{t('allCategories')}</Link>
+                   </div>
+                 </div>
+               </div>
 
-           {/* Hero Banner Slider */}
-           <div className="flex-1 relative bg-muted rounded-lg overflow-hidden flex items-center shadow-sm">
-             <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10" />
-             <img 
-               src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000" 
-               alt="Supermarket" 
-               className="absolute inset-0 w-full h-full object-cover" 
-             />
-             <div className="relative z-20 text-white p-8 md:p-14 max-w-lg">
-               <span className="inline-block py-1 px-3 bg-secondary text-white text-xs font-bold uppercase tracking-wider mb-4 rounded shadow-sm">
-                 {t('exclusiveOffer')}
-               </span>
-               <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 drop-shadow-md">
-                 {t('freshGroceries')} <br/> 
-                 <span className="text-yellow-400">{t('deliveredFast')}</span>
-               </h1>
-               <p className="text-base md:text-lg text-white/90 mb-8 font-medium drop-shadow max-w-sm">
-                 {t('heroDescription')}
-               </p>
-               <Link 
-                 to="/shop" 
-                 className="inline-flex bg-primary hover:opacity-90 text-white px-8 py-3 rounded uppercase font-bold text-sm tracking-wide shadow-lg transition-transform active:scale-95"
-               >
-                 {t('shopNow')}
+               {/* Hero Banner Slider */}
+               <div className="flex-1 relative bg-[#FFECD6] dark:bg-muted rounded-xl overflow-hidden shadow-sm h-[400px] lg:h-auto flex items-center">
+                 {/* Envato 3D Concept Styling Background */}
+                 <div className="absolute inset-0 z-10 bg-gradient-to-r from-orange-50/90 via-orange-50/70 to-transparent dark:from-black/90 dark:via-black/70 dark:to-transparent" />
+                 <img 
+                   src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000" 
+                   alt="Grocery Food Buying Online Delivery Concept" 
+                   className="absolute right-0 w-2/3 h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-80" 
+                 />
+                 <div className="relative z-20 p-8 md:p-14 max-w-xl flex flex-col justify-center h-full">
+                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900 dark:text-white mb-4 tracking-tight drop-shadow-sm">
+                     {t('rwandasSupermarket', "Rwanda's Online Supermarket:")} <br/> 
+                     <span className="text-[#F47A3E]">{t('freshGroceriesDelivered', 'Fresh groceries,')}</span> {t('deliveredToDoor', 'delivered to your door')}
+                   </h1>
+                   
+                 </div>
+               </div>
+            </div>
+          </section>
+
+          {/* Action Callouts Replacing Trust Badges */}
+          <section className="container mx-auto px-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <Link to="/shop" className="bg-[#F47A3E] hover:bg-[#D46A2E] text-white p-6 md:p-8 rounded-2xl shadow-xl flex items-center gap-5 transition-all duration-300 active:scale-95 group overflow-hidden relative">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+                  <div className="bg-white/20 p-4 rounded-xl group-hover:-rotate-6 transition-transform shadow-inner">
+                     <ShoppingCart className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                  </div>
+                  <div className="relative z-10">
+                     <h3 className="font-black text-2xl tracking-tight mb-1">{t('shopNow', 'Shop Now')}</h3>
+                     <p className="text-white/80 font-semibold text-sm">{t('productsCount', '500+ Products')}</p>
+                  </div>
                </Link>
-             </div>
-           </div>
-        </div>
-      </section>
 
-      {/* Trust Badges */}
-      <section className="container mx-auto px-4 mt-2">
-        <div className="bg-white dark:bg-card border dark:border-border rounded-lg shadow-sm p-6 grid grid-cols-2 md:grid-cols-4 gap-4 divide-x dark:divide-border divide-gray-100">
-           <div className="flex items-center gap-4 px-4 justify-center">
-              <Truck className="w-10 h-10 text-primary" />
-              <div>
-                 <h4 className="font-bold text-sm">{t('freeDelivery')}</h4>
-                 <p className="text-xs text-gray-500">{t('freeDeliveryDesc')}</p>
-              </div>
-           </div>
-           <div className="flex items-center gap-4 px-4 justify-center">
-              <Percent className="w-10 h-10 text-primary" />
-              <div>
-                 <h4 className="font-bold text-sm">{t('dailyOffers')}</h4>
-                 <p className="text-xs text-gray-500">{t('dailyOffersDesc')}</p>
-              </div>
-           </div>
-           <div className="flex items-center gap-4 px-4 justify-center">
-              <ShieldCheck className="w-10 h-10 text-primary" />
-              <div>
-                 <h4 className="font-bold text-sm">{t('securePayment')}</h4>
-                 <p className="text-xs text-gray-500">{t('securePaymentDesc')}</p>
-              </div>
-           </div>
-           <div className="flex items-center gap-4 px-4 justify-center">
-              <Clock className="w-10 h-10 text-primary" />
-              <div>
-                 <h4 className="font-bold text-sm">{t('support247')}</h4>
-                 <p className="text-xs text-gray-500">{t('supportDesc')}</p>
-              </div>
-           </div>
-        </div>
-      </section>
+               <a href="https://wa.me/250788316316" target="_blank" rel="noopener noreferrer" className="bg-[#25D366] hover:bg-[#20bd5c] text-white p-6 md:p-8 rounded-2xl shadow-xl flex items-center gap-5 transition-all duration-300 active:scale-95 group overflow-hidden relative">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+                  <div className="bg-white/20 p-4 rounded-xl group-hover:-rotate-6 transition-transform shadow-inner">
+                     <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                  </div>
+                  <div className="relative z-10">
+                     <h3 className="font-black text-2xl tracking-tight mb-1">{t('whatsappOrder', 'WhatsApp Order')}</h3>
+                     <p className="text-white/80 font-semibold text-sm">{t('chatWithUs', 'Chat with us')}</p>
+                  </div>
+               </a>
 
-      {/* Promotional Banners */}
-      <section className="container mx-auto px-4 mt-4">
-        <div className="grid md:grid-cols-2 gap-6">
-           <div className="bg-accent/30 rounded-lg p-8 flex items-center border border-accent overflow-hidden relative min-h-[200px]">
-              <div className="z-10 relative left-0 shadow-sm p-4 bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-lg">
-                 <h3 className="text-2xl font-bold flex items-center text-foreground mb-2">{t('freshFruits')}</h3>
-                 <p className="mb-4 font-medium text-foreground">{t('get10Off')}</p>
-                 <Link to="/shop?category=Fresh Produce" className="text-sm font-bold text-primary hover:underline border-b-2 border-primary pb-1">{t('shopNow')}</Link>
-              </div>
-              <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=300&q=80" alt="Fruits" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-80" />
-           </div>
-           <div className="bg-secondary/40 rounded-lg p-8 flex items-center border border-secondary overflow-hidden relative min-h-[200px]">
-              <div className="z-10 relative left-0 shadow-sm p-4 bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-lg">
-                 <h3 className="text-2xl font-bold text-foreground mb-2">{t('organicVeg')}</h3>
-                 <p className="text-foreground mb-4 font-medium">{t('freshFromFarm')}</p>
-                 <Link to="/shop?category=Fresh Produce" className="text-sm font-bold text-secondary-foreground hover:underline border-b-2 border-secondary-foreground pb-1">{t('shopNow')}</Link>
-              </div>
-              <img src="https://images.unsplash.com/photo-1598090842581-c94b8e1e4bfb?auto=format&fit=crop&w=300&q=80" alt="Veg" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-80" />
-           </div>
-        </div>
-      </section>
+               <a href="tel:+250788316316" className="bg-gray-900 border-2 border-gray-800 hover:border-[#F47A3E] text-white p-6 md:p-8 rounded-2xl shadow-xl flex items-center gap-5 transition-all duration-300 active:scale-95 group overflow-hidden relative">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#F47A3E]/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+                  <div className="bg-gray-800 p-4 rounded-xl group-hover:-rotate-6 transition-transform shadow-inner">
+                     <Phone className="w-8 h-8 md:w-10 md:h-10 text-[#F47A3E]" />
+                  </div>
+                  <div className="relative z-10">
+                     <h3 className="font-black text-2xl tracking-tight mb-1">{t('callNumber', 'Call Number')}</h3>
+                    <p className="text-gray-300 font-bold text-base">+250 788 316 316</p>
+                  </div>
+               </a>
+            </div>
+          </section>
 
-      {/* Popular Products */}
+          {/* Categories Grid */}
+          <CategoryGrid />
+
+          {/* Promotional Banners */}
+          <section className="container mx-auto px-4 mt-4">
+            <div className="grid md:grid-cols-2 gap-6">
+               <div className="bg-accent/30 rounded-lg p-8 flex items-center border border-accent overflow-hidden relative min-h-[200px]">
+                  <div className="z-10 relative left-0 shadow-sm p-4 bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-lg">
+                     <h3 className="text-2xl font-bold flex items-center text-foreground mb-2">{t('freshFruits')}</h3>
+                     <p className="mb-4 font-medium text-foreground">{t('get10Off')}</p>
+                     <button onClick={() => setSearchParams({ category: 'Fresh Produce' })} className="text-sm font-bold text-primary hover:underline border-b-2 border-primary pb-1">{t('shopNow')}</button>
+                  </div>
+                  <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=300&q=80" alt="Fruits" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-80" />
+               </div>
+               <div className="bg-secondary/40 rounded-lg p-8 flex items-center border border-secondary overflow-hidden relative min-h-[200px]">
+                  <div className="z-10 relative left-0 shadow-sm p-4 bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-lg">
+                     <h3 className="text-2xl font-bold text-foreground mb-2">{t('organicVeg')}</h3>
+                     <p className="text-foreground mb-4 font-medium">{t('freshFromFarm')}</p>
+                     <button onClick={() => setSearchParams({ category: 'Fresh Produce' })} className="text-sm font-bold text-secondary-foreground hover:underline border-b-2 border-secondary-foreground pb-1">{t('shopNow')}</button>
+                  </div>
+                  <img src="https://images.unsplash.com/photo-1598090842581-c94b8e1e4bfb?auto=format&fit=crop&w=300&q=80" alt="Veg" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-80" />
+               </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Products Display (Popular or Filtered) */}
       <section className="container mx-auto px-4 mt-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-extrabold flex items-center gap-3 text-foreground uppercase border-l-4 border-primary pl-4">
-            {t('dealsOfDay')}
+            {isFiltered ? (
+              <span className="flex items-center gap-2">
+                <SearchIcon className="w-6 h-6 text-primary" />
+                {queryParam ? `${t('resultsFor')}: "${queryParam}"` : (categoryParam)}
+              </span>
+            ) : t('dealsOfDay')}
           </h2>
-          <Link to="/shop" className="text-primary font-bold hover:underline shrink-0 text-sm flex items-center gap-1">
-            {t('viewAll')} <ChevronRight className="w-4 h-4" />
-          </Link>
+          
+          {isFiltered ? (
+             <button 
+               onClick={clearFilters}
+               className="flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 transition-colors"
+             >
+               <X className="w-4 h-4" />
+               {t('clearFilters')}
+             </button>
+          ) : (
+            <Link to="/shop" className="text-primary font-bold hover:underline shrink-0 text-sm flex items-center gap-1">
+              {t('viewAll')} <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {popularProducts.map(currentProduct => (
-            <ProductCard key={currentProduct.id} product={currentProduct as any} />
-          ))}
-        </div>
+        {isFiltered && filteredProducts.length === 0 ? (
+          <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-20 text-center shadow-lg animate-in fade-in zoom-in duration-300">
+            <Filter className="w-16 h-16 mx-auto text-muted-foreground opacity-20 mb-4" />
+            <h3 className="text-xl font-bold mb-2">{t('noProductsFound')}</h3>
+            <p className="text-muted-foreground mb-6">{t('tryAdjustingFilters')}</p>
+            <button 
+              onClick={clearFilters}
+              className="bg-primary text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition-opacity"
+            >
+              {t('clearFilters')}
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {filteredProducts.map(currentProduct => (
+              <ProductCard key={currentProduct.id} product={currentProduct as any} />
+            ))}
+          </div>
+        )}
       </section>
       
     </div>

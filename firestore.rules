@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Phase 4.0: Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3: Primitive Definition
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    function incoming() { 
+      return request.resource.data; 
+    }
+    function existing() { 
+      return resource.data; 
+    }
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    function isAdmin() {
+      // Treating the current owner email as an admin for this demo
+      return isSignedIn() && request.auth.token.email == "benjaminnshimiye633@gmail.com";
+    }
+    
+    // Validations
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'createdAt', 'updatedAt']) 
+        && data.keys().size() <= 6
+        && data.email is string && data.email.size() <= 200
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
+    function isValidUserUpdate(data) {
+      return data.updatedAt == request.time;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['userId', 'branchId', 'totalAmount', 'status', 'items', 'createdAt', 'updatedAt']) 
+        && data.userId is string && data.userId == request.auth.uid
+        && data.branchId is string && data.branchId.size() <= 128
+        && data.totalAmount is number && data.totalAmount >= 0
+        && data.status is string && data.status in ['pending', 'processing', 'completed', 'cancelled']
+        && data.items is list && data.items.size() <= 100
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
+    function isValidOrderUpdate(data) {
+      return data.updatedAt == request.time
+        && (data.status is string && data.status in ['pending', 'processing', 'completed', 'cancelled'])
+        && data.userId == existing().userId
+        && data.createdAt == existing().createdAt;
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() 
+        && request.auth.uid == userId
+        && isValidId(userId)
+        && isValidUser(incoming());
+      allow update: if isSignedIn() 
+        && request.auth.uid == userId
+        && isValidId(userId)
+        && isValidUserUpdate(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['updatedAt']);
+    }
+
+    match /orders/{orderId} {
+      allow read: if isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() 
+        && isValidId(orderId)
+        && isValidOrder(incoming());
+      allow update: if isSignedIn() 
+        && isValidId(orderId)
+        && (
+          (existing().userId == request.auth.uid
+           && existing().status != 'cancelled'
+           && existing().status != 'completed'
+           && isValidOrderUpdate(incoming())
+           && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+          ) || (
+           isAdmin()
+           && isValidOrderUpdate(incoming())
+           && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+          )
+        );
+    }
+  }
+}

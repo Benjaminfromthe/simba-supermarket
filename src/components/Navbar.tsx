@@ -4,6 +4,7 @@ import { ShoppingCart, Search, Menu, X, Sun, Moon, Globe, Phone, Mail, User, Gri
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();
@@ -12,6 +13,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { currentUser, signOut } = useAuth();
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -32,165 +34,167 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/shop?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/?q=${encodeURIComponent(searchQuery)}`);
+      setIsMobileMenuOpen(false);
     }
   };
 
   return (
     <header className="w-full z-50">
-      {/* Top Header - Contact & Tracking */}
-      <div className="hidden border-b bg-muted text-muted-foreground md:block text-xs py-2 dark:bg-card">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="flex gap-6">
-            <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-primary" /> +250 788 123 456</span>
-            <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-primary" /> info@simbasupermarket.rw</span>
-          </div>
-          <div className="flex gap-4 items-center">
-             <div className="flex items-center gap-3">
-               <span>{t('trackOrder')}</span>
-               <span className="text-gray-300">|</span>
-               <span>Help & FAQs</span>
-             </div>
-             
-             {/* Language Dropdown */}
-             <div className="group relative cursor-pointer flex items-center gap-1 hover:text-primary transition-colors">
-                <Globe className="w-3 h-3" /> {i18n.language.toUpperCase()}
-                <div className="absolute top-full right-0 mt-1 bg-white dark:bg-card border dark:border-border text-foreground rounded shadow-lg hidden group-hover:block z-50 overflow-hidden w-32">
-                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('en')}>{t('english')}</button>
-                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('fr')}>{t('french')}</button>
-                  <button className="w-full text-left px-3 py-1 hover:bg-muted" onClick={() => changeLanguage('rw')}>{t('kinyarwanda')}</button>
-                </div>
-             </div>
-             
-             {/* Theme Toggle */}
-             <button onClick={toggleTheme} className="hover:text-primary transition-colors">
-              {theme === 'light' ? <Moon className="w-3 h-3" /> : <Sun className="w-3 h-3" />}
-             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Header - Logo & Search */}
-      <div className="bg-white dark:bg-background border-b shadow-sm py-4">
-        <div className="container mx-auto px-4 flex items-center justify-between gap-4 lg:gap-8">
+      {/* Target Logo Bar Design: Simba 2.0 */}
+      <div className="bg-[#F47A3E] text-white py-4 shadow-lg border-b border-white/10">
+        <div className="container mx-auto px-4 flex items-center justify-between">
           
-          {/* Logo */}
-          <Link to="/" className="shrink-0 flex items-center gap-2">
-            <img 
-              src="https://drive.google.com/uc?export=view&id=1sD9_n1MUfQ91TMaWr-y2Vp6yxAoPp_pN" 
-              alt="Simba Logo" 
-              className="h-16 w-auto object-contain hidden md:block drop-shadow-sm" 
-              referrerPolicy="no-referrer"
-            />
-            <div className="flex flex-col text-primary leading-none uppercase">
-               <span className="font-extrabold text-2xl tracking-tighter">Simba</span>
-               <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400">{t('supermarket')}</span>
+          {/* Brand Identity */}
+          <Link to="/" className="flex items-center gap-4 group">
+            <div className="bg-white rounded-full p-1 w-16 h-16 md:w-24 md:h-24 flex items-center justify-center shadow-xl transition-transform group-hover:scale-105 overflow-hidden">
+              <img 
+                src="/simba-logo.jpg" 
+                alt="Simba Supermarket" 
+                className="h-16 w-auto object-contain" 
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-xl md:text-3xl font-bold font-serif leading-tight tracking-tight">
+                Simba Supermarket
+              </h1>
+              <span className="text-sm md:text-lg font-serif italic text-white/90">
+                Online Shopping
+              </span>
             </div>
           </Link>
 
-          {/* Big Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-2xl relative">
-            <form onSubmit={handleSearch} className="w-full flex rounded-full border-2 border-primary overflow-hidden h-12 shadow-sm">
-              <span className="bg-gray-50 dark:bg-muted text-sm font-semibold px-4 flex items-center text-gray-600 dark:text-gray-300 border-r dark:border-gray-700 w-44 shrink-0 transition-colors">
-                {t('allCategories')}
-              </span>
-              <input
-                type="text"
-                placeholder={t('search')}
-                className="w-full px-4 text-sm focus:outline-none dark:bg-background"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="submit" className="bg-primary hover:opacity-90 px-6 text-white transition-opacity flex items-center gap-2 font-semibold">
-                <Search className="w-5 h-5" />
-              </button>
-            </form>
-          </div>
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-base md:text-lg font-medium">
+            <Link to="/" className="hover:opacity-80 transition-opacity">{t('home')}</Link>
+            <Link to="/shop" className="hover:opacity-80 transition-opacity">{t('shop')}</Link>
+            <Link to="/about" className="hover:opacity-80 transition-opacity">{t('about', 'About us')}</Link>
+            <Link to="/contact" className="hover:opacity-80 transition-opacity">{t('contactUs', 'Contact us')}</Link>
+            
+            {currentUser && (
+              <Link to="/orders" className="hover:opacity-80 transition-opacity">
+                 {t('myOrders', 'My Orders')}
+              </Link>
+            )}
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-5 shrink-0">
-            <div className="hidden md:flex items-center gap-2 cursor-pointer hover:text-primary transition">
-               <User className="w-7 h-7 text-gray-500 dark:text-gray-400" />
-               <div className="flex flex-col text-left">
-                 <span className="text-xs text-gray-500">{t('signIn')}</span>
-                 <span className="text-sm font-bold">{t('account')}</span>
-               </div>
+            <div className="h-6 w-[1px] bg-white/30" />
+
+            {/* Auth Actions */}
+            <div className="flex items-center gap-4">
+              {!currentUser ? (
+                <>
+                  <Link to="/login" className="hover:opacity-80 transition-opacity text-sm font-bold uppercase tracking-wider">
+                    {t('signIn', 'Sign In')}
+                  </Link>
+                  <Link to="/signup" className="bg-white text-[#F47A3E] px-4 py-1.5 rounded-full text-sm font-bold hover:bg-gray-100 transition shadow-md">
+                    {t('signUp', 'Sign Up')}
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center gap-4">
+                  {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
+                    <Link to="/admin/orders" className="text-yellow-300 font-bold text-sm uppercase">
+                       Admin
+                    </Link>
+                  )}
+                  <button onClick={() => signOut()} className="hover:opacity-80 transition-opacity text-sm font-bold uppercase">
+                     {t('logout', 'Logout')}
+                  </button>
+                </div>
+              )}
             </div>
 
-            <button onClick={onOpenCart} className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative">
-                <div className="bg-secondary/10 p-3 rounded-full group-hover:bg-secondary/20 transition">
-                  <ShoppingCart className="w-6 h-6 text-secondary" />
-                </div>
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-[11px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white dark:border-background">
+            <div className="h-6 w-[1px] bg-white/30" />
+
+            {/* Cart & Utils */}
+            <div className="flex items-center gap-4">
+              <button onClick={onOpenCart} className="relative group p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#F47A3E]">
                   {cartCount}
                 </span>
-              </div>
-              <div className="hidden sm:flex flex-col text-left">
-                 <span className="text-xs text-gray-500">{t('myCart')}</span>
-                 <span className="text-sm font-bold text-primary">{t('priceRwf', { price: useCartStore.getState().getCartTotal().toLocaleString() })}</span>
-              </div>
-            </button>
+              </button>
 
-            {/* Mobile Toggle */}
-            <button className="lg:hidden p-2 text-gray-600 dark:text-gray-300" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
-            </button>
-          </div>
+              <button onClick={toggleTheme} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              </button>
+
+              <div className="group relative cursor-pointer p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
+                 <Globe className="w-5 h-5" />
+                 <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 border-2 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg shadow-xl hidden group-hover:block z-50 overflow-hidden w-40 font-bold border-gray-400">
+                   <button className="w-full text-left px-4 py-3 hover:bg-orange-500 hover:text-white text-base border-b border-gray-200 dark:border-gray-700 transition" onClick={() => changeLanguage('en')}>{t('english')}</button>
+                   <button className="w-full text-left px-4 py-3 hover:bg-orange-500 hover:text-white text-base border-b border-gray-200 dark:border-gray-700 transition" onClick={() => changeLanguage('fr')}>{t('french')}</button>
+                   <button className="w-full text-left px-4 py-3 hover:bg-orange-500 hover:text-white text-base transition" onClick={() => changeLanguage('rw')}>{t('kinyarwanda')}</button>
+                 </div>
+              </div>
+            </div>
+          </nav>
+
+          {/* Mobile Menu Icon */}
+          <button className="lg:hidden p-2 text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+          </button>
         </div>
       </div>
 
-      {/* Bottom Header - Navigation Menu */}
-      <div className="hidden lg:block bg-primary text-white shadow-md">
-         <div className="container mx-auto px-4 flex justify-between h-14 items-center">
-            
-            <div className="flex items-center gap-2 bg-black/20 h-full px-6 font-bold cursor-pointer hover:bg-black/30 transition uppercase">
-               <Grid className="w-5 h-5" /> 
-               <span>{t('browseDepartments')}</span>
-            </div>
-
-            <nav className="flex items-center gap-8 font-semibold text-sm uppercase">
-               <Link to="/" className="hover:text-yellow-300 transition">{t('home')}</Link>
-               <Link to="/shop" className="hover:text-yellow-300 transition">{t('shop')}</Link>
-               <Link to="/shop?category=Food Products" className="hover:text-yellow-300 transition">{t('freshFood')}</Link>
-               <Link to="/shop?category=Alcoholic Drinks" className="hover:text-yellow-300 transition">{t('beverages')}</Link>
-               <Link to="/shop?category=Cosmetics & Personal Care" className="hover:text-yellow-300 transition">{t('beautyHealth')}</Link>
-            </nav>
-            
-            <div className="text-sm font-bold text-yellow-300 animate-pulse uppercase">
-               ⚡ {t('weekendSale')}
-            </div>
-         </div>
-      </div>
-
-      {/* Mobile Menu & Search (Expands below) */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden border-b bg-white dark:bg-card p-4 flex flex-col gap-4 shadow-inner">
-           <form onSubmit={handleSearch} className="w-full relative border rounded-lg overflow-hidden flex">
+      {/* Sub-header with Search (Auxiliary) */}
+      <div className="bg-white dark:bg-background border-b py-3">
+        <div className="container mx-auto px-4 flex items-center justify-center">
+          <form onSubmit={handleSearch} className="w-full max-w-2xl flex rounded-full border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm bg-gray-50 dark:bg-card">
             <input
               type="text"
               placeholder={t('search')}
-              className="w-full py-3 px-4 focus:outline-none dark:bg-background"
+              className="w-full px-5 py-2.5 text-sm focus:outline-none bg-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button type="submit" className="bg-primary text-white px-5">
-              <Search className="w-5 h-5" />
+            <button type="submit" className="bg-[#F47A3E] text-white px-6 hover:bg-[#D46A2E] transition-colors">
+              <Search className="w-4 h-4" />
             </button>
           </form>
-          
-          <nav className="flex flex-col gap-3 mt-2 font-semibold">
-             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('home')}</Link>
-             <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('shop')}</Link>
-             <Link to="/shop?category=Food Products" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('freshFood')}</Link>
-             <Link to="/shop?category=Alcoholic Drinks" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b">{t('beverages')}</Link>
-          </nav>
+        </div>
+      </div>
 
-          <div className="flex gap-4 mt-2 mb-2">
-             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('en'); setIsMobileMenuOpen(false)}}>{t('english')}</button>
-             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('fr'); setIsMobileMenuOpen(false)}}>{t('french')}</button>
-             <button className="flex-1 py-2 text-center rounded border hover:bg-muted font-bold" onClick={() => { changeLanguage('rw'); setIsMobileMenuOpen(false)}}>{t('kinyarwanda')}</button>
-          </div>
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden border-b bg-white dark:bg-card flex flex-col shadow-2xl animate-in slide-in-from-top duration-300">
+           <nav className="flex flex-col font-bold p-2 text-foreground">
+             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('home')}</Link>
+             <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('about', 'About us')}</Link>
+             <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('contactUs', 'Contact us')}</Link>
+             <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('shop')}</Link>
+             
+             {!currentUser && (
+               <>
+                 <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('signUp', 'Sign Up')}</Link>
+                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('signIn', 'Sign In')}</Link>
+               </>
+             )}
+             
+             {currentUser && (
+               <>
+                 {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
+                   <Link to="/admin/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-yellow-600 font-bold">Admin</Link>
+                 )}
+                 <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-[#F47A3E]">{t('myOrders', 'My Orders')}</Link>
+                 <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-left text-red-500">{t('logout', 'Logout')}</button>
+               </>
+             )}
+           </nav>
+           <div className="p-4 bg-gray-50 dark:bg-muted flex gap-4 text-foreground items-center">
+             <div className="flex flex-1 gap-2">
+               <button onClick={() => changeLanguage('en')} className="flex-1 py-1.5 bg-white dark:bg-card rounded shadow-sm text-[10px] font-bold">EN</button>
+               <button onClick={() => changeLanguage('fr')} className="flex-1 py-1.5 bg-white dark:bg-card rounded shadow-sm text-[10px] font-bold">FR</button>
+               <button onClick={() => changeLanguage('rw')} className="flex-1 py-1.5 bg-white dark:bg-card rounded shadow-sm text-[10px] font-bold">RW</button>
+             </div>
+             <button 
+               onClick={toggleTheme} 
+               className="p-3 bg-white dark:bg-card rounded-full shadow-sm hover:opacity-80 transition"
+             >
+               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+             </button>
+           </div>
         </div>
       )}
     </header>

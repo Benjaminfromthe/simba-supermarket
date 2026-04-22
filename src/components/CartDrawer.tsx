@@ -3,6 +3,7 @@ import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useNavigate } from 'react-router-dom';
 import { getLocalizedProductName } from '../lib/localize';
+import { useAuth } from '../contexts/AuthContext';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -13,12 +14,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { t } = useTranslation();
   const { items, updateQuantity, removeItem, getCartTotal } = useCartStore();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   if (!isOpen) return null;
 
   const handleCheckout = () => {
     onClose();
-    navigate('/checkout');
+    if (currentUser) {
+      navigate('/checkout');
+    } else {
+      navigate('/login');
+    }
   };
 
   return (
@@ -30,7 +36,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           <div className="flex items-center gap-2">
             <ShoppingCart className="w-5 h-5" />
             <h2 className="text-lg font-bold">{t('myCart')}</h2>
-            <span className="bg-primary text-white text-xs px-2 py-0.5 rounded-full font-bold">
+            <span className="bg-primary text-white text-sm px-2 py-0.5 rounded-full font-bold">
               {items.reduce((acc, i) => acc + i.quantity, 0)}
             </span>
           </div>
@@ -68,7 +74,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="text-xs font-bold w-6 text-center">{item.quantity}</span>
+                      <span className="text-sm font-bold w-6 text-center">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         className="p-1 px-2 hover:bg-muted text-muted-foreground hover:text-foreground"

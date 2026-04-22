@@ -20,9 +20,9 @@ export default function ProductPage() {
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('productNotFound', 'Product Not Found')}</h2>
         <button onClick={() => navigate(-1)} className="text-primary hover:underline flex items-center justify-center gap-2 mx-auto">
-          <ArrowLeft className="w-4 h-4" /> Go Back
+          <ArrowLeft className="w-4 h-4" /> {t('goBack', 'Go Back')}
         </button>
       </div>
     );
@@ -40,7 +40,7 @@ export default function ProductPage() {
       <div className="container mx-auto px-4">
         
         <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground flex items-center gap-2 mb-6 font-medium transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Back to Shop
+          <ArrowLeft className="w-5 h-5" /> {t('backToShop', 'Back to Shop')}
         </button>
 
         <div className="bg-white dark:bg-card border dark:border-border rounded-3xl overflow-hidden shadow-sm flex flex-col md:flex-row">
