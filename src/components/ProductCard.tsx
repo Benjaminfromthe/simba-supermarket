@@ -28,7 +28,8 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         <img 
           src={product.image} 
           alt={localizedName} 
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal" 
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
         />
         {/* Sale Badge */}
         <div className="absolute top-3 left-3 bg-red-600 text-white px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">
