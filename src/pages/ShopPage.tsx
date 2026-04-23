@@ -39,7 +39,12 @@ export default function ShopPage() {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(p => {
         const localizedName = getLocalizedProductName(p).toLowerCase();
-        return localizedName.includes(q) || p.name?.toLowerCase().includes(q) || ((p as any).description && (p as any).description.toLowerCase().includes(q));
+        const localizedCat = getLocalizedProductCategory(p).toLowerCase();
+        return localizedName.includes(q) || 
+               p.name?.toLowerCase().includes(q) || 
+               localizedCat.includes(q) || 
+               p.category?.toLowerCase().includes(q) || 
+               ((p as any).description && (p as any).description.toLowerCase().includes(q));
       });
     }
     
@@ -68,8 +73,8 @@ export default function ShopPage() {
       {/* Header and Mobile Filters */}
       <div className="flex flex-col md:flex-row gap-6 mb-8 items-start md:items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">{t('shop')}</h1>
-          <p className="text-muted-foreground">{filteredProducts.length} {t('productsFoundText')}</p>
+          <h1 className="text-3xl font-black mb-2">{t('shop')}</h1>
+          <p className="text-gray-900 dark:text-white font-black">{filteredProducts.length} {t('productsFoundText')}</p>
         </div>
       </div>
 
@@ -123,8 +128,8 @@ export default function ShopPage() {
               <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
                 <Filter className="w-10 h-10" />
               </div>
-              <h2 className="text-xl font-bold mb-2">{t('noProductsFound')}</h2>
-              <p className="text-muted-foreground">{t('tryAdjustingFilters')}</p>
+              <h2 className="text-xl font-black mb-2">{t('noProductsFound')}</h2>
+              <p className="text-gray-900 dark:text-white font-black">{t('tryAdjustingFilters')}</p>
               <button 
                 onClick={() => {
                   setSearchQuery('');

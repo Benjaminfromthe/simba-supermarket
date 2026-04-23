@@ -28,8 +28,8 @@ export default function ContactPage() {
     {
       icon: <Globe className="w-6 h-6 text-primary" />,
       title: "Official Website",
-      details: ["simbaonlineshopping.com"],
-      link: "https://simbaonlineshopping.com"
+      details: ["www.simbaonlineshopping.com"],
+      link: "https://www.simbaonlineshopping.com/"
     }
   ];
 
@@ -99,25 +99,25 @@ export default function ContactPage() {
             <div>
               <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{t('ourSocialMedia', 'Our Social Media')}</h2>
               <div className="grid grid-cols-2 gap-4">
-                <a href="https://facebook.com/simbasupermarket" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
+                <a href="https://www.facebook.com/simbasupermarket" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
                   <div className="bg-[#1877F2]/10 p-3 rounded-xl text-[#1877F2]">
                     <Facebook className="w-6 h-6" />
                   </div>
                   <span className="font-bold text-gray-700 dark:text-gray-300">Facebook</span>
                 </a>
-                <a href="https://instagram.com/simbasupermarketrw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
+                <a href="https://www.instagram.com/simba_supermarket/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
                   <div className="bg-[#E4405F]/10 p-3 rounded-xl text-[#E4405F]">
                     <Instagram className="w-6 h-6" />
                   </div>
                   <span className="font-bold text-gray-700 dark:text-gray-300">Instagram</span>
                 </a>
-                <a href="https://twitter.com/SimbaSupermarke" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
+                <a href="https://x.com/SimbaRwanda" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
                   <div className="bg-black/10 dark:bg-white/10 p-3 rounded-xl text-black dark:text-white">
                     <Twitter className="w-6 h-6" />
                   </div>
                   <span className="font-bold text-gray-700 dark:text-gray-300">Twitter (X)</span>
                 </a>
-                <a href="https://www.linkedin.com/company/simba-supermarket/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
+                <a href="https://www.linkedin.com/company/simba-supermarket-ltd-rwanda/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white dark:bg-card p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-border hover:border-primary/50 transition-colors group">
                   <div className="bg-[#0077B5]/10 p-3 rounded-xl text-[#0077B5]">
                     <Linkedin className="w-6 h-6" />
                   </div>

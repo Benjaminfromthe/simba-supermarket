@@ -7,6 +7,7 @@ export interface Branch {
   latitude: number;
   longitude: number;
   locationNote: string;
+  mapUrl?: string;
 }
 
 interface LocationState {

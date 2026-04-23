@@ -1,16 +1,19 @@
 import type React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, X, Sun, Moon, Globe, Phone, Mail, User, Grid } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, Sun, Moon, Globe, Phone, Mail, User, Grid, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();
   const cartItems = useCartStore((state) => state.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const { currentUser, signOut } = useAuth();
@@ -25,10 +28,22 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     }
   }, [theme]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    setIsLangMenuOpen(false);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -39,8 +54,14 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     }
   };
 
+  const languages = [
+    { code: 'en', label: 'English', key: 'english' },
+    { code: 'fr', label: 'Français', key: 'french' },
+    { code: 'rw', label: 'Kinyarwanda', key: 'kinyarwanda' },
+  ];
+
   return (
-    <header className="w-full z-50">
+    <header className="flex flex-col">
       {/* Target Logo Bar Design: Simba 2.0 */}
       <div className="bg-[#F47A3E] text-white py-4 shadow-lg border-b border-white/10">
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -95,7 +116,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                 <div className="flex items-center gap-4">
                   {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
                     <Link to="/admin/orders" className="text-yellow-300 font-bold text-sm uppercase">
-                       Admin
+                       {t('adminDashboard', 'Admin Dashboard')}
                     </Link>
                   )}
                   <button onClick={() => signOut()} className="hover:opacity-80 transition-opacity text-sm font-bold uppercase">
@@ -120,13 +141,45 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </button>
 
-              <div className="group relative cursor-pointer p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
-                 <Globe className="w-5 h-5" />
-                 <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 border-2 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg shadow-xl hidden group-hover:block z-50 overflow-hidden w-40 font-bold border-gray-400">
-                   <button className="w-full text-left px-4 py-3 hover:bg-orange-500 hover:text-white text-base border-b border-gray-200 dark:border-gray-700 transition" onClick={() => changeLanguage('en')}>{t('english')}</button>
-                   <button className="w-full text-left px-4 py-3 hover:bg-orange-500 hover:text-white text-base border-b border-gray-200 dark:border-gray-700 transition" onClick={() => changeLanguage('fr')}>{t('french')}</button>
-                   <button className="w-full text-left px-4 py-3 hover:bg-orange-500 hover:text-white text-base transition" onClick={() => changeLanguage('rw')}>{t('kinyarwanda')}</button>
-                 </div>
+              <div className="relative" ref={langMenuRef}>
+                 <button 
+                  onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                  className={`p-2 rounded-full transition flex items-center gap-1 ${isLangMenuOpen ? 'bg-white/40' : 'bg-white/20 hover:bg-white/30'}`}
+                 >
+                   <Globe className="w-5 h-5" />
+                   <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+                 </button>
+                 
+                 <AnimatePresence>
+                   {isLangMenuOpen && (
+                     <motion.div 
+                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                       animate={{ opacity: 1, y: 0, scale: 1 }}
+                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                       transition={{ duration: 0.2 }}
+                       className="absolute top-full right-0 mt-3 bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl shadow-2xl z-50 overflow-hidden w-48 font-bold"
+                     >
+                       <div className="py-1">
+                         {languages.map((lang) => (
+                           <button 
+                             key={lang.code}
+                             className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
+                               i18n.language === lang.code 
+                                ? 'bg-orange-600 text-white' 
+                                : 'hover:bg-orange-50 dark:hover:bg-gray-700'
+                             }`}
+                             onClick={() => changeLanguage(lang.code)}
+                           >
+                             <span>{t(lang.key, lang.label)}</span>
+                             {i18n.language === lang.code && (
+                               <div className="w-2 h-2 bg-white rounded-full" />
+                             )}
+                           </button>
+                         ))}
+                       </div>
+                     </motion.div>
+                   )}
+                 </AnimatePresence>
               </div>
             </div>
           </nav>
@@ -139,64 +192,87 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
       </div>
 
       {/* Sub-header with Search (Auxiliary) */}
-      <div className="bg-white dark:bg-background border-b py-3">
+      <div className="bg-white dark:bg-background border-b border-gray-100 dark:border-border py-3">
         <div className="container mx-auto px-4 flex items-center justify-center">
-          <form onSubmit={handleSearch} className="w-full max-w-2xl flex rounded-full border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm bg-gray-50 dark:bg-card">
+          <form onSubmit={handleSearch} className="w-full max-w-2xl flex rounded-full border border-gray-200 dark:border-border overflow-hidden shadow-sm bg-gray-50 dark:bg-card">
             <input
               type="text"
               placeholder={t('search')}
-              className="w-full px-5 py-2.5 text-sm focus:outline-none bg-transparent"
+              className="w-full px-5 py-2.5 text-base font-bold outline-none bg-transparent text-foreground placeholder:text-foreground/50 dark:placeholder:text-white/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button type="submit" className="bg-[#F47A3E] text-white px-6 hover:bg-[#D46A2E] transition-colors">
-              <Search className="w-4 h-4" />
+              <Search className="w-5 h-5" />
             </button>
           </form>
         </div>
       </div>
 
+
       {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden border-b bg-white dark:bg-card flex flex-col shadow-2xl animate-in slide-in-from-top duration-300">
-           <nav className="flex flex-col font-bold p-2 text-foreground">
-             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('home')}</Link>
-             <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('about', 'About us')}</Link>
-             <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('contactUs', 'Contact us')}</Link>
-             <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('shop')}</Link>
-             
-             {!currentUser && (
-               <>
-                 <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('signUp', 'Sign Up')}</Link>
-                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50">{t('signIn', 'Sign In')}</Link>
-               </>
-             )}
-             
-             {currentUser && (
-               <>
-                 {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
-                   <Link to="/admin/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-yellow-600 font-bold">Admin</Link>
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden border-b border-gray-100 dark:border-border bg-white dark:bg-card flex flex-col shadow-2xl overflow-hidden"
+          >
+             <nav className="flex flex-col font-bold p-2 text-foreground">
+               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('home')}</Link>
+               <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('about', 'About us')}</Link>
+               <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('contactUs', 'Contact us')}</Link>
+               <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('shop')}</Link>
+               
+               {!currentUser && (
+                 <>
+                   <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('signUp', 'Sign Up')}</Link>
+                   <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('signIn', 'Sign In')}</Link>
+                 </>
+               )}
+               
+               {currentUser && (
+                 <>
+                   {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
+                     <Link to="/admin/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-yellow-600 font-bold transition-colors">{t('adminDashboard', 'Admin Dashboard')}</Link>
+                   )}
+                   <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-[#F47A3E] transition-colors">{t('myOrders', 'My Orders')}</Link>
+                   <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-left text-red-500 transition-colors">{t('logout', 'Logout')}</button>
+                 </>
+               )}
+             </nav>
+             <div className="p-4 bg-gray-50 dark:bg-muted flex flex-col sm:flex-row gap-4 text-foreground items-center">
+               <div className="flex w-full sm:flex-1 gap-2">
+                 {languages.map((lang) => (
+                   <button 
+                     key={lang.code}
+                     onClick={() => changeLanguage(lang.code)} 
+                     className={`flex-1 py-3 rounded-lg shadow-sm text-xs font-bold uppercase transition-colors ${
+                       i18n.language === lang.code 
+                        ? 'bg-orange-600 text-white' 
+                        : 'bg-white dark:bg-card'
+                     }`}
+                   >
+                     {lang.code}
+                   </button>
+                 ))}
+               </div>
+               <button 
+                 onClick={toggleTheme} 
+                 className="w-full sm:w-auto p-3 bg-white dark:bg-card rounded-xl shadow-sm hover:opacity-80 transition flex items-center justify-center gap-2 font-bold text-sm"
+               >
+                 {theme === 'light' ? (
+                   <><Moon className="w-5 h-5" /> Dark Mode</>
+                 ) : (
+                   <><Sun className="w-5 h-5" /> Light Mode</>
                  )}
-                 <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-[#F47A3E]">{t('myOrders', 'My Orders')}</Link>
-                 <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="p-4 border-b dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-left text-red-500">{t('logout', 'Logout')}</button>
-               </>
-             )}
-           </nav>
-           <div className="p-4 bg-gray-50 dark:bg-muted flex gap-4 text-foreground items-center">
-             <div className="flex flex-1 gap-2">
-               <button onClick={() => changeLanguage('en')} className="flex-1 py-1.5 bg-white dark:bg-card rounded shadow-sm text-[10px] font-bold">EN</button>
-               <button onClick={() => changeLanguage('fr')} className="flex-1 py-1.5 bg-white dark:bg-card rounded shadow-sm text-[10px] font-bold">FR</button>
-               <button onClick={() => changeLanguage('rw')} className="flex-1 py-1.5 bg-white dark:bg-card rounded shadow-sm text-[10px] font-bold">RW</button>
+               </button>
              </div>
-             <button 
-               onClick={toggleTheme} 
-               className="p-3 bg-white dark:bg-card rounded-full shadow-sm hover:opacity-80 transition"
-             >
-               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-             </button>
-           </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
+

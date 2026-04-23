@@ -4,62 +4,71 @@
     "name": "Simba UTC (Town)",
     "latitude": -1.9458424,
     "longitude": 30.0615536,
-    "locationNote": "KN 4 Ave, Union Trade Center"
+    "locationNote": "KN 4 Ave, Union Trade Center",
+    "mapUrl": "https://www.google.com/maps?q=Simba+Supermarket+UTC+Kigali"
   },
   {
     "id": "simba_gishushu",
     "name": "Simba Gishushu",
     "latitude": -1.9536577,
     "longitude": 30.0981838,
-    "locationNote": "KG 8 Ave, KGL Business Center"
+    "locationNote": "KG 8 Ave, KGL Business Center",
+    "mapUrl": "https://www.google.com/maps?q=Simba+Supermarket+Gishushu"
   },
   {
     "id": "simba_kisimenti",
     "name": "Simba Kisimenti",
     "latitude": -1.9604659,
     "longitude": 30.1075648,
-    "locationNote": "Kisimenti Area, Remera"
+    "locationNote": "Kisimenti Area, Remera",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kisimenti"
   },
   {
     "id": "simba_gacuriro",
     "name": "Simba Gacuriro",
     "latitude": -1.9235083,
     "longitude": 30.0948917,
-    "locationNote": "KG 14 Ave, Simba Center Gacuriro"
+    "locationNote": "KG 14 Ave, Simba Center Gacuriro",
+    "mapUrl": "https://maps.google.com/?q=Simba+Center+Gacuriro"
   },
   {
     "id": "simba_kigali_heights",
     "name": "Simba Kigali Heights",
     "latitude": -1.9519,
     "longitude": 30.0914,
-    "locationNote": "KG 2 Rd, Opposite Convention Center"
+    "locationNote": "KG 2 Rd, Opposite Convention Center",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kigali+Heights"
   },
   {
     "id": "simba_kimironko",
     "name": "Simba Kimironko",
     "latitude": -1.9361,
     "longitude": 30.1268,
-    "locationNote": "KG 11 Ave, Near Kimironko Market"
+    "locationNote": "KG 11 Ave, Near Kimironko Market",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kimironko"
   },
   {
     "id": "simba_centenary",
     "name": "Simba Centenary House",
     "latitude": -1.9444,
     "longitude": 30.0617,
-    "locationNote": "KN 3 St, Centenary House Building"
+    "locationNote": "KN 3 St, Centenary House Building",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Centenary+House"
   },
   {
     "id": "simba_kanombe",
     "name": "Simba Kanombe",
     "latitude": -1.9678,
     "longitude": 30.1412,
-    "locationNote": "Near Kigali International Airport"
+    "locationNote": "Near Kigali International Airport",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kanombe"
   },
   {
     "id": "simba_chic",
     "name": "Simba CHIC City Market",
     "latitude": -1.9461,
     "longitude": 30.0575,
-    "locationNote": "KN 2 St, CHIC Building Ground Floor"
+    "locationNote": "KN 2 St, CHIC Building Ground Floor",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+CHIC+Building"
   }
 ]

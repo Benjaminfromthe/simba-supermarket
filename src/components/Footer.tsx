@@ -1,22 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail, ExternalLink } from 'lucide-react';
+import branchesData from '../data/branches.json';
 
 export default function Footer() {
   const { t } = useTranslation();
   
-  const branches = [
-    t('simbaUTC', 'Simba UTC (Town)'),
-    t('simbaGishushu', 'Simba Gishushu'),
-    t('simbaKisimenti', 'Simba Kisimenti'),
-    t('simbaGacuriro', 'Simba Gacuriro'),
-    t('simbaKigaliHeights', 'Simba Kigali Heights'),
-    t('simbaKimironko', 'Simba Kimironko'),
-    t('simbaCentenaryHouse', 'Simba Centenary House'),
-    t('simbaKanombe', 'Simba Kanombe'),
-    t('simbaChic', 'Simba CHIC City Market')
-  ];
-
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-8 border-t-4 border-[#F47A3E]">
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
@@ -41,12 +30,12 @@ export default function Footer() {
               </p>
             </div>
           </div>
-          <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+          <p className="text-gray-200 text-sm leading-relaxed max-w-sm font-medium">
             {t('footerDescMobile', 'Serving Rwanda with quality and care for over 50 years. Simba Supermarket is your premier destination for groceries and household essentials.')}
           </p>
-          <p className="text-gray-300 text-sm font-medium uppercase tracking-widest mt-2 border-l-2 border-[#F47A3E] pl-3">
+          <p className="text-white text-sm font-bold uppercase tracking-widest mt-2 border-l-2 border-[#F47A3E] pl-3">
             {t('officialWebsite', 'Official Website:')}<br/>
-            <a href="https://simbaonlineshopping.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors lowercase">simbaonlineshopping.com</a>
+            <a href="https://www.simbaonlineshopping.com/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors lowercase font-bold underline underline-offset-4 decoration-[#F47A3E]">www.simbaonlineshopping.com</a>
           </p>
           <div className="flex flex-col gap-3">
             <a 
@@ -67,11 +56,11 @@ export default function Footer() {
             {t('quickLinks', 'Quick Links')}
           </h3>
           <ul className="space-y-3">
-            <li><Link to="/" className="text-gray-400 hover:text-[#F47A3E] transition-colors text-sm flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('home')}</Link></li>
-            <li><Link to="/shop" className="text-gray-400 hover:text-[#F47A3E] transition-colors text-sm flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('shop')}</Link></li>
-            <li><Link to="/orders" className="text-gray-400 hover:text-[#F47A3E] transition-colors text-sm flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('myOrders', 'My Orders')}</Link></li>
-            <li><Link to="/about" className="text-gray-400 hover:text-[#F47A3E] transition-colors text-sm flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('about', 'About us')}</Link></li>
-            <li><Link to="/contact" className="text-gray-400 hover:text-[#F47A3E] transition-colors text-sm flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('contactUs', 'Contact us')}</Link></li>
+            <li><Link to="/" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('home')}</Link></li>
+            <li><Link to="/shop" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('shop')}</Link></li>
+            <li><Link to="/orders" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('myOrders', 'My Orders')}</Link></li>
+            <li><Link to="/about" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('about', 'About us')}</Link></li>
+            <li><Link to="/contact" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('contactUs', 'Contact us')}</Link></li>
           </ul>
         </div>
 
@@ -81,19 +70,19 @@ export default function Footer() {
             {t('ourBranches', 'Our Branches')}
           </h3>
           <ul className="space-y-2">
-            {branches.map((branch) => (
-              <li key={branch}>
-                <div className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-3 group cursor-default">
+            {branchesData.map((branch) => (
+              <li key={branch.id}>
+                <a 
+                  href={branch.mapUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-gray-100 hover:text-white transition-colors text-sm font-bold flex items-center gap-3 group"
+                >
                   <MapPin className="w-3.5 h-3.5 text-[#F47A3E] group-hover:animate-bounce" />
-                  {branch}
-                </div>
+                  {branch.name}
+                </a>
               </li>
             ))}
-            <li className="pt-2">
-              <Link to="/" className="text-[#F47A3E] font-bold text-sm hover:underline flex items-center gap-1 uppercase tracking-wider">
-                {t('findOnMap', 'Find on Map')}
-              </Link>
-            </li>
           </ul>
         </div>
 
@@ -124,13 +113,13 @@ export default function Footer() {
             <a href="https://www.facebook.com/simbasupermarket" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#1877F2] transition-all group shadow-lg">
               <Facebook className="w-5 h-5 text-gray-400 group-hover:text-white" />
             </a>
-            <a href="https://www.instagram.com/simbasupermarketrw" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#E4405F] transition-all group shadow-lg">
+            <a href="https://www.instagram.com/simba_supermarket/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#E4405F] transition-all group shadow-lg">
               <Instagram className="w-5 h-5 text-gray-400 group-hover:text-white" />
             </a>
-            <a href="https://twitter.com/SimbaSupermarke" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-black transition-all group shadow-lg">
+            <a href="https://x.com/SimbaRwanda" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-black transition-all group shadow-lg">
               <Twitter className="w-5 h-5 text-gray-400 group-hover:text-white" />
             </a>
-            <a href="https://www.linkedin.com/company/simba-supermarket/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#0077B5] transition-all group shadow-lg">
+            <a href="https://www.linkedin.com/company/simba-supermarket-ltd-rwanda/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#0077B5] transition-all group shadow-lg">
               <Linkedin className="w-5 h-5 text-gray-400 group-hover:text-white" />
             </a>
           </div>
@@ -138,7 +127,7 @@ export default function Footer() {
       </div>
 
       <div className="container mx-auto px-4 mt-16 pt-8 border-t border-gray-800">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-medium text-gray-300 uppercase tracking-widest">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-normal text-gray-200 tracking-wider">
           <p>&copy; {new Date().getFullYear()} {t('allRightsReserved', 'Simba Supermarket Ltd. All rights reserved.')}</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-white transition-colors">{t('privacyPolicy', 'Privacy Policy')}</Link>

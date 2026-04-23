@@ -1,6 +1,8 @@
 {
-  "name": "",
-  "description": "",
-  "requestFramePermissions": [],
+  "name": "SIMBA",
+  "description": "ecommerce supermarket\n",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
   "majorCapabilities": []
 }

@@ -87,10 +87,10 @@ export default function AdminOrdersPage() {
 
   const getStatusDisplay = (status: Order['status']) => {
     switch (status) {
-      case 'pending': return <span className="text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><Clock className="w-3 h-3" /> Pending</span>;
-      case 'processing': return <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><Loader2 className="w-3 h-3 animate-spin"/> Processing</span>;
-      case 'completed': return <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><CheckCircle2 className="w-3 h-3"/> Completed</span>;
-      case 'cancelled': return <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><XCircle className="w-3 h-3"/> Cancelled</span>;
+      case 'pending': return <span className="text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><Clock className="w-3 h-3" /> {t('statusPending', 'Pending')}</span>;
+      case 'processing': return <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><Loader2 className="w-3 h-3 animate-spin"/> {t('statusProcessing', 'Processing')}</span>;
+      case 'completed': return <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><CheckCircle2 className="w-3 h-3"/> {t('statusCompleted', 'Completed')}</span>;
+      case 'cancelled': return <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded text-sm font-bold flex items-center gap-1 w-max"><XCircle className="w-3 h-3"/> {t('statusCancelled', 'Cancelled')}</span>;
       default: return null;
     }
   };
@@ -101,27 +101,27 @@ export default function AdminOrdersPage() {
         <div className="flex items-center gap-3 mb-8 bg-black dark:bg-card text-white p-6 rounded-2xl shadow-lg border border-gray-800">
           <ShieldCheck className="w-10 h-10 text-[#F47A3E]" />
           <div>
-            <h1 className="text-2xl font-bold font-serif leading-tight">Admin Dashboard</h1>
-            <p className="text-gray-700 dark:text-gray-300 text-sm">Manage Master Orders</p>
+            <h1 className="text-2xl font-bold font-serif leading-tight">{t('adminDashboard', 'Admin Dashboard')}</h1>
+            <p className="text-gray-700 dark:text-gray-300 text-sm">{t('manageOrders', 'Manage Master Orders')}</p>
           </div>
         </div>
 
         {orders.length === 0 ? (
            <div className="text-center py-20 bg-white dark:bg-card border dark:border-border rounded-2xl shadow-sm">
              <Package className="w-16 h-16 mx-auto text-muted-foreground opacity-20 mb-4" />
-             <h2 className="text-xl font-bold mb-2">No orders in system</h2>
+             <h2 className="text-xl font-bold mb-2">{t('noOrdersSystem', 'No orders in system')}</h2>
            </div>
         ) : (
           <div className="bg-white dark:bg-card border dark:border-border rounded-2xl shadow-sm overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-muted/50 text-sm uppercase tracking-wider text-muted-foreground border-b dark:border-border font-bold">
-                  <th className="p-4 rounded-tl-2xl">Order ID</th>
-                  <th className="p-4">Date</th>
-                  <th className="p-4">Branch</th>
-                  <th className="p-4 text-right">Total</th>
-                  <th className="p-4">Current Status</th>
-                  <th className="p-4 rounded-tr-2xl text-right">Action</th>
+                  <th className="p-4 rounded-tl-2xl">{t('orderId', 'Order ID')}</th>
+                  <th className="p-4">{t('date', 'Date')}</th>
+                  <th className="p-4">{t('branch', 'Branch')}</th>
+                  <th className="p-4 text-right">{t('total', 'Total')}</th>
+                  <th className="p-4">{t('currentStatus', 'Current Status')}</th>
+                  <th className="p-4 rounded-tr-2xl text-right">{t('action', 'Action')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y dark:divide-border text-sm">
@@ -147,10 +147,10 @@ export default function AdminOrdersPage() {
                           value={order.status}
                           onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
                         >
-                          <option value="pending">Pending</option>
-                          <option value="processing">Processing</option>
-                          <option value="completed">Completed</option>
-                          <option value="cancelled">Cancelled</option>
+                          <option value="pending">{t('statusPending', 'Pending')}</option>
+                          <option value="processing">{t('statusProcessing', 'Processing')}</option>
+                          <option value="completed">{t('statusCompleted', 'Completed')}</option>
+                          <option value="cancelled">{t('statusCancelled', 'Cancelled')}</option>
                         </select>
                       )}
                     </td>

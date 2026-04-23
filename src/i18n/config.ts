@@ -23,7 +23,7 @@ const resources = {
       priceRwf: "{{price}} RWF",
       newArrivals: "New Arrivals",
       popularProducts: "Popular Products",
-      supermarket: "Supermarket",
+      supermarket: "Simba Supermarket",
       browseDepartments: "BROWSE DEPARTMENTS",
       freshFood: "FRESH FOOD",
       beverages: "BEVERAGES",
@@ -98,8 +98,6 @@ const resources = {
       autoDetect: "Auto-detect nearest branch",
       calculating: "Calculating...",
       chooseBranch: "Choose a branch...",
-      
-      // Footer
       simbaUTC: "Simba UTC (Town)",
       simbaGishushu: "Simba Gishushu",
       simbaKisimenti: "Simba Kisimenti",
@@ -123,8 +121,6 @@ const resources = {
       allRightsReserved: "Simba Supermarket Ltd. All rights reserved.",
       privacyPolicy: "Privacy Policy",
       termsOfService: "Terms of Service",
-
-      // Auth
       passwordsDoNotMatch: "Passwords do not match",
       failedToCreateAccount: "Failed to create an account",
       failedToSignUpWithGoogle: "Failed to sign up with Google",
@@ -141,8 +137,6 @@ const resources = {
       signInWithGoogle: "Sign In with Google",
       dontHaveAccount: "Don't have an account?",
       logout: "Logout",
-
-      // Home/Misc
       rwandasSupermarket: "Rwanda's Online Supermarket:",
       freshGroceriesDelivered: "Fresh groceries,",
       deliveredToDoor: "delivered to your door",
@@ -155,9 +149,6 @@ const resources = {
       orderFulfillment: "Order Fulfillment",
       defaultBranch: "Default Branch",
       dispatchingFromHere: "Picking up & Dispatching from here",
-
-      // Contact Page
-      getInTouch: "Get In Touch",
       contactPreamble: "Have questions about your order or our services? We're here to help you experience unlimited shopping at one stop.",
       callUs: "Call Us",
       callUsDesc: "Customer support available during store hours.",
@@ -176,11 +167,9 @@ const resources = {
       ourSocialMedia: "Our Social Media",
       mainBranch: "Main Branch (UTC)",
       openDaily: "Open Daily: 7:00 AM - 10:00 PM",
-
-      // About Page
       ourStory: "Our Story",
       over50Years: "Over 50 Years of Serving the Rwandan Market",
-      storyPara1: "Established as one of the oldest and most trusted supermarket chains in Rwanda, Simba Supermarket has been a cornerstone of the Kigali community for decades. Our journey began with a simple vision: to provide high-quality groceries and household items at affordable prices.",
+      storyPara1: "Established as one of the oldest and most trusted supermarket chains in Rwanda, Simba Supermarket has been a cornerstone of the Kigali community for decades.",
       storyPara2: "Today, with over 10 branches across Kigali and an expanding online platform, we continue to innovate while staying true to our core value: exceptional customer service.",
       yearsExperience: "Years Experience",
       branchesCount: "Branches",
@@ -195,11 +184,7 @@ const resources = {
       communityDesc: "Beyond being a store, we are part of the Kigali community, supporting local farmers and businesses.",
       readyToShop: "READY TO START SHOPPING?",
       goToShop: "Go to Shop",
-
-      // Misc
       backToShop: "Back to Shop",
-      productNotFound: "Product Not Found",
-      goBack: "Go Back",
       statusPending: "Pending",
       statusProcessing: "Processing",
       statusCompleted: "Completed",
@@ -210,10 +195,22 @@ const resources = {
       startShopping: "Start Shopping",
       orderId: "Order ID",
       date: "Date",
-      status: "Status",
-      total: "Total",
       items: "Items",
       qty: "Qty",
+      adminDashboard: "Admin Dashboard",
+      manageOrders: "Manage Master Orders",
+      noOrdersSystem: "No orders in system",
+      currentStatus: "Current Status",
+      action: "Action",
+      resultsFor: "Results for",
+      getLocation: "Get My Location",
+      openMap: "Open Map",
+      locating: "Locating...",
+      locationError: "Could not get location",
+      selectOnMap: "Select on Map",
+      confirmLocation: "Confirm Location",
+      mapFallbackText: "Click on the map to select your delivery location.",
+      viewOnMap: "View on Map",
     }
   },
   fr: {
@@ -268,7 +265,7 @@ const resources = {
       get10Off: "Obtenez 10% de réduction",
       organicVeg: "Légumes Biologiques",
       freshFromFarm: "Frais de la ferme",
-      dealsOfDay: "Offres du Jour",
+      dealsOfDay: "Offres du jour",
       viewAll: "Voir Tout",
       sortBy: "Trier Par",
       featured: "En Vedette",
@@ -312,8 +309,6 @@ const resources = {
       autoDetect: "Détecter la succursale la plus proche",
       calculating: "Calcul en cours...",
       chooseBranch: "Choisir une succursale...",
-
-      // Footer
       simbaUTC: "Simba UTC (Ville)",
       simbaGishushu: "Simba Gishushu",
       simbaKisimenti: "Simba Kisimenti",
@@ -337,8 +332,6 @@ const resources = {
       allRightsReserved: "Simba Supermarket Ltd. Tous droits réservés.",
       privacyPolicy: "Politique de confidentialité",
       termsOfService: "Conditions d'utilisation",
-
-      // Auth
       passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
       failedToCreateAccount: "Échec de la création du compte",
       failedToSignUpWithGoogle: "Échec de l'inscription avec Google",
@@ -355,8 +348,6 @@ const resources = {
       signInWithGoogle: "Se connecter avec Google",
       dontHaveAccount: "Vous n'avez pas de compte ?",
       logout: "Déconnexion",
-
-      // Home/Misc
       rwandasSupermarket: "Le Supermarché en ligne du Rwanda :",
       freshGroceriesDelivered: "Des produits frais,",
       deliveredToDoor: "livrés à votre porte",
@@ -369,9 +360,6 @@ const resources = {
       orderFulfillment: "Exécution de la commande",
       defaultBranch: "Succursale par défaut",
       dispatchingFromHere: "Collecte et expédition à partir d'ici",
-
-      // Contact Page
-      getInTouch: "Contactez-nous",
       contactPreamble: "Vous avez des questions sur votre commande ou nos services ? Nous sommes là pour vous aider à vivre une expérience de magasinage illimitée en un seul endroit.",
       callUs: "Appelez-nous",
       callUsDesc: "Le support client est disponible pendant les heures d'ouverture du magasin.",
@@ -390,11 +378,9 @@ const resources = {
       ourSocialMedia: "Nos réseaux sociaux",
       mainBranch: "Succursale Principale (UTC)",
       openDaily: "Ouvert tous les jours : 7h00 - 22h00",
-
-      // About Page
       ourStory: "Notre histoire",
       over50Years: "Plus de 50 ans au service du marché rwandais",
-      storyPara1: "Créée comme l'une des chaînes de supermarchés les plus anciennes et les plus fiables du Rwanda, Simba Supermarket est un pilier de la communauté de Kigali depuis des décennies. Notre parcours a commencé avec une vision simple : fournir des produits d'épicerie et des articles ménagers de haute qualité à des prix abordables.",
+      storyPara1: "Créée comme l'une des chaînes de supermarchés les plus anciennes et les plus fiables du Rwanda, Simba Supermarket est un pilier de la communauté de Kigali depuis des décennies.",
       storyPara2: "Aujourd'hui, avec plus de 10 succursales à travers Kigali et une plateforme en ligne en pleine expansion, nous continuons d'innover tout en restant fidèles à notre valeur fondamentale : un service client exceptionnel.",
       yearsExperience: "Années d'expérience",
       branchesCount: "Succursales",
@@ -409,11 +395,7 @@ const resources = {
       communityDesc: "Au-delà d'être un magasin, nous faisons partie de la communauté de Kigali, en soutenant les agriculteurs et les entreprises locales.",
       readyToShop: "PRÊT À COMMENCER VOS ACHATS ?",
       goToShop: "Aller à la Boutique",
-
-      // Misc
       backToShop: "Retour à la boutique",
-      productNotFound: "Produit non trouvé",
-      goBack: "Retourner",
       statusPending: "En attente",
       statusProcessing: "En traitement",
       statusCompleted: "Terminé",
@@ -424,10 +406,22 @@ const resources = {
       startShopping: "Commencer les achats",
       orderId: "ID de commande",
       date: "Date",
-      status: "Statut",
-      total: "Total",
       items: "Articles",
       qty: "Qté",
+      adminDashboard: "Tableau de bord d'administration",
+      manageOrders: "Gérez les commandes maîtresses",
+      noOrdersSystem: "Aucune commande dans le système",
+      currentStatus: "Statut Actuel",
+      action: "Action",
+      resultsFor: "Résultats pour",
+      getLocation: "Obtenir ma position",
+      openMap: "Ouvrir la carte",
+      locating: "Localisation...",
+      locationError: "Impossible d'obtenir la position",
+      selectOnMap: "Sélectionner sur la carte",
+      confirmLocation: "Confirmer la position",
+      mapFallbackText: "Cliquez sur la carte pour sélectionner votre lieu de livraison.",
+      viewOnMap: "Voir sur la carte",
     }
   },
   rw: {
@@ -451,7 +445,7 @@ const resources = {
       priceRwf: "{{price}} RWF",
       newArrivals: "Ibishya",
       popularProducts: "Ibicuruzwa Bikunzwe",
-      supermarket: "Supermarket",
+      supermarket: "Simba Supermarket",
       browseDepartments: "REBA IBYICIRO",
       freshFood: "IBIRIWA BISHYA",
       beverages: "IBINYOBWA",
@@ -526,8 +520,6 @@ const resources = {
       autoDetect: "Shakisha ishami riri hafi",
       calculating: "Turimo gushakisha...",
       chooseBranch: "Hitamo ishami...",
-
-      // Footer
       simbaUTC: "Simba UTC (Mu Mujyi)",
       simbaGishushu: "Simba Gishushu",
       simbaKisimenti: "Simba Kisimenti",
@@ -538,7 +530,7 @@ const resources = {
       simbaKanombe: "Simba Kanombe",
       simbaChic: "Simba CHIC City Market",
       slogan: "\"Guhaha Byose Ahantu Hamwe!\"",
-      footerDescMobile: "Tumaze imyaka irenga 50 duha abanyarwanda serivisi nziza. Simba Supermarket ni ryo soko rya mbere ku biribwa n'ibikoresho byo mu rugo.",
+      footerDescMobile: "Tumaze imyaka irenga 50 duha abanyarwanda serivisi nziza. Simba Supermarket ni ryo soko rya mbere ku biribwa n'ibikoresho byo mo rugo.",
       officialWebsite: "Urubuga Rwemewe:",
       chatWithSimba: "Vugana na Simba",
       myOrders: "Komande Zanjye",
@@ -546,13 +538,11 @@ const resources = {
       findOnMap: "Reba ku Ikarita",
       getInTouch: "Tuvugishe",
       customerSupport: "Ubufasha ku Bakiriya",
-      onlineShopSupport: "Ubufasha ku Ihaha ryo Kuri Murandasi",
+      onlineShopSupport: "Ubufasha bwo Guhaha kuri Murandasi",
       followSimba: "Kurikira Simba",
       allRightsReserved: "Simba Supermarket Ltd. Uburenganzira bwose burabitswe.",
       privacyPolicy: "Ibijyanye n'Ubusugire",
       termsOfService: "Amategeko n'Amabwiriza",
-
-      // Auth
       passwordsDoNotMatch: "Amagambo banga ntahuje",
       failedToCreateAccount: "Byanze gufungura konti",
       failedToSignUpWithGoogle: "Byanze kwiyandikisha ukoresheje Google",
@@ -563,14 +553,13 @@ const resources = {
       signUp: "Iyandikishe",
       signUpWithGoogle: "Iyandikishe ukoresheje Google",
       alreadyHaveAccount: "Usanzwe ufite konti?",
-      failedToSignIn: "Byanze kwinjira",
-      failedToSignInWithGoogle: "Byanze kwinjira ukoresheje Google",
+      failedToLogIn: "Byanze kwinjira",
+      failedToLogInWithGoogle: "Byanze kwinjira ukoresheje Google",
+      welcomeBack: "Ikaze",
       signInToAccount: "Injira muri konti yawe",
       signInWithGoogle: "Injira ukoresheje Google",
       dontHaveAccount: "Nta konti ufite?",
       logout: "Sohoka",
-
-      // Home/Misc
       rwandasSupermarket: "Isoko ryo kuri Murandasi mu Rwanda:",
       freshGroceriesDelivered: "Ibiribwa bishya,",
       deliveredToDoor: "ubigezwaho iwawe",
@@ -583,9 +572,6 @@ const resources = {
       orderFulfillment: "Ahatunganyirizwa Komande",
       defaultBranch: "Ishami ry'ibanze",
       dispatchingFromHere: "Turabitunganya tukanabohereza biviye hano",
-
-      // Contact Page
-      getInTouch: "Twandikire",
       contactPreamble: "Waba ufite ibibazo kuri komande yawe cyangwa serivisi zacu? Turi hano kugirango tugufashe guhaha byose ahantu hamwe kandi neza.",
       callUs: "Aduhamagare",
       callUsDesc: "Ubufasha ku bakiriya buboneka mu masaha y'akazi.",
@@ -604,11 +590,9 @@ const resources = {
       ourSocialMedia: "Imbuga Nkoranyambaga Zacu",
       mainBranch: "Ishami Rikuru (UTC)",
       openDaily: "Dufungura Buri Munsi: 7:00 AM - 10:00 PM",
-
-      // About Page
       ourStory: "Amateka Yacu",
       over50Years: "Imyaka irenga 50 dutanga serivisi mu Rwanda",
-      storyPara1: "Nka rimwe mu masoko makuru yizewe mu Rwanda, Simba Supermarket imaze igihe kinini ari inkingi ya mwamba mu mujyi wa Kigali. Urugendo rwacu rwatangiranye intego imwe: guha abanyarwanda ibiribwa bishya n'ibikoresho byo mu rugo byiza ku giciro kinoze.",
+      storyPara1: "Nka rimwe mu masoko makuru yizewe mu Rwanda, Simba Supermarket imaze igihe kinini ari inkingi ya mwamba mu mujyi wa Kigali.",
       storyPara2: "Uyu munsi, dufite amashami arenga 10 mu mujyi wa Kigali hamwe n'ivugurura ryo guhaha hifashishijwe ikoranabuhanga, dukomeza gutanga serivisi zinoze dushyira imbere umukiriya.",
       yearsExperience: "Imyaka y'uburambe",
       branchesCount: "Amashami",
@@ -616,18 +600,14 @@ const resources = {
       ourCoreValues: "Indangagaciro Zacu",
       whatMakesSimba: "Igituma Simba ari ku isonga ry'isoko.",
       qualityFirst: "Ubuziranenge Imbere",
-      qualityFirstDesc: "Dushakisha ibiribwa bishya gusa n'ibikoresho byo mu rugo byo ku rwego rwo hejuru tubigeza ku bakiriya.",
+      qualityFirstDesc: "Dushakisha ibiribwa bishya gusa n'ibikoresho byo mo rugo byo ku rwego rwo hejuru tubigeza ku bakiriya.",
       efficiency: "Ubunyangamugayo",
       efficiencyDesc: "Hamwe n'ihaha ryo kuri murandasi no kukugezaho ibyo waguze vuba, twubaha igihe cyawe tukaguhera serivisi nziza.",
       community: "Umuryango",
       communityDesc: "Turenze kuba gusa isoko, turi umuryango w'abatuye Kigali, dushyigikira abahinzi n'abacuruzi baciriritse.",
       readyToShop: "WITEGUYE GUHAHA?",
       goToShop: "Jya Guhaha",
-
-      // Misc
       backToShop: "Subira Guhaha",
-      productNotFound: "Igicuruzwa Nticyabonetse",
-      goBack: "Subira Inyuma",
       statusPending: "Tugitegereje",
       statusProcessing: "Tukirimo kuyitunganya",
       statusCompleted: "Byarangiye",
@@ -639,9 +619,22 @@ const resources = {
       orderId: "Kode ya Komande",
       date: "Itariki",
       status: "Uko Imeze",
-      total: "Igiteranyo",
       items: "Ibyo waguze",
       qty: "Umubare",
+      adminDashboard: "Ikibaho cy'Ubuyobozi",
+      manageOrders: "Cunga Komande Zose",
+      noOrdersSystem: "Nta komande ziri muri sisitemu",
+      currentStatus: "Uko Imeze Ubu",
+      action: "Igikorwa",
+      resultsFor: "Ibyabonetse kuri",
+      getLocation: "Erekana aho uri",
+      openMap: "Fungura Ikarita",
+      locating: "Gushakisha...",
+      locationError: "Byananiranye kubona aho uherereye",
+      selectOnMap: "Hitamo Ku Ikarita",
+      confirmLocation: "Emeza Aho Uherereye",
+      mapFallbackText: "Kanda kw'ikarita uhitemo aho uherereye.",
+      viewOnMap: "Reba ku Ikarita",
     }
   }
 };
@@ -650,7 +643,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: "en", // default
+    lng: "en",
     fallbackLng: "en",
     interpolation: {
       escapeValue: false

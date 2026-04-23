@@ -38,7 +38,11 @@ export default function HomePage() {
       const q = queryParam.toLowerCase();
       filtered = filtered.filter(p => {
         const localizedName = getLocalizedProductName(p).toLowerCase();
-        return localizedName.includes(q) || p.name?.toLowerCase().includes(q);
+        const localizedCat = getLocalizedProductCategory(p).toLowerCase();
+        return localizedName.includes(q) || 
+               p.name?.toLowerCase().includes(q) || 
+               localizedCat.includes(q) || 
+               p.category?.toLowerCase().includes(q);
       });
     }
     
@@ -63,8 +67,8 @@ export default function HomePage() {
                  <BranchLocator />
                  
                  {/* Main Categories Menu */}
-                 <div className="bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-500 rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
-                   <div className="bg-primary text-white p-4 font-bold uppercase text-base flex items-center">
+                 <div className="bg-white dark:bg-card border border-gray-200 dark:border-border rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
+                   <div className="bg-[#F47A3E] text-white p-4 font-bold uppercase text-base flex items-center">
                       {t('allCategories')}
                    </div>
                    <div className="flex flex-col py-2 overflow-y-auto">
@@ -72,13 +76,13 @@ export default function HomePage() {
                        <button 
                          key={cat} 
                          onClick={() => setSearchParams({ category: cat })}
-                         className="px-5 py-4 hover:bg-orange-500 hover:text-white text-left text-base font-bold border-b border-gray-200 dark:border-gray-700 flex justify-between items-center group text-gray-900 dark:text-white transition-colors"
+                         className="px-5 py-4 hover:bg-gray-50 dark:hover:bg-muted text-left text-base font-bold border-b border-gray-100 dark:border-border flex justify-between items-center group text-foreground transition-colors"
                        >
-                         <span>{getLocalizedCat(cat)}</span>
-                         <ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                         <span className="group-hover:text-[#F47A3E] transition-colors">{getLocalizedCat(cat)}</span>
+                         <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-[#F47A3E] transition-all" />
                        </button>
                      ))}
-                     <Link to="/shop" className="px-5 py-4 text-base font-bold text-primary hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors uppercase tracking-wider text-center">{t('allCategories')}</Link>
+                     <Link to="/shop" className="px-5 py-4 text-sm font-black text-[#F47A3E] hover:underline transition-colors uppercase tracking-widest text-center">{t('allCategories')}</Link>
                    </div>
                  </div>
                </div>
@@ -93,7 +97,7 @@ export default function HomePage() {
                    className="absolute right-0 w-2/3 h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-80" 
                  />
                  <div className="relative z-20 p-8 md:p-14 max-w-xl flex flex-col justify-center h-full">
-                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900 dark:text-white mb-4 tracking-tight drop-shadow-sm">
+                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-foreground mb-4 tracking-tight drop-shadow-sm">
                      {t('rwandasSupermarket', "Rwanda's Online Supermarket:")} <br/> 
                      <span className="text-[#F47A3E]">{t('freshGroceriesDelivered', 'Fresh groceries,')}</span> {t('deliveredToDoor', 'delivered to your door')}
                    </h1>
@@ -113,7 +117,7 @@ export default function HomePage() {
                   </div>
                   <div className="relative z-10">
                      <h3 className="font-black text-2xl tracking-tight mb-1">{t('shopNow', 'Shop Now')}</h3>
-                     <p className="text-white/80 font-semibold text-sm">{t('productsCount', '500+ Products')}</p>
+                     <p className="text-white font-bold text-sm tracking-wide">{t('productsCount', '500+ Products')}</p>
                   </div>
                </Link>
 
@@ -124,7 +128,7 @@ export default function HomePage() {
                   </div>
                   <div className="relative z-10">
                      <h3 className="font-black text-2xl tracking-tight mb-1">{t('whatsappOrder', 'WhatsApp Order')}</h3>
-                     <p className="text-white/80 font-semibold text-sm">{t('chatWithUs', 'Chat with us')}</p>
+                     <p className="text-white font-bold text-sm tracking-wide">{t('chatWithUs', 'Chat with us')}</p>
                   </div>
                </a>
 
@@ -148,20 +152,20 @@ export default function HomePage() {
           <section className="container mx-auto px-4 mt-4">
             <div className="grid md:grid-cols-2 gap-6">
                <div className="bg-accent/30 rounded-lg p-8 flex items-center border border-accent overflow-hidden relative min-h-[200px]">
-                  <div className="z-10 relative left-0 shadow-sm p-4 bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-lg">
-                     <h3 className="text-2xl font-bold flex items-center text-foreground mb-2">{t('freshFruits')}</h3>
-                     <p className="mb-4 font-medium text-foreground">{t('get10Off')}</p>
-                     <button onClick={() => setSearchParams({ category: 'Fresh Produce' })} className="text-sm font-bold text-primary hover:underline border-b-2 border-primary pb-1">{t('shopNow')}</button>
+                  <div className="z-10 relative left-0 shadow-xl p-5 bg-white/90 dark:bg-black/80 backdrop-blur-md rounded-xl">
+                     <h3 className="text-3xl font-black flex items-center text-gray-900 dark:text-white mb-2">{t('freshFruits')}</h3>
+                     <p className="mb-4 font-bold text-gray-900 dark:text-gray-100">{t('get10Off')}</p>
+                     <button onClick={() => setSearchParams({ q: 'Fruit' })} className="text-base font-black text-primary hover:text-orange-700 dark:hover:text-orange-400 hover:underline border-b-2 border-primary pb-1 transition-colors uppercase tracking-wider">{t('shopNow')}</button>
                   </div>
-                  <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=300&q=80" alt="Fruits" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-80" />
+                  <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1200&q=80" alt="Fruits" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-90" />
                </div>
                <div className="bg-secondary/40 rounded-lg p-8 flex items-center border border-secondary overflow-hidden relative min-h-[200px]">
-                  <div className="z-10 relative left-0 shadow-sm p-4 bg-white/70 dark:bg-black/50 backdrop-blur-sm rounded-lg">
-                     <h3 className="text-2xl font-bold text-foreground mb-2">{t('organicVeg')}</h3>
-                     <p className="text-foreground mb-4 font-medium">{t('freshFromFarm')}</p>
-                     <button onClick={() => setSearchParams({ category: 'Fresh Produce' })} className="text-sm font-bold text-secondary-foreground hover:underline border-b-2 border-secondary-foreground pb-1">{t('shopNow')}</button>
+                  <div className="z-10 relative left-0 shadow-xl p-5 bg-white/90 dark:bg-black/80 backdrop-blur-md rounded-xl">
+                     <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-2">{t('organicVeg')}</h3>
+                     <p className="text-gray-900 dark:text-gray-100 mb-4 font-bold">{t('freshFromFarm')}</p>
+                     <button onClick={() => setSearchParams({ q: 'Vegetable' })} className="text-base font-black text-gray-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 hover:underline border-b-2 border-gray-900 dark:border-white pb-1 transition-colors uppercase tracking-wider">{t('shopNow')}</button>
                   </div>
-                  <img src="https://images.unsplash.com/photo-1598090842581-c94b8e1e4bfb?auto=format&fit=crop&w=300&q=80" alt="Veg" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-80" />
+                  <img src="https://images.unsplash.com/photo-1598090842581-c94b8e1e4bfb?auto=format&fit=crop&w=1200&q=80" alt="Veg" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-90" />
                </div>
             </div>
           </section>
@@ -175,7 +179,7 @@ export default function HomePage() {
             {isFiltered ? (
               <span className="flex items-center gap-2">
                 <SearchIcon className="w-6 h-6 text-primary" />
-                {queryParam ? `${t('resultsFor')}: "${queryParam}"` : (categoryParam)}
+                {queryParam ? `${t('resultsFor')}: "${queryParam}"` : getLocalizedCat(categoryParam || '')}
               </span>
             ) : t('dealsOfDay')}
           </h2>
