@@ -26,7 +26,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   };
 
   return (
-    <div className="group bg-white dark:bg-card border border-gray-200 dark:border-border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full hover:border-primary/50 relative">
+    <div className="group card-premium flex flex-col h-full overflow-hidden">
       <Link to={`/product/${product.id}`} className="relative bg-white dark:bg-card aspect-square overflow-hidden block p-6">
         <img 
           src={product.image} 

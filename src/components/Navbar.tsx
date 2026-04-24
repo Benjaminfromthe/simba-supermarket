@@ -137,8 +137,8 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
         </div>
       </div>
 
-      {/* Search bar */}
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 py-2.5">
+      {/* Search bar — glassmorphism */}
+      <div className="navbar-glass border-b border-gray-100 dark:border-gray-800 py-2.5">
         <div className="container mx-auto px-4 flex justify-center">
           <SmartSearchBar />
         </div>
