@@ -4,7 +4,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
-import BranchLocator from '../components/BranchLocator';
 import CategoryGrid from '../components/CategoryGrid';
 import { ChevronRight, Percent, Truck, ShieldCheck, Clock, Search as SearchIcon, X, Filter, ShoppingCart, MessageCircle, Phone } from 'lucide-react';
 import { getLocalizedProductCategory, getLocalizedProductName } from '../lib/localize';
@@ -64,11 +63,9 @@ export default function HomePage() {
           <section className="container mx-auto px-4 mt-8">
             <div className="flex gap-8 items-stretch lg:h-[600px]">
                {/* Sidebar Workspace (Desktop) */}
-               <div className="hidden lg:flex w-[21rem] shrink-0 flex-col gap-6">
-                 <BranchLocator />
-                 
-                 {/* Main Categories Menu */}
-                 <div className="bg-white dark:bg-card border border-gray-200 dark:border-border rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
+               {/* Main Categories Menu */}
+               <div className="hidden lg:flex w-[21rem] shrink-0 flex-col">
+               <div className="bg-white dark:bg-card border border-gray-200 dark:border-border rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
                    <div className="bg-[#F47A3E] text-white p-4 font-bold uppercase text-base flex items-center">
                       {t('allCategories')}
                    </div>

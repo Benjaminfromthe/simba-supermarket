@@ -1,11 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #f97c07;
-  --color-brand-hover: #e76f00;
-
+  --color-brand: #F47A3E;
+  --color-brand-hover: #D46A2E;
   --font-sans: "Inter", system-ui, sans-serif;
-
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -31,60 +29,115 @@
 }
 
 @layer base {
+  /* ===== LIGHT MODE ===== */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 20%; /* #333333 */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%; /* #333333 */
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%; /* #333333 */
-    --primary: 29 95% 50.2%; /* #f97c07 */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 32 76.5% 87.1%; /* #f8e0c4 */
-    --secondary-foreground: 0 0% 20%; /* #333333 */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 0 0% 20%; /* Set to high contrast #333333 instead of gray */
-    --accent: 38 92.2% 72.4%; /* #f9c978 */
-    --accent-foreground: 0 0% 20%; /* #333333 */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 85%; /* Clean sharp lines */
-    --input: 0 0% 80%;
-    --ring: 29 95% 50.2%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 22 90% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 76% 87%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 38 92% 72%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 22 90% 58%;
     --radius: 0.5rem;
   }
 
+  /* ===== DARK MODE ===== */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 0 0% 96%; /* Bright white */
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 0 0% 96%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 29 95% 50.2%; /* #f97c07 */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 40 78% 42.4%; /* #c08818 */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 0 0% 96%; /* High visibility white/light gray */
-    --accent: 28 75.8% 63.3%; /* #e79e5b */
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 20%; /* Clean sharp lines for dark mode */
-    --input: 0 0% 30%;
-    --ring: 31.8 93.3% 54.1%;
+    --background: 220 20% 10%;
+    --foreground: 0 0% 95%;
+    --card: 220 20% 14%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 20% 14%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 22 90% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 20%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 220 20% 22%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 22 90% 58%;
   }
 }
 
 @layer base {
+  * {
+    @apply border-border;
+  }
   body {
     @apply bg-background text-foreground antialiased;
   }
+
+  /* Ensure all text is visible in both modes */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight text-foreground;
+    @apply text-foreground font-bold tracking-tight;
   }
-  p, span, label, input, select, button, a {
-    @apply font-normal text-foreground;
+
+  /* Product card text always visible */
+  .dark .product-name,
+  .dark p,
+  .dark span,
+  .dark label,
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4 {
+    color: hsl(0 0% 95%);
+  }
+
+  /* Input fields in dark mode */
+  .dark input,
+  .dark select,
+  .dark textarea {
+    color: hsl(0 0% 95%);
+    background-color: hsl(220 20% 18%);
+  }
+
+  /* Gray text overrides for dark mode */
+  .dark .text-gray-500,
+  .dark .text-gray-600,
+  .dark .text-gray-700,
+  .dark .text-gray-800,
+  .dark .text-gray-900 {
+    color: hsl(0 0% 80%) !important;
+  }
+
+  .dark .text-gray-400 {
+    color: hsl(0 0% 65%) !important;
+  }
+
+  /* Background overrides for dark mode */
+  .dark .bg-white {
+    background-color: hsl(220 20% 14%) !important;
+  }
+
+  .dark .bg-gray-50 {
+    background-color: hsl(220 20% 12%) !important;
+  }
+
+  .dark .bg-gray-100 {
+    background-color: hsl(220 20% 16%) !important;
+  }
+
+  .dark .border-gray-100,
+  .dark .border-gray-200 {
+    border-color: hsl(220 20% 22%) !important;
   }
 }
