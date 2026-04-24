@@ -17,6 +17,9 @@ import OrdersPage from './pages/OrdersPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import BranchDashboard from './pages/BranchDashboard';
+import ConversationalSearch from './components/ConversationalSearch';
 
 export default function App() {
   return (
@@ -34,7 +37,10 @@ export default function App() {
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/branch-dashboard" element={<BranchDashboard />} />
       </Routes>
+      <ConversationalSearch />
     </Router>
   );
 }

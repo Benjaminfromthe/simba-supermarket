@@ -62,8 +62,11 @@ export default function LoginPage() {
               className="w-full border-2 border-gray-400 dark:border-gray-500 rounded-xl p-3 bg-white dark:bg-gray-800 text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F47A3E]" 
             />
           </div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-base font-bold text-gray-900 dark:text-gray-100">{t('password', 'Password')}</label>
+            <Link to="/forgot-password" className="text-xs text-[#F47A3E] hover:underline font-bold">Forgot password?</Link>
+          </div>
           <div>
-            <label className="block text-base font-bold mb-1 text-gray-900 dark:text-gray-100">{t('password', 'Password')}</label>
             <input 
               type="password" 
               required 

@@ -98,6 +98,11 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                  {t('myOrders', 'My Orders')}
               </Link>
             )}
+            {currentUser?.email === 'benjaminnshimiye633@gmail.com' && (
+              <Link to="/branch-dashboard" className="hover:opacity-80 transition-opacity text-yellow-200">
+                Branch Dashboard
+              </Link>
+            )}
 
             <div className="h-6 w-[1px] bg-white/30" />
 
