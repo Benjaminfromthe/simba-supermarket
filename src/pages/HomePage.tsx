@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
 import CategoryGrid from '../components/CategoryGrid';
-import { ChevronRight, Percent, Truck, ShieldCheck, Clock, Search as SearchIcon, X, Filter, ShoppingCart, MessageCircle, Phone } from 'lucide-react';
+import { ChevronRight, Truck, ShieldCheck, Search as SearchIcon, X, Filter, ShoppingCart, MessageCircle, Phone } from 'lucide-react';
 import { getLocalizedProductCategory, getLocalizedProductName } from '../lib/localize';
 import { Product } from '../store/useCartStore';
 
@@ -59,33 +59,10 @@ export default function HomePage() {
       {/* Show regular HomePage content only if NOT filtered */}
       {!isFiltered && (
         <>
-          {/* Main Hero with Sidebar Layout */}
+          {/* Main Hero */}
           <section className="container mx-auto px-4 mt-8">
             <div className="flex gap-8 items-stretch lg:h-[600px]">
-               {/* Sidebar Workspace (Desktop) */}
-               {/* Main Categories Menu */}
-               <div className="hidden lg:flex w-[21rem] shrink-0 flex-col">
-               <div className="bg-white dark:bg-card border border-gray-200 dark:border-border rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
-                   <div className="bg-[#F47A3E] text-white p-4 font-bold uppercase text-base flex items-center">
-                      {t('allCategories')}
-                   </div>
-                   <div className="flex flex-col py-2 overflow-y-auto">
-                     {CATEGORIES.map(cat => (
-                       <button 
-                         key={cat} 
-                         onClick={() => setSearchParams({ category: cat })}
-                         className="px-5 py-4 hover:bg-gray-50 dark:hover:bg-muted text-left text-base font-bold border-b border-gray-100 dark:border-border flex justify-between items-center group text-foreground transition-colors"
-                       >
-                         <span className="group-hover:text-[#F47A3E] transition-colors">{getLocalizedCat(cat)}</span>
-                         <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-[#F47A3E] transition-all" />
-                       </button>
-                     ))}
-                     <Link to="/shop" className="px-5 py-4 text-sm font-black text-[#F47A3E] hover:underline transition-colors uppercase tracking-widest text-center">{t('allCategories')}</Link>
-                   </div>
-                 </div>
-               </div>
-
-               {/* Hero Banner Slider */}
+               {/* Hero Banner */}
                <motion.div 
                  initial={{ opacity: 0, scale: 0.95 }}
                  animate={{ opacity: 1, scale: 1 }}

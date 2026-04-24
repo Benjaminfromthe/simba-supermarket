@@ -19,13 +19,9 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
   const handleAddToCart = () => {
     addItem(product, quantity);
-    toast.success(`${localizedName} ${t('addedToCartToast', 'added to cart!')}`, {
+    toast.success(`${localizedName} ${t('addedToCartToast')}`, {
       icon: '🛒',
-      style: {
-        borderRadius: '10px',
-        background: '#333',
-        color: '#fff',
-      },
+      style: { borderRadius: '10px', background: '#333', color: '#fff' },
     });
   };
 
@@ -38,18 +34,17 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300?text=Simba'; }}
         />
-        {/* Sale Badge */}
         <div className="absolute top-3 left-3 bg-red-600 text-white px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">
           {t('sale')}
         </div>
       </Link>
       
       <div className="p-4 pt-5 flex flex-col flex-1 border-t border-gray-100 dark:border-border/50">
-        <div className="text-xs md:text-sm text-foreground uppercase font-black tracking-widest mb-1.5 line-clamp-1 opacity-90">
+        <div className="text-xs text-[#F47A3E] uppercase font-black tracking-widest mb-1.5 line-clamp-1 hyphens-auto">
           {getLocalizedProductCategory(product)}
         </div>
         <Link to={`/product/${product.id}`} className="hover:text-primary transition-colors">
-          <h3 className="font-bold text-base md:text-lg text-foreground line-clamp-2 leading-snug mb-2 group-hover:text-primary transition-colors min-h-[48px]">
+          <h3 className="font-bold text-sm md:text-base text-foreground line-clamp-2 leading-snug mb-2 group-hover:text-primary transition-colors min-h-[40px] hyphens-auto">
             {localizedName}
           </h3>
         </Link>

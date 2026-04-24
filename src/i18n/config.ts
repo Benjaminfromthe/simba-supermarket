@@ -724,11 +724,17 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: "en",
-    fallbackLng: "en",
+    lng: localStorage.getItem('simba-language') || 'en',
+    fallbackLng: 'en',
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
 
+// Persist language choice on every change
+i18n.on('languageChanged', (lng) => {
+  localStorage.setItem('simba-language', lng);
+});
+
 export default i18n;
+
