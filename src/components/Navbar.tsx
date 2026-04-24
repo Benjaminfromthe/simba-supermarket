@@ -1,5 +1,6 @@
-import type React from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SmartSearchBar from './SmartSearchBar';
 import { ShoppingCart, Search, Menu, X, Sun, Moon, Globe, Phone, Mail, User, Grid, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
@@ -92,6 +93,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
             <Link to="/shop" className="hover:opacity-80 transition-opacity">{t('shop')}</Link>
             <Link to="/about" className="hover:opacity-80 transition-opacity">{t('about', 'About us')}</Link>
             <Link to="/contact" className="hover:opacity-80 transition-opacity">{t('contactUs', 'Contact us')}</Link>
+            <Link to="/reviews" className="hover:opacity-80 transition-opacity">⭐ Reviews</Link>
             
             {currentUser && (
               <Link to="/orders" className="hover:opacity-80 transition-opacity">
@@ -196,21 +198,10 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
         </div>
       </div>
 
-      {/* Sub-header with Search (Auxiliary) */}
+      {/* Sub-header with Smart AI Search */}
       <div className="bg-white dark:bg-background border-b border-gray-100 dark:border-border py-3">
         <div className="container mx-auto px-4 flex items-center justify-center">
-          <form onSubmit={handleSearch} className="w-full max-w-2xl flex rounded-full border border-gray-200 dark:border-border overflow-hidden shadow-sm bg-gray-50 dark:bg-card">
-            <input
-              type="text"
-              placeholder={t('search')}
-              className="w-full px-5 py-2.5 text-base font-bold outline-none bg-transparent text-foreground placeholder:text-foreground/50 dark:placeholder:text-white/50"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit" className="bg-[#F47A3E] text-white px-6 hover:bg-[#D46A2E] transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
-          </form>
+          <SmartSearchBar />
         </div>
       </div>
 

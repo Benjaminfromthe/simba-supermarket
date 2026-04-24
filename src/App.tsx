@@ -19,7 +19,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import BranchDashboard from './pages/BranchDashboard';
-import ConversationalSearch from './components/ConversationalSearch';
+import BranchReviewsPage from './pages/BranchReviewsPage';
 import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
@@ -42,8 +42,8 @@ export default function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/branch-dashboard" element={<BranchDashboard />} />
+        <Route path="/reviews" element={<BranchReviewsPage />} />
       </Routes>
-      <ConversationalSearch />
     </Router>
   );
 }
