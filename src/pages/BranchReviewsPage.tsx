@@ -59,18 +59,18 @@ export default function BranchReviewsPage() {
       {/* Branch selector */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
         {branches.map(b => (
-          <button key={b.id} onClick={() => setSelectedBranch(b.id)}
-            className={`p-4 rounded-2xl border-2 text-left transition-all ${selectedBranch === b.id ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-card hover:border-orange-300'}`}>
+          <div key={b.id} onClick={() => setSelectedBranch(b.id)}
+            className={`card-premium p-4 cursor-pointer flex flex-col gap-2 ${selectedBranch === b.id ? 'border-[#F47A3E] bg-orange-50 dark:!bg-orange-950/20' : ''}`}>
             <Store className={`w-5 h-5 mb-2 ${selectedBranch === b.id ? 'text-[#F47A3E]' : 'text-gray-400'}`} />
             <p className={`text-sm font-bold leading-tight ${selectedBranch === b.id ? 'text-[#F47A3E]' : 'text-gray-800 dark:text-white'}`}>{b.name}</p>
             <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" />{b.locationNote}</p>
-          </button>
+          </div>
         ))}
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Write review */}
-        <div className="bg-white dark:bg-card border border-gray-100 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
+        <div className="card-premium p-6">
           {submitted ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -99,7 +99,7 @@ export default function BranchReviewsPage() {
                 )}
                 <textarea value={comment} onChange={e => setComment(e.target.value)}
                   placeholder="Share your experience (optional)..."
-                  className="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm bg-gray-50 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E] resize-none h-24" />
+                  className="input-field resize-none h-24" />
                 <button type="submit" disabled={rating === 0 || loading}
                   className="w-full bg-[#F47A3E] disabled:opacity-40 text-white font-bold py-3 rounded-xl hover:bg-[#D46A2E] transition flex items-center justify-center gap-2">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Star className="w-4 h-4 fill-white" />}

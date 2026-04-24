@@ -79,17 +79,13 @@ export default function ShopPage() {
           <button
             key={cat}
             onClick={() => handleCategoryChange(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-              activeCategory === cat
-                ? 'bg-[#F47A3E] text-white shadow-sm'
-                : 'bg-white dark:bg-card border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-[#F47A3E] hover:text-[#F47A3E]'
-            }`}
+            className={`pill ${activeCategory === cat ? 'active' : ''}`}
           >
             {cat === 'All' ? t('allCategories') : getLocalizedCategoryName(cat)}
           </button>
         ))}
         {activeCategory !== 'All' && (
-          <button onClick={() => handleCategoryChange('All')} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold text-red-500 border border-red-200 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors">
+          <button onClick={() => handleCategoryChange('All')} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-red-500 border border-red-200 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors">
             <X className="w-3 h-3" /> {t('clearFilters')}
           </button>
         )}

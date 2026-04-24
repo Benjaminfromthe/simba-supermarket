@@ -64,7 +64,7 @@ export default function SignupPage() {
               placeholder={t('enterEmail', 'Enter your email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-2 border-gray-400 dark:border-gray-500 rounded-xl p-3 bg-white dark:bg-gray-800 text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F47A3E]" 
+              className="input-field" 
             />
           </div>
           <div>
@@ -75,7 +75,7 @@ export default function SignupPage() {
               placeholder={t('password', 'Password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-2 border-gray-400 dark:border-gray-500 rounded-xl p-3 bg-white dark:bg-gray-800 text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F47A3E]" 
+              className="input-field" 
             />
           </div>
           <div>
@@ -86,13 +86,13 @@ export default function SignupPage() {
               placeholder={t('confirmPassword', 'Confirm Password')}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full border-2 border-gray-400 dark:border-gray-500 rounded-xl p-3 bg-white dark:bg-gray-800 text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F47A3E]" 
+              className="input-field" 
             />
           </div>
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-[#F47A3E] hover:opacity-90 text-white font-bold py-3 rounded-xl transition flex justify-center items-center gap-2 mt-4"
+            className="btn-primary w-full flex justify-center items-center gap-2 mt-4"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('signUp', 'Sign Up')}
           </button>
@@ -122,4 +122,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
 
