@@ -1,278 +1,191 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import SmartSearchBar from './SmartSearchBar';
-import { ShoppingCart, Search, Menu, X, Sun, Moon, Globe, Phone, Mail, User, Grid, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
-import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
+import SmartSearchBar from './SmartSearchBar';
 
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();
-  const cartItems = useCartStore((state) => state.items);
-  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const langMenuRef = useRef<HTMLDivElement>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
+  const cartItems = useCartStore(s => s.items);
+  const cartCount = cartItems.reduce((a, i) => a + i.quantity, 0);
   const { currentUser, signOut } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
 
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    // Persist dark mode across refreshes
-    return (localStorage.getItem('simba-theme') as 'light' | 'dark') || 'light';
-  });
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    (localStorage.getItem('simba-theme') as 'light' | 'dark') || 'light'
+  );
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('simba-theme', theme);
   }, [theme]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
-        setIsLangMenuOpen(false);
-      }
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
-
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    setIsLangMenuOpen(false);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/?q=${encodeURIComponent(searchQuery)}`);
-      setIsMobileMenuOpen(false);
-    }
-  };
-
-  const languages = [
-    { code: 'en', label: 'English', key: 'english' },
-    { code: 'fr', label: 'Français', key: 'french' },
-    { code: 'rw', label: 'Kinyarwanda', key: 'kinyarwanda' },
+  const langs = [
+    { code: 'en', label: 'English' },
+    { code: 'fr', label: 'Français' },
+    { code: 'rw', label: 'Kinyarwanda' },
   ];
 
+  const isAdmin = currentUser?.email === 'benjaminnshimiye633@gmail.com';
+
   return (
-    <header className="flex flex-col">
-      {/* Target Logo Bar Design: Simba 2.0 */}
-      <div className="bg-[#F47A3E] text-white py-4 shadow-lg border-b border-white/10">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          
-          {/* Brand Identity */}
-          <Link to="/" className="flex items-center gap-4 group">
-            <div className="bg-white rounded-full p-1 w-16 h-16 md:w-24 md:h-24 flex items-center justify-center shadow-xl transition-transform group-hover:scale-105 overflow-hidden">
-              <img 
-                src="/simba-logo.jpg" 
-                alt="Simba Supermarket" 
-                className="h-16 w-auto object-contain" 
-                referrerPolicy="no-referrer"
-              />
+    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm">
+      {/* Top orange bar */}
+      <div className="bg-[#F47A3E]">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md overflow-hidden shrink-0">
+              <img src="/simba-logo.jpg" alt="Simba" className="w-9 h-9 object-contain" />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-xl md:text-3xl font-bold font-serif leading-tight tracking-tight">
-                Simba Supermarket
-              </h1>
-              <span className="text-sm md:text-lg font-serif italic text-white/90">
-                Online Shopping
-              </span>
+            <div className="hidden sm:block">
+              <p className="text-white font-black text-lg leading-none">Simba</p>
+              <p className="text-orange-100 text-xs font-medium leading-none">Supermarket</p>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-base md:text-lg font-medium">
-            <Link to="/" className="hover:opacity-80 transition-opacity">{t('home')}</Link>
-            <Link to="/shop" className="hover:opacity-80 transition-opacity">{t('shop')}</Link>
-            <Link to="/about" className="hover:opacity-80 transition-opacity">{t('about', 'About us')}</Link>
-            <Link to="/contact" className="hover:opacity-80 transition-opacity">{t('contactUs', 'Contact us')}</Link>
-            <Link to="/reviews" className="hover:opacity-80 transition-opacity">⭐ Reviews</Link>
-            
-            {currentUser && (
-              <Link to="/orders" className="hover:opacity-80 transition-opacity">
-                 {t('myOrders', 'My Orders')}
-              </Link>
-            )}
-            {currentUser?.email === 'benjaminnshimiye633@gmail.com' && (
-              <Link to="/branch-dashboard" className="hover:opacity-80 transition-opacity text-yellow-200">
-                Branch Dashboard
-              </Link>
-            )}
+          {/* Desktop nav links */}
+          <nav className="hidden lg:flex items-center gap-6 text-white text-sm font-semibold">
+            <Link to="/" className="hover:text-orange-100 transition-colors">{t('home')}</Link>
+            <Link to="/shop" className="hover:text-orange-100 transition-colors">{t('shop')}</Link>
+            <Link to="/about" className="hover:text-orange-100 transition-colors">{t('about')}</Link>
+            <Link to="/contact" className="hover:text-orange-100 transition-colors">{t('contactUs')}</Link>
+            <Link to="/reviews" className="hover:text-orange-100 transition-colors">⭐ Reviews</Link>
+            {currentUser && <Link to="/orders" className="hover:text-orange-100 transition-colors">{t('myOrders')}</Link>}
+            {isAdmin && <Link to="/branch-dashboard" className="text-yellow-200 hover:text-yellow-100 transition-colors font-bold">Dashboard</Link>}
+          </nav>
 
-            <div className="h-6 w-[1px] bg-white/30" />
-
-            {/* Auth Actions */}
-            <div className="flex items-center gap-4">
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
+            {/* Auth */}
+            <div className="hidden lg:flex items-center gap-2">
               {!currentUser ? (
                 <>
-                  <Link to="/login" className="hover:opacity-80 transition-opacity text-sm font-bold uppercase tracking-wider">
-                    {t('signIn', 'Sign In')}
-                  </Link>
-                  <Link to="/signup" className="bg-white text-[#F47A3E] px-4 py-1.5 rounded-full text-sm font-bold hover:bg-gray-100 transition shadow-md">
-                    {t('signUp', 'Sign Up')}
-                  </Link>
+                  <Link to="/login" className="text-white text-sm font-bold hover:text-orange-100 transition-colors">{t('signIn')}</Link>
+                  <Link to="/signup" className="bg-white text-[#F47A3E] text-sm font-bold px-4 py-1.5 rounded-full hover:bg-orange-50 transition-colors shadow-sm">{t('signUp')}</Link>
                 </>
               ) : (
-                <div className="flex items-center gap-4">
-                  {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
-                    <Link to="/admin/orders" className="text-yellow-300 font-bold text-sm uppercase">
-                       {t('adminDashboard', 'Admin Dashboard')}
-                    </Link>
+                <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <Link to="/admin/orders" className="text-yellow-200 text-xs font-bold uppercase tracking-wide hover:text-yellow-100">{t('adminDashboard')}</Link>
                   )}
-                  <button onClick={() => signOut()} className="hover:opacity-80 transition-opacity text-sm font-bold uppercase">
-                     {t('logout', 'Logout')}
+                  <button onClick={() => signOut()} className="flex items-center gap-1 text-white text-sm font-bold hover:text-orange-100 transition-colors">
+                    <LogOut className="w-4 h-4" /> {t('logout')}
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="h-6 w-[1px] bg-white/30" />
+            <div className="w-px h-5 bg-white/30 hidden lg:block" />
 
-            {/* Cart & Utils */}
-            <div className="flex items-center gap-4">
-              <button onClick={onOpenCart} className="relative group p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#F47A3E]">
-                  {cartCount}
-                </span>
+            {/* Dark mode */}
+            <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className="p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            {/* Language */}
+            <div className="relative" ref={langRef}>
+              <button onClick={() => setLangOpen(!langOpen)} className="flex items-center gap-1 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
+                <Globe className="w-4 h-4" />
+                <span className="text-xs font-bold hidden sm:inline">{i18n.language.toUpperCase()}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
               </button>
-
-              <button onClick={toggleTheme} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
-                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-              </button>
-
-              <div className="relative" ref={langMenuRef}>
-                 <button 
-                  onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                  className={`p-2 rounded-full transition flex items-center gap-1 ${isLangMenuOpen ? 'bg-white/40' : 'bg-white/20 hover:bg-white/30'}`}
-                 >
-                   <Globe className="w-5 h-5" />
-                   <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
-                 </button>
-                 
-                 <AnimatePresence>
-                   {isLangMenuOpen && (
-                     <motion.div 
-                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                       transition={{ duration: 0.2 }}
-                       className="absolute top-full right-0 mt-3 bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl shadow-2xl z-50 overflow-hidden w-48 font-bold"
-                     >
-                       <div className="py-1">
-                         {languages.map((lang) => (
-                           <button 
-                             key={lang.code}
-                             className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
-                               i18n.language === lang.code 
-                                ? 'bg-orange-600 text-white' 
-                                : 'hover:bg-orange-50 dark:hover:bg-gray-700'
-                             }`}
-                             onClick={() => changeLanguage(lang.code)}
-                           >
-                             <span>{t(lang.key, lang.label)}</span>
-                             {i18n.language === lang.code && (
-                               <div className="w-2 h-2 bg-white rounded-full" />
-                             )}
-                           </button>
-                         ))}
-                       </div>
-                     </motion.div>
-                   )}
-                 </AnimatePresence>
-              </div>
+              <AnimatePresence>
+                {langOpen && (
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden w-40 z-50">
+                    {langs.map(l => (
+                      <button key={l.code} onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
+                        className={`w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700'}`}>
+                        {l.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </nav>
 
-          {/* Mobile Menu Icon */}
-          <button className="lg:hidden p-2 text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
-          </button>
+            {/* Cart */}
+            <button onClick={onOpenCart} className="relative p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
+              <ShoppingCart className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile menu toggle */}
+            <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-2 text-white">
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Sub-header with Smart AI Search */}
-      <div className="bg-white dark:bg-background border-b border-gray-100 dark:border-border py-3">
-        <div className="container mx-auto px-4 flex items-center justify-center">
+      {/* Search bar */}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 py-2.5">
+        <div className="container mx-auto px-4 flex justify-center">
           <SmartSearchBar />
         </div>
       </div>
 
-
-      {/* Mobile Menu Overlay */}
+      {/* Mobile menu */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-b border-gray-100 dark:border-border bg-white dark:bg-card flex flex-col shadow-2xl overflow-hidden"
-          >
-             <nav className="flex flex-col font-bold p-2 text-foreground">
-               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('home')}</Link>
-               <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('about', 'About us')}</Link>
-               <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('contactUs', 'Contact us')}</Link>
-               <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('shop')}</Link>
-               
-               {!currentUser && (
-                 <>
-                   <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('signUp', 'Sign Up')}</Link>
-                   <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors">{t('signIn', 'Sign In')}</Link>
-                 </>
-               )}
-               
-               {currentUser && (
-                 <>
-                   {currentUser.email === 'benjaminnshimiye633@gmail.com' && (
-                     <Link to="/admin/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-yellow-600 font-bold transition-colors">{t('adminDashboard', 'Admin Dashboard')}</Link>
-                   )}
-                   <Link to="/orders" onClick={() => setIsMobileMenuOpen(false)} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-[#F47A3E] transition-colors">{t('myOrders', 'My Orders')}</Link>
-                   <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="p-4 border-b border-gray-100 dark:border-border hover:bg-gray-50 dark:hover:bg-muted/50 text-left text-red-500 transition-colors">{t('logout', 'Logout')}</button>
-                 </>
-               )}
-             </nav>
-             <div className="p-4 bg-gray-50 dark:bg-muted flex flex-col sm:flex-row gap-4 text-foreground items-center">
-               <div className="flex w-full sm:flex-1 gap-2">
-                 {languages.map((lang) => (
-                   <button 
-                     key={lang.code}
-                     onClick={() => changeLanguage(lang.code)} 
-                     className={`flex-1 py-3 rounded-lg shadow-sm text-xs font-bold uppercase transition-colors ${
-                       i18n.language === lang.code 
-                        ? 'bg-orange-600 text-white' 
-                        : 'bg-white dark:bg-card'
-                     }`}
-                   >
-                     {lang.code}
-                   </button>
-                 ))}
-               </div>
-               <button 
-                 onClick={toggleTheme} 
-                 className="w-full sm:w-auto p-3 bg-white dark:bg-card rounded-xl shadow-sm hover:opacity-80 transition flex items-center justify-center gap-2 font-bold text-sm"
-               >
-                 {theme === 'light' ? (
-                   <><Moon className="w-5 h-5" /> {t('darkMode')}</>
-                 ) : (
-                   <><Sun className="w-5 h-5" /> {t('lightMode')}</>
-                 )}
-               </button>
-             </div>
+        {mobileOpen && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-hidden">
+            <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
+              {[
+                { to: '/', label: t('home') },
+                { to: '/shop', label: t('shop') },
+                { to: '/about', label: t('about') },
+                { to: '/contact', label: t('contactUs') },
+                { to: '/reviews', label: '⭐ Reviews' },
+                ...(currentUser ? [{ to: '/orders', label: t('myOrders') }] : []),
+                ...(isAdmin ? [{ to: '/branch-dashboard', label: 'Dashboard' }] : []),
+              ].map(item => (
+                <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
+                  className="px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-800 transition-colors">
+                  {item.label}
+                </Link>
+              ))}
+              <div className="flex gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                {!currentUser ? (
+                  <>
+                    <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1 text-center py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold text-gray-700 dark:text-gray-200">{t('signIn')}</Link>
+                    <Link to="/signup" onClick={() => setMobileOpen(false)} className="flex-1 text-center py-2.5 rounded-xl bg-[#F47A3E] text-white text-sm font-bold">{t('signUp')}</Link>
+                  </>
+                ) : (
+                  <button onClick={() => { signOut(); setMobileOpen(false); }} className="flex-1 py-2.5 rounded-xl border border-red-200 text-red-500 text-sm font-bold">{t('logout')}</button>
+                )}
+              </div>
+              <div className="flex gap-2 mt-1">
+                {langs.map(l => (
+                  <button key={l.code} onClick={() => { i18n.changeLanguage(l.code); setMobileOpen(false); }}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}>
+                    {l.code.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
   );
 }
-

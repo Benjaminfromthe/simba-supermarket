@@ -1,137 +1,120 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail, ExternalLink } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail } from 'lucide-react';
 import branchesData from '../data/branches.json';
 
 export default function Footer() {
   const { t } = useTranslation();
-  
+
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8 border-t-4 border-[#F47A3E]">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-        
-        {/* About Section */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <div className="bg-white rounded-full p-1.5 w-12 h-12 flex items-center justify-center shadow-lg overflow-hidden">
-              <img 
-                src="/simba-logo.jpg" 
-                alt="Simba Logo" 
-                className="w-10 h-10 object-contain" 
-                referrerPolicy="no-referrer"
-              />
+    <footer className="bg-gray-950 text-white mt-16">
+      {/* Orange top accent */}
+      <div className="h-1 bg-gradient-to-r from-[#F47A3E] via-orange-400 to-[#F47A3E]" />
+
+      <div className="container mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        {/* Brand */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shrink-0">
+              <img src="/simba-logo.jpg" alt="Simba" className="w-9 h-9 object-contain" />
             </div>
-            <div className="flex flex-col">
-              <h2 className="text-xl font-black tracking-tighter text-white">
-                SIMBA <span className="text-[#F47A3E]">SUPERMARKET</span>
-              </h2>
-              <p className="text-[10px] font-bold italic text-[#F47A3E] tracking-tight">
-                {t('slogan', '"Unlimited Shopping At One Stop!"')}
-              </p>
+            <div>
+              <p className="font-black text-white text-base leading-none">Simba Supermarket</p>
+              <p className="text-[#F47A3E] text-xs italic mt-0.5">"Unlimited Shopping At One Stop!"</p>
             </div>
           </div>
-          <p className="text-gray-200 text-sm leading-relaxed max-w-sm font-medium">
-            {t('footerDescMobile', 'Serving Rwanda with quality and care for over 50 years. Simba Supermarket is your premier destination for groceries and household essentials.')}
+          <p className="text-gray-400 text-sm leading-relaxed">
+            {t('footerDescMobile')}
           </p>
-          <p className="text-white text-sm font-bold uppercase tracking-widest mt-2 border-l-2 border-[#F47A3E] pl-3">
-            {t('officialWebsite', 'Official Website:')}<br/>
-            <a href="https://www.simbaonlineshopping.com/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors lowercase font-bold underline underline-offset-4 decoration-[#F47A3E]">www.simbaonlineshopping.com</a>
-          </p>
-          <div className="flex flex-col gap-3">
-            <a 
-              href="https://wa.me/250788316316" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg active:scale-95 w-max text-sm"
-            >
-              <MessageCircle className="w-5 h-5" />
-              {t('chatWithSimba', 'Chat with Simba')}
-            </a>
-          </div>
+          <a href="https://wa.me/250788316316" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
+            <MessageCircle className="w-4 h-4" /> {t('chatWithSimba')}
+          </a>
         </div>
-        
+
         {/* Quick Links */}
         <div>
-          <h3 className="font-extrabold text-lg mb-6 flex items-center gap-2 border-b border-gray-800 pb-2">
-            {t('quickLinks', 'Quick Links')}
-          </h3>
-          <ul className="space-y-3">
-            <li><Link to="/" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('home')}</Link></li>
-            <li><Link to="/shop" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('shop')}</Link></li>
-            <li><Link to="/orders" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('myOrders', 'My Orders')}</Link></li>
-            <li><Link to="/about" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('about', 'About us')}</Link></li>
-            <li><Link to="/contact" className="text-gray-100 hover:text-[#F47A3E] transition-colors text-sm font-bold flex items-center gap-2 group"><ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100" /> {t('contactUs', 'Contact us')}</Link></li>
+          <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">{t('quickLinks')}</h4>
+          <ul className="space-y-2.5">
+            {[
+              { to: '/', label: t('home') },
+              { to: '/shop', label: t('shop') },
+              { to: '/orders', label: t('myOrders') },
+              { to: '/about', label: t('about') },
+              { to: '/contact', label: t('contactUs') },
+              { to: '/reviews', label: '⭐ Reviews' },
+            ].map(l => (
+              <li key={l.to}>
+                <Link to={l.to} className="text-gray-400 hover:text-[#F47A3E] text-sm font-medium transition-colors">{l.label}</Link>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Our Branches */}
+        {/* Branches */}
         <div>
-          <h3 className="font-extrabold text-lg mb-6 flex items-center gap-2 border-b border-gray-800 pb-2">
-            {t('ourBranches', 'Our Branches')}
-          </h3>
+          <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">{t('ourBranches')}</h4>
           <ul className="space-y-2">
-            {branchesData.map((branch) => (
-              <li key={branch.id}>
-                <a 
-                  href={branch.mapUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-gray-100 hover:text-white transition-colors text-sm font-bold flex items-center gap-3 group"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-[#F47A3E] group-hover:animate-bounce" />
-                  {branch.name}
+            {branchesData.map(b => (
+              <li key={b.id}>
+                <a href={b.mapUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-gray-400 hover:text-[#F47A3E] text-sm font-medium transition-colors group">
+                  <MapPin className="w-3.5 h-3.5 text-[#F47A3E] shrink-0" />
+                  {b.name}
                 </a>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Contact & Follow Us */}
+        {/* Contact */}
         <div>
-          <h3 className="font-extrabold text-lg mb-6 flex items-center gap-2 border-b border-gray-800 pb-2">
-            {t('getInTouch', 'Get In Touch')}
-          </h3>
-          <ul className="space-y-4 mb-8">
-            <li className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-[#F47A3E] shrink-0" />
-              <div className="text-sm">
-                <p className="font-bold text-gray-200">+250 788 316 316</p>
-                <p className="text-sm text-gray-300">{t('customerSupport', 'Customer Support')}</p>
+          <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">{t('getInTouch')}</h4>
+          <ul className="space-y-3 mb-6">
+            <li className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
+                <Phone className="w-4 h-4 text-[#F47A3E]" />
+              </div>
+              <div>
+                <p className="text-white text-sm font-bold">+250 788 316 316</p>
+                <p className="text-gray-500 text-xs">{t('customerSupport')}</p>
               </div>
             </li>
-            <li className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-[#F47A3E] shrink-0" />
-              <div className="text-sm">
-                <p className="font-bold text-gray-200">orders@simba.rw</p>
-                <p className="text-sm text-gray-300">{t('onlineShopSupport', 'Online Shop Support')}</p>
+            <li className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-[#F47A3E]" />
+              </div>
+              <div>
+                <p className="text-white text-sm font-bold">orders@simba.rw</p>
+                <p className="text-gray-500 text-xs">{t('onlineShopSupport')}</p>
               </div>
             </li>
           </ul>
-
-          <h4 className="font-bold text-sm uppercase tracking-[0.2em] text-gray-300 mb-4">{t('followSimba', 'Follow Simba')}</h4>
-          <div className="flex items-center gap-4">
-            <a href="https://www.facebook.com/simbasupermarket" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#1877F2] transition-all group shadow-lg">
-              <Facebook className="w-5 h-5 text-gray-400 group-hover:text-white" />
-            </a>
-            <a href="https://www.instagram.com/simba_supermarket/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#E4405F] transition-all group shadow-lg">
-              <Instagram className="w-5 h-5 text-gray-400 group-hover:text-white" />
-            </a>
-            <a href="https://x.com/SimbaRwanda" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-black transition-all group shadow-lg">
-              <Twitter className="w-5 h-5 text-gray-400 group-hover:text-white" />
-            </a>
-            <a href="https://www.linkedin.com/company/simba-supermarket-ltd-rwanda/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-[#0077B5] transition-all group shadow-lg">
-              <Linkedin className="w-5 h-5 text-gray-400 group-hover:text-white" />
-            </a>
+          <p className="text-gray-500 text-xs uppercase tracking-widest mb-3">{t('followSimba')}</p>
+          <div className="flex gap-2">
+            {[
+              { href: 'https://www.facebook.com/simbasupermarket', icon: <Facebook className="w-4 h-4" />, color: 'hover:bg-[#1877F2]' },
+              { href: 'https://www.instagram.com/simba_supermarket/', icon: <Instagram className="w-4 h-4" />, color: 'hover:bg-[#E4405F]' },
+              { href: 'https://x.com/SimbaRwanda', icon: <Twitter className="w-4 h-4" />, color: 'hover:bg-gray-700' },
+              { href: 'https://www.linkedin.com/company/simba-supermarket-ltd-rwanda/', icon: <Linkedin className="w-4 h-4" />, color: 'hover:bg-[#0077B5]' },
+            ].map((s, i) => (
+              <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                className={`w-8 h-8 bg-gray-800 ${s.color} rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all`}>
+                {s.icon}
+              </a>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 mt-16 pt-8 border-t border-gray-800">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-normal text-gray-200 tracking-wider">
-          <p>&copy; {new Date().getFullYear()} {t('allRightsReserved', 'Simba Supermarket Ltd. All rights reserved.')}</p>
-          <div className="flex gap-6">
-            <Link to="/privacy" className="hover:text-white transition-colors">{t('privacyPolicy', 'Privacy Policy')}</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">{t('termsOfService', 'Terms of Service')}</Link>
+      {/* Bottom bar */}
+      <div className="border-t border-gray-800">
+        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
+          <p>© {new Date().getFullYear()} {t('allRightsReserved')}</p>
+          <div className="flex gap-4">
+            <Link to="/privacy" className="hover:text-gray-300 transition-colors">{t('privacyPolicy')}</Link>
+            <Link to="/terms" className="hover:text-gray-300 transition-colors">{t('termsOfService')}</Link>
           </div>
         </div>
       </div>

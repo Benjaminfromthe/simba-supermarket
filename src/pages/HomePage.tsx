@@ -4,7 +4,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
-import CategoryGrid from '../components/CategoryGrid';
 import { ChevronRight, Truck, ShieldCheck, Search as SearchIcon, X, Filter, ShoppingCart, MessageCircle, Phone } from 'lucide-react';
 import { getLocalizedProductCategory, getLocalizedProductName } from '../lib/localize';
 import { Product } from '../store/useCartStore';
@@ -115,8 +114,7 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Categories Grid */}
-          <CategoryGrid />
+          {/* Categories Grid removed — use Shop page */}
         </>
       )}
 
