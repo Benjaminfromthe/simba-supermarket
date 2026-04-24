@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Star, ArrowLeft, ShoppingCart, CheckCircle2, ShieldCheck, Truck } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, CheckCircle2, ShieldCheck, Truck } from 'lucide-react';
+import toast from 'react-hot-toast';
 import productsData from '../data/simba_products.json';
 import { useCartStore, Product } from '../store/useCartStore';
 import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
@@ -30,6 +31,14 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     addItem(product, quantity);
+    toast.success(`${localizedName} ${t('addedToCartToast', 'added to cart!')}`, {
+      icon: '🛒',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    });
   };
 
   const localizedName = getLocalizedProductName(product);
@@ -49,7 +58,7 @@ export default function ProductPage() {
             <img 
               src={product.image} 
               alt={localizedName} 
-              className="max-h-[500px] object-contain rounded-xl"
+              className="w-full aspect-square object-cover rounded-xl"
             />
           </div>
           <div className="md:hidden p-4 bg-white dark:bg-card">
@@ -71,13 +80,6 @@ export default function ProductPage() {
             </h1>
             
             <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-muted-foreground">
-              {product.rating && (
-                <div className="flex items-center gap-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500 px-2 py-1 rounded-md">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="font-bold">{product.rating}</span>
-                  <span>({product.reviews || 0} {t('reviews')})</span>
-                </div>
-              )}
               {product.brand && (
                 <>
                   <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30"></span>

@@ -268,9 +268,9 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                  className="w-full sm:w-auto p-3 bg-white dark:bg-card rounded-xl shadow-sm hover:opacity-80 transition flex items-center justify-center gap-2 font-bold text-sm"
                >
                  {theme === 'light' ? (
-                   <><Moon className="w-5 h-5" /> Dark Mode</>
+                   <><Moon className="w-5 h-5" /> {t('darkMode')}</>
                  ) : (
-                   <><Sun className="w-5 h-5" /> Light Mode</>
+                   <><Sun className="w-5 h-5" /> {t('lightMode')}</>
                  )}
                </button>
              </div>

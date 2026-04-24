@@ -1,0 +1,10 @@
+src/components/Footer.tsx:                SIMBA <span className="text-[#F47A3E]">SUPERMARKET</span>
+src/components/Footer.tsx:            <a href="https://www.simbaonlineshopping.com/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors lowercase font-bold underline underline-offset-4 decoration-[#F47A3E]">www.simbaonlineshopping.com</a>
+src/components/Footer.tsx:                <p className="font-bold text-gray-200">orders@simba.rw</p>
+src/pages/CheckoutPage.tsx:                  <h3 className="font-bold">MTN Mobile Money (MoMo)</h3>
+src/pages/CheckoutPage.tsx:                <div className="absolute top-4 right-4 bg-yellow-400 text-blue-900 font-bold text-sm px-2 py-1 rounded">MoMo</div>
+src/pages/AboutPage.tsx:            Simba <span className="text-white/80">Supermarket</span>
+src/pages/ContactPage.tsx:                  <span className="font-bold text-gray-700 dark:text-gray-300">Facebook</span>
+src/pages/ContactPage.tsx:                  <span className="font-bold text-gray-700 dark:text-gray-300">Instagram</span>
+src/pages/ContactPage.tsx:                  <span className="font-bold text-gray-700 dark:text-gray-300">Twitter (X)</span>
+src/pages/ContactPage.tsx:                  <span className="font-bold text-gray-700 dark:text-gray-300">LinkedIn</span>
