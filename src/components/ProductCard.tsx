@@ -2,7 +2,8 @@ import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Star, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Plus, Minus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Product, useCartStore } from '../store/useCartStore';
 import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
 
@@ -18,8 +19,14 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
   const handleAddToCart = () => {
     addItem(product, quantity);
-    // Optional: Reset quantity to 1 after adding? Usually better to keep it if they want to add more, 
-    // but the user wants to "get their attention".
+    toast.success(`${localizedName} ${t('addedToCartToast', 'added to cart!')}`, {
+      icon: '🛒',
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    });
   };
 
   return (
@@ -28,8 +35,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         <img 
           src={product.image} 
           alt={localizedName} 
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300?text=No+Image'; }}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal" 
         />
         {/* Sale Badge */}
         <div className="absolute top-3 left-3 bg-red-600 text-white px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">
@@ -47,14 +53,6 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           </h3>
         </Link>
         
-        {/* Star Rating Placeholder */}
-        <div className="flex items-center gap-0.5 mb-4">
-            {[1, 2, 3, 4, 5].map(star => (
-              <Star key={star} className="w-4 h-4 text-[#F47A3E] fill-[#F47A3E]" />
-            ))}
-            <span className="text-sm text-foreground ml-1 font-bold">(12)</span>
-        </div>
-
         <div className="mt-auto flex flex-col gap-3">
           <div className="flex items-end gap-2 flex-wrap">
             <span className="text-2xl font-black text-[#F47A3E] tracking-tighter leading-none">

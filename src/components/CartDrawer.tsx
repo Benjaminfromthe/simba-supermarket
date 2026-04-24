@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../store/useCartStore';
 import { useNavigate } from 'react-router-dom';
 import { getLocalizedProductName } from '../lib/localize';
@@ -83,7 +84,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       </button>
                     </div>
                     <button 
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => {
+                        removeItem(item.id);
+                        toast.error(`${getLocalizedProductName(item)} ${t('removedFromCartToast', 'removed from cart')}`, {
+                          icon: '🗑️',
+                          style: {
+                            borderRadius: '10px',
+                            background: '#333',
+                            color: '#fff',
+                          },
+                        });
+                      }}
                       className="text-muted-foreground hover:text-destructive p-1"
                     >
                       <Trash2 className="w-4 h-4" />

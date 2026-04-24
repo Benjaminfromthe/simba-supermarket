@@ -5,6 +5,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Toaster } from 'react-hot-toast';
 import './i18n/config';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
@@ -17,10 +18,13 @@ import OrdersPage from './pages/OrdersPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
+      <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />

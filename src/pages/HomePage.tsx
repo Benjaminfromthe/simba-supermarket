@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
+import { motion } from 'motion/react';
 import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
 import BranchLocator from '../components/BranchLocator';
@@ -88,92 +89,65 @@ export default function HomePage() {
                </div>
 
                {/* Hero Banner Slider */}
-               <div className="flex-1 relative bg-[#FFECD6] dark:bg-muted rounded-xl overflow-hidden shadow-sm h-[400px] lg:h-auto flex items-center">
-                 {/* Envato 3D Concept Styling Background */}
-                 <div className="absolute inset-0 z-10 bg-gradient-to-r from-orange-50/90 via-orange-50/70 to-transparent dark:from-black/90 dark:via-black/70 dark:to-transparent" />
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.95 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 transition={{ duration: 0.6, ease: "easeOut" }}
+                 className="flex-1 relative rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,138,0,0.15)] h-[400px] lg:h-[600px] flex items-center border border-white/10 dark:border-white/5"
+               >
                  <img 
-                   src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000" 
-                   alt="Grocery Food Buying Online Delivery Concept" 
-                   className="absolute right-0 w-2/3 h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-80" 
+                   src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=2000" 
+                   alt="Modern Supermarket Interior" 
+                   className="absolute inset-0 w-full h-full object-cover" 
                  />
-                 <div className="relative z-20 p-8 md:p-14 max-w-xl flex flex-col justify-center h-full">
-                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-foreground mb-4 tracking-tight drop-shadow-sm">
-                     {t('rwandasSupermarket', "Rwanda's Online Supermarket:")} <br/> 
-                     <span className="text-[#F47A3E]">{t('freshGroceriesDelivered', 'Fresh groceries,')}</span> {t('deliveredToDoor', 'delivered to your door')}
-                   </h1>
+                 {/* Dark Overlay for Text Pop */}
+                 <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#050B14]/95 via-[#050B14]/70 to-[#050B14]/30 mix-blend-multiply" />
+                 <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[2px]" />
+                 
+                 <div className="relative z-20 p-8 md:p-14 lg:p-20 max-w-2xl flex flex-col justify-center h-full">
+                   <motion.h1 
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5, delay: 0.2 }}
+                     className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-white mb-6 tracking-tight drop-shadow-lg"
+                   >
+                     {t("qualityFirst")}.<br/>
+                     <span className="text-[#FF8A00] drop-shadow-[0_0_15px_rgba(255,138,0,0.5)]">{t("deliveredFast")}.</span>
+                   </motion.h1>
                    
+                   <motion.p 
+                     initial={{ opacity: 0 }}
+                     animate={{ opacity: 1 }}
+                     transition={{ duration: 0.5, delay: 0.4 }}
+                     className="text-lg md:text-xl font-medium text-gray-200 mb-8 max-w-lg tracking-wide"
+                   >
+                     {t("heroDescription")}
+                   </motion.p>
+                   
+                   <motion.div
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5, delay: 0.6 }}
+                   >
+                     <button 
+                       onClick={() => document.getElementById('products-display')?.scrollIntoView({ behavior: 'smooth' })}
+                       className="inline-flex items-center justify-center bg-[#FF8A00] text-white px-10 py-5 rounded-full font-black text-lg tracking-wide uppercase shadow-[0_0_20px_rgba(255,138,0,0.4)] hover:shadow-[0_0_35px_rgba(255,138,0,0.7)] hover:bg-[#ff9e33] transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer"
+                     >
+                       {t("startShopping")}
+                     </button>
+                   </motion.div>
                  </div>
-               </div>
-            </div>
-          </section>
-
-          {/* Action Callouts Replacing Trust Badges */}
-          <section className="container mx-auto px-4 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <Link to="/shop" className="bg-[#F47A3E] hover:bg-[#D46A2E] text-white p-6 md:p-8 rounded-2xl shadow-xl flex items-center gap-5 transition-all duration-300 active:scale-95 group overflow-hidden relative">
-                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-                  <div className="bg-white/20 p-4 rounded-xl group-hover:-rotate-6 transition-transform shadow-inner">
-                     <ShoppingCart className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                  </div>
-                  <div className="relative z-10">
-                     <h3 className="font-black text-2xl tracking-tight mb-1">{t('shopNow', 'Shop Now')}</h3>
-                     <p className="text-white font-bold text-sm tracking-wide">{t('productsCount', '500+ Products')}</p>
-                  </div>
-               </Link>
-
-               <a href="https://wa.me/250788316316" target="_blank" rel="noopener noreferrer" className="bg-[#25D366] hover:bg-[#20bd5c] text-white p-6 md:p-8 rounded-2xl shadow-xl flex items-center gap-5 transition-all duration-300 active:scale-95 group overflow-hidden relative">
-                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-                  <div className="bg-white/20 p-4 rounded-xl group-hover:-rotate-6 transition-transform shadow-inner">
-                     <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                  </div>
-                  <div className="relative z-10">
-                     <h3 className="font-black text-2xl tracking-tight mb-1">{t('whatsappOrder', 'WhatsApp Order')}</h3>
-                     <p className="text-white font-bold text-sm tracking-wide">{t('chatWithUs', 'Chat with us')}</p>
-                  </div>
-               </a>
-
-               <a href="tel:+250788316316" className="bg-gray-900 border-2 border-gray-800 hover:border-[#F47A3E] text-white p-6 md:p-8 rounded-2xl shadow-xl flex items-center gap-5 transition-all duration-300 active:scale-95 group overflow-hidden relative">
-                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#F47A3E]/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-                  <div className="bg-gray-800 p-4 rounded-xl group-hover:-rotate-6 transition-transform shadow-inner">
-                     <Phone className="w-8 h-8 md:w-10 md:h-10 text-[#F47A3E]" />
-                  </div>
-                  <div className="relative z-10">
-                     <h3 className="font-black text-2xl tracking-tight mb-1">{t('callNumber', 'Call Number')}</h3>
-                    <p className="text-gray-300 font-bold text-base">+250 788 316 316</p>
-                  </div>
-               </a>
+               </motion.div>
             </div>
           </section>
 
           {/* Categories Grid */}
           <CategoryGrid />
-
-          {/* Promotional Banners */}
-          <section className="container mx-auto px-4 mt-4">
-            <div className="grid md:grid-cols-2 gap-6">
-               <div className="bg-accent/30 rounded-lg p-8 flex items-center border border-accent overflow-hidden relative min-h-[200px]">
-                  <div className="z-10 relative left-0 shadow-xl p-5 bg-white/90 dark:bg-black/80 backdrop-blur-md rounded-xl">
-                     <h3 className="text-3xl font-black flex items-center text-gray-900 dark:text-white mb-2">{t('freshFruits')}</h3>
-                     <p className="mb-4 font-bold text-gray-900 dark:text-gray-100">{t('get10Off')}</p>
-                     <button onClick={() => setSearchParams({ q: 'Fruit' })} className="text-base font-black text-primary hover:text-orange-700 dark:hover:text-orange-400 hover:underline border-b-2 border-primary pb-1 transition-colors uppercase tracking-wider">{t('shopNow')}</button>
-                  </div>
-                  <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1200&q=80" alt="Fruits" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-90" />
-               </div>
-               <div className="bg-secondary/40 rounded-lg p-8 flex items-center border border-secondary overflow-hidden relative min-h-[200px]">
-                  <div className="z-10 relative left-0 shadow-xl p-5 bg-white/90 dark:bg-black/80 backdrop-blur-md rounded-xl">
-                     <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-2">{t('organicVeg')}</h3>
-                     <p className="text-gray-900 dark:text-gray-100 mb-4 font-bold">{t('freshFromFarm')}</p>
-                     <button onClick={() => setSearchParams({ q: 'Vegetable' })} className="text-base font-black text-gray-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 hover:underline border-b-2 border-gray-900 dark:border-white pb-1 transition-colors uppercase tracking-wider">{t('shopNow')}</button>
-                  </div>
-                  <img src="https://images.unsplash.com/photo-1598090842581-c94b8e1e4bfb?auto=format&fit=crop&w=1200&q=80" alt="Veg" className="absolute right-0 top-0 bottom-0 h-full object-cover w-1/2 rounded-l-full shadow-xl opacity-90" />
-               </div>
-            </div>
-          </section>
         </>
       )}
 
       {/* Products Display (Popular or Filtered) */}
-      <section className="container mx-auto px-4 mt-8">
+      <section id="products-display" className="container mx-auto px-4 mt-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-extrabold flex items-center gap-3 text-foreground uppercase border-l-4 border-primary pl-4">
             {isFiltered ? (
