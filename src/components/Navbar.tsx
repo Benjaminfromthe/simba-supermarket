@@ -50,7 +50,16 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md overflow-hidden shrink-0">
-              <img src="/simba-logo.jpg" alt="Simba" className="w-9 h-9 object-contain" />
+              <img 
+                src="/simba-logo.jpg" 
+                alt="Simba" 
+                className="w-9 h-9 object-contain"
+                onError={(e) => {
+                  // Fallback to text logo if image fails
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<span style="font-size:18px;font-weight:900;color:#F47A3E;">S</span>';
+                }}
+              />
             </div>
             <div className="hidden sm:block">
               <p className="text-white font-black text-lg leading-none">Simba</p>

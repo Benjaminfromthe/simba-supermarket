@@ -40,7 +40,7 @@
     --primary: 22 90% 58%;
     --primary-foreground: 0 0% 100%;
     --muted: 222 35% 17%;
-    --muted-foreground: 0 0% 75%;
+    --muted-foreground: 0 0% 72%;
     --border: 222 35% 20%;
     --input: 222 35% 20%;
     --ring: 22 90% 58%;
@@ -48,68 +48,68 @@
 }
 
 @layer base {
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; }
 
-  html {
+  html, body {
     font-family: 'Poppins', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
   }
 
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Poppins', system-ui, sans-serif;
-    line-height: 1.6;
   }
-
-  /* ── LIGHT MODE TEXT ── */
-  h1, h2, h3, h4, h5, h6 {
-    color: #000000;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-  p, span, label, li, td, th, div {
-    color: #1A1A1A;
-  }
-  a { color: inherit; }
-
-  /* ── DARK MODE TEXT — everything white ── */
-  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-    color: #FFFFFF !important;
-  }
-  .dark p, .dark span, .dark label, .dark li,
-  .dark td, .dark th, .dark div {
-    color: #FFFFFF !important;
-  }
-  /* Exceptions — keep orange/green/red colored text */
-  .dark .text-\[\#F47A3E\], .dark .text-orange-500,
-  .dark .text-green-500, .dark .text-red-500,
-  .dark .text-yellow-300, .dark .text-blue-400 {
-    color: inherit !important;
-  }
-  /* Muted/secondary text slightly dimmed but still visible */
-  .dark .text-muted, .dark .text-gray-400,
-  .dark .text-gray-500, .dark .text-gray-600 {
-    color: #94A3B8 !important;
-  }
-  .dark .text-gray-300, .dark .text-gray-200 {
-    color: #CBD5E1 !important;
-  }
-
-  /* ── DARK MODE BACKGROUNDS ── */
-  .dark .bg-white { background-color: hsl(222 35% 13%) !important; }
-  .dark .bg-gray-50 { background-color: hsl(222 47% 9%) !important; }
-  .dark .bg-gray-100 { background-color: hsl(222 35% 15%) !important; }
-  .dark .bg-gray-800 { background-color: hsl(222 35% 17%) !important; }
-  .dark .bg-gray-900 { background-color: hsl(222 47% 7%) !important; }
-  .dark .bg-gray-950 { background-color: hsl(222 47% 5%) !important; }
-
-  /* ── DARK MODE BORDERS ── */
-  .dark .border-gray-100,
-  .dark .border-gray-200,
-  .dark .border-gray-300 { border-color: hsl(222 35% 20%) !important; }
 }
+
+/* ══════════════════════════════════════
+   DARK MODE — targeted fixes only
+   (avoid overriding div broadly)
+══════════════════════════════════════ */
+
+/* Text elements that need to be white in dark mode */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #FFFFFF;
+}
+.dark p {
+  color: #E2E8F0;
+}
+.dark label {
+  color: #E2E8F0;
+}
+.dark span:not(.badge):not([class*="text-"]) {
+  color: #E2E8F0;
+}
+
+/* Force white on specific utility classes in dark mode */
+.dark .text-gray-900 { color: #F1F5F9 !important; }
+.dark .text-gray-800 { color: #E2E8F0 !important; }
+.dark .text-gray-700 { color: #CBD5E1 !important; }
+.dark .text-gray-600 { color: #94A3B8 !important; }
+.dark .text-gray-500 { color: #94A3B8 !important; }
+.dark .text-gray-400 { color: #64748B !important; }
+.dark .text-foreground { color: #FFFFFF !important; }
+
+/* Dark backgrounds */
+.dark .bg-white { background-color: hsl(222 35% 13%) !important; }
+.dark .bg-gray-50 { background-color: hsl(222 47% 9%) !important; }
+.dark .bg-gray-100 { background-color: hsl(222 35% 15%) !important; }
+.dark .bg-gray-800 { background-color: hsl(222 35% 17%) !important; }
+.dark .bg-gray-900 { background-color: hsl(222 47% 7%) !important; }
+.dark .bg-gray-950 { background-color: hsl(222 47% 5%) !important; }
+
+/* Dark borders */
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 { border-color: hsl(222 35% 20%) !important; }
+
+/* Input fields in dark mode */
+.dark input, .dark textarea, .dark select {
+  background-color: hsl(222 35% 17%) !important;
+  color: #FFFFFF !important;
+  border-color: hsl(222 35% 22%) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder { color: #64748B !important; }
 
 /* ══════════════════════════════════════
    PREMIUM CARD
@@ -123,7 +123,7 @@
 }
 .card-premium:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(244, 122, 62, 0.15);
+  box-shadow: 0 12px 32px rgba(244, 122, 62, 0.18);
   border-color: #F47A3E;
 }
 .dark .card-premium {
@@ -140,13 +140,13 @@
    GLASSMORPHISM NAVBAR
 ══════════════════════════════════════ */
 .navbar-glass {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.93);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
 }
 .dark .navbar-glass {
-  background: rgba(10, 15, 30, 0.92);
+  background: rgba(10, 15, 30, 0.93);
   border-bottom: 1px solid rgba(30, 41, 59, 0.8);
 }
 
@@ -163,14 +163,14 @@
   align-items: center;
   justify-content: center;
 }
-.icon-circle svg { color: #F47A3E; }
+.icon-circle svg { color: #F47A3E !important; }
 
 /* ══════════════════════════════════════
    BUTTONS
 ══════════════════════════════════════ */
 .btn-primary {
-  background: #F47A3E;
-  color: #ffffff;
+  background: #F47A3E !important;
+  color: #ffffff !important;
   font-weight: 700;
   border-radius: 12px;
   padding: 0.75rem 1.5rem;
@@ -178,29 +178,23 @@
   cursor: pointer;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   font-family: 'Poppins', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-primary:hover {
-  background: #D46A2E;
+  background: #D46A2E !important;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(244, 122, 62, 0.35);
 }
-.btn-outline {
-  background: transparent;
-  color: #F47A3E;
-  font-weight: 600;
-  border-radius: 12px;
-  padding: 0.75rem 1.5rem;
-  border: 1.5px solid #F47A3E;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Poppins', sans-serif;
-}
-.btn-outline:hover {
-  background: rgba(244, 122, 62, 0.08);
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* ══════════════════════════════════════
-   INPUT FIELDS
+   INPUT FIELD
 ══════════════════════════════════════ */
 .input-field {
   width: 100%;
@@ -219,12 +213,9 @@
   box-shadow: 0 0 0 3px rgba(244, 122, 62, 0.12);
 }
 .dark .input-field {
-  background: hsl(222 35% 17%);
-  border-color: hsl(222 35% 22%);
-  color: #FFFFFF;
-}
-.dark .input-field:focus {
-  border-color: #F47A3E;
+  background: hsl(222 35% 17%) !important;
+  border-color: hsl(222 35% 22%) !important;
+  color: #FFFFFF !important;
 }
 .dark .input-field::placeholder { color: #64748B; }
 
@@ -242,34 +233,13 @@
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  font-family: 'Poppins', sans-serif;
 }
-.pill:hover {
-  border-color: #F47A3E;
-  color: #F47A3E;
-}
-.pill.active {
-  background: #F47A3E;
-  border-color: #F47A3E;
-  color: #ffffff;
-}
-.dark .pill {
-  background: hsl(222 35% 15%);
-  border-color: hsl(222 35% 22%);
-  color: #FFFFFF;
-}
-.dark .pill:hover {
-  border-color: #F47A3E;
-  color: #F47A3E;
-}
-.dark .pill.active {
-  background: #F47A3E;
-  color: #ffffff;
-}
-
-/* ══════════════════════════════════════
-   SECTION SPACING
-══════════════════════════════════════ */
-.section { padding: 4rem 0; }
+.pill:hover { border-color: #F47A3E; color: #F47A3E; }
+.pill.active { background: #F47A3E; border-color: #F47A3E; color: #ffffff; }
+.dark .pill { background: hsl(222 35% 15%); border-color: hsl(222 35% 22%); color: #FFFFFF; }
+.dark .pill:hover { border-color: #F47A3E; color: #F47A3E; }
+.dark .pill.active { background: #F47A3E; color: #ffffff; }
 
 /* ══════════════════════════════════════
    SCROLLBAR
