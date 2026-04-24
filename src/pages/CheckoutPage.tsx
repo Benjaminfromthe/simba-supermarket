@@ -150,7 +150,7 @@ export default function CheckoutPage() {
   const stepIndex = ['branch', 'timeslot', 'payment'].indexOf(step);
 
   return (
-    <div className="bg-gray-50 dark:bg-background min-h-screen py-8 text-foreground">
+    <div className="bg-gray-50 dark: min-h-screen py-8 text-foreground">
       <div className="container mx-auto px-4 max-w-4xl">
 
         {/* Progress */}
@@ -334,3 +334,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

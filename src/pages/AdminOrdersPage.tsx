@@ -96,7 +96,7 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="bg-muted/20 dark:bg-background min-h-screen py-10 md:py-16 text-foreground">
+    <div className=" min-h-screen py-10 md:py-16 text-foreground">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex items-center gap-3 mb-8 bg-black dark:bg-card text-white p-6 rounded-2xl shadow-lg border border-gray-800">
           <ShieldCheck className="w-10 h-10 text-[#F47A3E]" />
@@ -164,3 +164,4 @@ export default function AdminOrdersPage() {
     </div>
   );
 }
+

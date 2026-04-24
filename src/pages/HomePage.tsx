@@ -54,7 +54,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-12 text-foreground bg-gray-50 dark:bg-background min-h-screen">
+    <div className="flex flex-col gap-8 pb-12 text-foreground min-h-screen">
       
       {/* Show regular HomePage content only if NOT filtered */}
       {!isFiltered && (
@@ -171,3 +171,4 @@ export default function HomePage() {
     </div>
   );
 }
+

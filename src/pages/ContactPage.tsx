@@ -34,7 +34,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="bg-gray-50 dark:bg-background min-h-screen py-12">
+    <div className="bg-gray-50 dark: min-h-screen py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         <header className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">
@@ -148,3 +148,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

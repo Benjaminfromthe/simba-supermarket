@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import productsData from '../data/simba_products.json';
+import { getLocalizedCategoryName } from '../lib/localize';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 
@@ -30,8 +31,8 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ name, imageUrl, href
       </div>
 
       <div className="p-4 text-center">
-        <h3 className="font-bold text-sm md:text-base text-foreground group-hover:text-[#FF8A00] transition-colors line-clamp-1">
-          {name}
+        <h3 className="font-bold text-sm md:text-base text-foreground group-hover:text-[#FF8A00] transition-colors line-clamp-1 hyphens-auto">
+          {getLocalizedCategoryName(name)}
         </h3>
         <p className="text-gray-500 text-xs mt-1">
           {count} {t('items')}

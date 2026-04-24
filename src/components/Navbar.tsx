@@ -19,7 +19,10 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const navigate = useNavigate();
   const { currentUser, signOut } = useAuth();
 
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    // Persist dark mode across refreshes
+    return (localStorage.getItem('simba-theme') as 'light' | 'dark') || 'light';
+  });
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -27,6 +30,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    localStorage.setItem('simba-theme', theme);
   }, [theme]);
 
   // Close dropdown when clicking outside

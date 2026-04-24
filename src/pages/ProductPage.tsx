@@ -45,7 +45,7 @@ export default function ProductPage() {
   const localizedCategory = getLocalizedProductCategory(product);
 
   return (
-    <div className="bg-muted/30 dark:bg-background min-h-screen py-8 text-foreground">
+    <div className=" min-h-screen py-8 text-foreground">
       <div className="container mx-auto px-4">
         
         <button onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground flex items-center gap-2 mb-6 font-medium transition-colors">
@@ -107,14 +107,14 @@ export default function ProductPage() {
                   <div className="flex items-center border-2 border-border dark:border-border rounded-xl bg-white dark:bg-muted overflow-hidden h-14 w-32">
                     <button 
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-full flex items-center justify-center text-muted-foreground hover:bg-muted dark:hover:bg-background transition"
+                      className="w-10 h-full flex items-center justify-center text-muted-foreground hover:bg-muted dark:hover: transition"
                     >
                       -
                     </button>
                     <span className="flex-1 font-bold text-center text-lg bg-transparent">{quantity}</span>
                     <button 
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-full flex items-center justify-center text-muted-foreground hover:bg-muted dark:hover:bg-background transition"
+                      className="w-10 h-full flex items-center justify-center text-muted-foreground hover:bg-muted dark:hover: transition"
                     >
                       +
                     </button>
@@ -144,3 +144,4 @@ export default function ProductPage() {
     </div>
   );
 }
+

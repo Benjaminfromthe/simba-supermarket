@@ -54,7 +54,7 @@ export default function BranchDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-background text-foreground">
+    <div className="min-h-screen bg-gray-50 dark: text-foreground">
       <div className="bg-[#F47A3E] text-white py-4 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -195,3 +195,4 @@ export default function BranchDashboard() {
     </div>
   );
 }
+

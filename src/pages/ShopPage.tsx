@@ -5,17 +5,11 @@ import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
 import { Filter } from 'lucide-react';
 import { Product } from '../store/useCartStore';
-import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
+import { getLocalizedProductName, getLocalizedProductCategory, getLocalizedCategoryName } from '../lib/localize';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 
 const CATEGORIES = ["All", ...Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean)] as string[];
-
-const getLocalizedCat = (catName: string) => {
-  if (catName === 'All') return catName;
-  const p = productsList.find((p: any) => p.category === catName);
-  return p ? getLocalizedProductCategory(p) : catName;
-}
 
 export default function ShopPage() {
   const { t } = useTranslation();
@@ -99,7 +93,7 @@ export default function ShopPage() {
                         : 'text-gray-900 dark:text-white hover:bg-orange-500 hover:text-white'
                     }`}
                   >
-                    {cat === 'All' ? t('allCategories') : getLocalizedCat(cat)}
+                    {cat === 'All' ? t('allCategories') : getLocalizedCategoryName(cat)}
                   </button>
                 </li>
               ))}
@@ -152,3 +146,4 @@ export default function ShopPage() {
     </div>
   );
 }
+

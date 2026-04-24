@@ -7,7 +7,7 @@ export default function AboutPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white dark:bg-background min-h-screen">
+    <div className="bg-white dark: min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/95 mix-blend-multiply z-10" />
@@ -111,3 +111,4 @@ export default function AboutPage() {
     </div>
   );
 }
+

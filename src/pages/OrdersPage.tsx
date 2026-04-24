@@ -78,7 +78,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="bg-muted/20 dark:bg-background min-h-screen py-10 md:py-16 text-foreground">
+    <div className=" min-h-screen py-10 md:py-16 text-foreground">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="flex items-center gap-3 mb-8">
           <Package className="w-8 h-8 text-[#F47A3E]" />
@@ -166,3 +166,4 @@ export default function OrdersPage() {
     </div>
   );
 }
+
