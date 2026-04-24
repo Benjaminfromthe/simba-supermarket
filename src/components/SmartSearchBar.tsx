@@ -1,56 +1,137 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { Search, Sparkles, Loader2, X } from 'lucide-react';
+import { Search, Sparkles, Loader2, X, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCartStore, Product } from '../store/useCartStore';
 import productsData from '../data/simba_products.json';
 import toast from 'react-hot-toast';
 
-const productsList: Product[] = (Array.isArray(productsData) ? productsData : (productsData as any).products) || [];
+const ALL_PRODUCTS: Product[] = (Array.isArray(productsData) ? productsData : (productsData as any).products) || [];
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
 
-interface AIResult { message: string; products: Product[]; }
+interface AIResult {
+  message: string;
+  products: Product[];
+}
 
-async function smartSearch(query: string): Promise<AIResult> {
-  // First try fast keyword match
+// Smart local search with price filter support
+function localSearch(query: string): Product[] {
   const q = query.toLowerCase();
-  const keyword = productsList.filter(p =>
-    p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
-  ).slice(0, 8);
 
-  // If good keyword results, return immediately (no API call needed)
-  if (keyword.length >= 3 && query.length < 20) {
-    return { message: '', products: keyword };
+  // Extract price constraint e.g. "under 1000", "less than 2000", "below 500"
+  const underMatch = q.match(/(?:under|below|less than|cheaper than|max|at most)\s*(\d+)/);
+  const overMatch = q.match(/(?:over|above|more than|at least|min)\s*(\d+)/);
+  const maxPrice = underMatch ? parseInt(underMatch[1]) : null;
+  const minPrice = overMatch ? parseInt(overMatch[1]) : null;
+
+  // Remove price words from query for keyword matching
+  const cleanQ = q
+    .replace(/(?:under|below|less than|cheaper than|max|at most|over|above|more than|at least|min)\s*\d+/g, '')
+    .replace(/rwf|rfw|frw/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  let results = ALL_PRODUCTS.filter(p => {
+    const name = p.name.toLowerCase();
+    const cat = p.category.toLowerCase();
+
+    // Price filter
+    if (maxPrice && p.price > maxPrice) return false;
+    if (minPrice && p.price < minPrice) return false;
+
+    // If no keyword left after removing price, return all price-filtered
+    if (!cleanQ) return true;
+
+    // Keyword match — split into words for better matching
+    const words = cleanQ.split(' ').filter(w => w.length > 2);
+    return words.some(w => name.includes(w) || cat.includes(w));
+  });
+
+  return results.slice(0, 8);
+}
+
+async function askGroqAI(query: string): Promise<AIResult> {
+  // Always try local first
+  const localResults = localSearch(query);
+
+  // If good local results and query is simple keyword, return immediately
+  const isSimple = query.length < 15 && !query.includes(' ');
+  if (isSimple && localResults.length > 0) {
+    return { message: '', products: localResults };
   }
 
-  // For conversational queries, use Groq
-  if (!GROQ_API_KEY) return { message: '', products: keyword };
+  // Use Groq for all natural language queries
+  if (!GROQ_API_KEY) {
+    return {
+      message: localResults.length > 0 ? `Found ${localResults.length} products for you:` : "I couldn't find matching products. Try browsing our shop!",
+      products: localResults,
+    };
+  }
 
   try {
-    const catalog = productsList.slice(0, 300).map(p => `${p.id}|${p.name}|${p.category}|${p.price}`).join('\n');
+    // Build compact catalog with prices for AI context
+    const catalog = ALL_PRODUCTS.map(p => `${p.id}|${p.name}|${p.category}|${p.price}RWF`).join('\n');
+
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+      },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [
-          { role: 'system', content: `You are a shopping assistant for Simba Supermarket Rwanda. Find relevant products from this catalog and return JSON: {"message":"short friendly response","productIds":[id1,id2,...]}. Max 8 products. Catalog:\n${catalog}` },
-          { role: 'user', content: query }
+          {
+            role: 'system',
+            content: `You are a smart shopping assistant for Simba Supermarket in Kigali, Rwanda. All prices are in RWF (Rwandan Francs).
+
+Your job: understand what the customer wants (including price constraints like "under 1000 RWF") and find the best matching products from the catalog.
+
+Rules:
+- Understand natural language: "I want milk under 1000" = find milk products with price <= 1000 RWF
+- "something for breakfast" = find breakfast-related products
+- "cheap cooking oil" = find low-priced cooking oil
+- Always respond with JSON only: {"message": "friendly 1-sentence response", "productIds": [id1, id2, ...]}
+- Max 6 product IDs. Only use IDs from the catalog.
+- If nothing matches, return {"message": "friendly apology", "productIds": []}
+
+FULL CATALOG (id|name|category|price):
+${catalog}`,
+          },
+          { role: 'user', content: query },
         ],
-        temperature: 0.2, max_tokens: 300,
+        temperature: 0.1,
+        max_tokens: 400,
       }),
     });
+
     const data = await res.json();
     const content = data.choices?.[0]?.message?.content || '{}';
-    const match = content.match(/\{[\s\S]*\}/);
-    if (match) {
-      const parsed = JSON.parse(match[0]);
-      const found = (parsed.productIds || []).map((id: number) => productsList.find(p => p.id === id)).filter(Boolean) as Product[];
-      return { message: parsed.message || '', products: found.length > 0 ? found : keyword };
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      const aiProducts = (parsed.productIds || [])
+        .map((id: number) => ALL_PRODUCTS.find(p => p.id === id || p.id === String(id)))
+        .filter(Boolean) as Product[];
+
+      // If AI found products, use them; otherwise fall back to local
+      const finalProducts = aiProducts.length > 0 ? aiProducts : localResults;
+      return {
+        message: parsed.message || (finalProducts.length > 0 ? `Here's what I found for you:` : "No products found."),
+        products: finalProducts,
+      };
     }
-  } catch {}
-  return { message: '', products: keyword };
+  } catch (err) {
+    console.error('Groq error:', err);
+  }
+
+  // Fallback to local results
+  return {
+    message: localResults.length > 0 ? `Found ${localResults.length} products matching your request:` : "I couldn't find that. Try browsing our full shop!",
+    products: localResults,
+  };
 }
 
 export default function SmartSearchBar() {
@@ -58,13 +139,12 @@ export default function SmartSearchBar() {
   const navigate = useNavigate();
   const { addItem } = useCartStore();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<AIResult | null>(null);
+  const [result, setResult] = useState<AIResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -75,15 +155,16 @@ export default function SmartSearchBar() {
 
   const handleInput = (val: string) => {
     setQuery(val);
-    if (!val.trim()) { setResults(null); setOpen(false); return; }
+    if (!val.trim()) { setResult(null); setOpen(false); return; }
     setOpen(true);
     clearTimeout(debounceRef.current);
+    // Shorter debounce for better UX
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-      const res = await smartSearch(val);
-      setResults(res);
+      const res = await askGroqAI(val);
+      setResult(res);
       setLoading(false);
-    }, 400);
+    }, 500);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -94,18 +175,24 @@ export default function SmartSearchBar() {
     }
   };
 
-  const handleAddToCart = (product: Product) => {
+  const handleAdd = (product: Product) => {
     addItem(product, 1);
     toast.success(`${product.name} ${t('addedToCartToast')}`, {
-      icon: '🛒', style: { borderRadius: '10px', background: '#333', color: '#fff' },
+      icon: '🛒',
+      style: { borderRadius: '12px', background: '#1A1A1A', color: '#fff', fontFamily: 'Poppins, sans-serif' },
     });
   };
 
+  const suggestions = ['I want milk under 1000', 'Cooking oil', 'Baby products', 'Something for breakfast'];
+
   return (
     <div ref={ref} className="relative w-full max-w-2xl">
-      <form onSubmit={handleSubmit} className="flex rounded-full border border-gray-200 dark:border-border overflow-hidden shadow-sm bg-gray-50 dark:bg-card">
+      <form onSubmit={handleSubmit} className="flex rounded-full border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm bg-white dark:bg-gray-800">
         <div className="flex items-center pl-4 text-gray-400">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin text-[#F47A3E]" /> : <Search className="w-4 h-4" />}
+          {loading
+            ? <Loader2 className="w-4 h-4 animate-spin text-[#F47A3E]" />
+            : <Search className="w-4 h-4" />
+          }
         </div>
         <input
           type="text"
@@ -113,48 +200,91 @@ export default function SmartSearchBar() {
           onChange={e => handleInput(e.target.value)}
           onFocus={() => query && setOpen(true)}
           placeholder={t('search')}
-          className="flex-1 px-3 py-2.5 text-sm font-medium outline-none bg-transparent text-foreground placeholder:text-foreground/50"
+          className="flex-1 px-3 py-2.5 text-sm font-medium outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400"
         />
         {query && (
-          <button type="button" onClick={() => { setQuery(''); setResults(null); setOpen(false); }} className="px-2 text-gray-400 hover:text-gray-600">
+          <button type="button" onClick={() => { setQuery(''); setResult(null); setOpen(false); }} className="px-2 text-gray-400 hover:text-gray-600">
             <X className="w-4 h-4" />
           </button>
         )}
-        <button type="submit" className="bg-[#F47A3E] text-white px-5 hover:bg-[#D46A2E] transition-colors flex items-center gap-1.5 text-sm font-bold">
+        <button type="submit" className="bg-[#F47A3E] hover:bg-[#D46A2E] text-white px-5 flex items-center gap-1.5 text-sm font-bold transition-colors">
           <Sparkles className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">AI</span>
         </button>
       </form>
 
-      {/* Dropdown results */}
-      {open && results && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto">
-          {results.message && (
-            <div className="px-4 py-2.5 bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100 dark:border-orange-900 flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#F47A3E] shrink-0" />
-              <p className="text-xs text-[#F47A3E] font-medium">{results.message}</p>
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
+
+          {/* AI message */}
+          {result?.message && (
+            <div className="px-4 py-3 bg-orange-50 dark:bg-orange-950/20 border-b border-orange-100 dark:border-orange-900/30 flex items-start gap-2">
+              <Sparkles className="w-4 h-4 text-[#F47A3E] shrink-0 mt-0.5" />
+              <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">{result.message}</p>
             </div>
           )}
-          {results.products.length === 0 ? (
-            <div className="px-4 py-6 text-center text-sm text-gray-400">{t('noProductsFound')}</div>
-          ) : (
-            <>
-              {results.products.map(p => (
-                <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800 last:border-0">
-                  <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded-lg bg-gray-50 dark:bg-gray-700 shrink-0" />
-                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => { navigate(`/product/${p.id}`); setOpen(false); }}>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white line-clamp-1">{p.name}</p>
-                    <p className="text-xs text-[#F47A3E] font-bold">{p.price.toLocaleString()} RWF</p>
-                  </div>
-                  <button onClick={() => handleAddToCart(p)} className="shrink-0 bg-[#F47A3E] text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-[#D46A2E] transition">
-                    + {t('addToCart').split(' ')[0]}
-                  </button>
+
+          {/* Loading state */}
+          {loading && (
+            <div className="px-4 py-6 flex items-center justify-center gap-3 text-gray-400">
+              <Loader2 className="w-5 h-5 animate-spin text-[#F47A3E]" />
+              <span className="text-sm font-medium">Searching with AI...</span>
+            </div>
+          )}
+
+          {/* Results */}
+          {!loading && result && (
+            result.products.length === 0 ? (
+              <div className="px-4 py-8 text-center">
+                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-3">{t('noProductsFound')}</p>
+                <button onClick={() => { navigate('/shop'); setOpen(false); }}
+                  className="text-[#F47A3E] text-sm font-bold hover:underline">
+                  Browse all products →
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-gray-800">
+                  {result.products.map(p => (
+                    <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <img src={p.image} alt={p.name}
+                        className="w-12 h-12 object-contain rounded-xl bg-gray-50 dark:bg-gray-700 shrink-0 p-1"
+                        onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }} />
+                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => { navigate(`/product/${p.id}`); setOpen(false); }}>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{p.name}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">{p.category}</p>
+                        <p className="text-sm font-bold text-[#F47A3E] mt-0.5">{p.price.toLocaleString()} RWF</p>
+                      </div>
+                      <button onClick={() => handleAdd(p)}
+                        className="shrink-0 bg-[#F47A3E] hover:bg-[#D46A2E] text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors flex items-center gap-1">
+                        <ShoppingCart className="w-3 h-3" />
+                        <span className="hidden sm:inline">Add</span>
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
-              <button onClick={() => { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }} className="w-full py-3 text-center text-sm text-[#F47A3E] font-bold hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors">
-                {t('viewAll')} "{query}" →
-              </button>
-            </>
+                <button onClick={() => { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }}
+                  className="w-full py-3 text-center text-sm text-[#F47A3E] font-bold hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors border-t border-gray-50 dark:border-gray-800">
+                  See all results for "{query}" →
+                </button>
+              </>
+            )
+          )}
+
+          {/* Suggestions when no query yet */}
+          {!loading && !result && (
+            <div className="p-3">
+              <p className="text-xs text-gray-400 font-medium px-2 mb-2">Try asking:</p>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map(s => (
+                  <button key={s} onClick={() => handleInput(s)}
+                    className="text-xs bg-orange-50 dark:bg-orange-950/20 text-[#F47A3E] px-3 py-1.5 rounded-full font-medium hover:bg-orange-100 transition-colors">
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       )}
