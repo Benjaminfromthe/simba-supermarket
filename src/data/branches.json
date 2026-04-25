@@ -1,74 +1,74 @@
 [
   {
-    "id": "simba_town",
-    "name": "Simba UTC (Town)",
-    "latitude": -1.9458424,
-    "longitude": 30.0615536,
-    "locationNote": "KN 4 Ave, Union Trade Center",
-    "mapUrl": "https://www.google.com/maps?q=Simba+Supermarket+UTC+Kigali"
-  },
-  {
-    "id": "simba_gishushu",
-    "name": "Simba Gishushu",
-    "latitude": -1.9536577,
-    "longitude": 30.0981838,
-    "locationNote": "KG 8 Ave, KGL Business Center",
-    "mapUrl": "https://www.google.com/maps?q=Simba+Supermarket+Gishushu"
-  },
-  {
-    "id": "simba_kisimenti",
-    "name": "Simba Kisimenti",
+    "id": "simba_remera",
+    "name": "Simba Supermarket Remera",
     "latitude": -1.9604659,
     "longitude": 30.1075648,
-    "locationNote": "Kisimenti Area, Remera",
-    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kisimenti"
-  },
-  {
-    "id": "simba_gacuriro",
-    "name": "Simba Gacuriro",
-    "latitude": -1.9235083,
-    "longitude": 30.0948917,
-    "locationNote": "KG 14 Ave, Simba Center Gacuriro",
-    "mapUrl": "https://maps.google.com/?q=Simba+Center+Gacuriro"
-  },
-  {
-    "id": "simba_kigali_heights",
-    "name": "Simba Kigali Heights",
-    "latitude": -1.9519,
-    "longitude": 30.0914,
-    "locationNote": "KG 2 Rd, Opposite Convention Center",
-    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kigali+Heights"
+    "locationNote": "Remera, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Remera+Kigali"
   },
   {
     "id": "simba_kimironko",
-    "name": "Simba Kimironko",
+    "name": "Simba Supermarket Kimironko",
     "latitude": -1.9361,
     "longitude": 30.1268,
-    "locationNote": "KG 11 Ave, Near Kimironko Market",
-    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kimironko"
+    "locationNote": "Kimironko, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kimironko+Kigali"
   },
   {
-    "id": "simba_centenary",
-    "name": "Simba Centenary House",
-    "latitude": -1.9444,
-    "longitude": 30.0617,
-    "locationNote": "KN 3 St, Centenary House Building",
-    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Centenary+House"
+    "id": "simba_kacyiru",
+    "name": "Simba Supermarket Kacyiru",
+    "latitude": -1.9319,
+    "longitude": 30.0614,
+    "locationNote": "Kacyiru, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kacyiru+Kigali"
+  },
+  {
+    "id": "simba_nyamirambo",
+    "name": "Simba Supermarket Nyamirambo",
+    "latitude": -1.9731,
+    "longitude": 30.0441,
+    "locationNote": "Nyamirambo, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Nyamirambo+Kigali"
+  },
+  {
+    "id": "simba_gikondo",
+    "name": "Simba Supermarket Gikondo",
+    "latitude": -1.9789,
+    "longitude": 30.0731,
+    "locationNote": "Gikondo, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Gikondo+Kigali"
   },
   {
     "id": "simba_kanombe",
-    "name": "Simba Kanombe",
+    "name": "Simba Supermarket Kanombe",
     "latitude": -1.9678,
     "longitude": 30.1412,
-    "locationNote": "Near Kigali International Airport",
-    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kanombe"
+    "locationNote": "Kanombe, near Airport",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kanombe+Kigali"
   },
   {
-    "id": "simba_chic",
-    "name": "Simba CHIC City Market",
-    "latitude": -1.9461,
-    "longitude": 30.0575,
-    "locationNote": "KN 2 St, CHIC Building Ground Floor",
-    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+CHIC+Building"
+    "id": "simba_kinyinya",
+    "name": "Simba Supermarket Kinyinya",
+    "latitude": -1.9089,
+    "longitude": 30.1156,
+    "locationNote": "Kinyinya, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kinyinya+Kigali"
+  },
+  {
+    "id": "simba_kibagabaga",
+    "name": "Simba Supermarket Kibagabaga",
+    "latitude": -1.9244,
+    "longitude": 30.1189,
+    "locationNote": "Kibagabaga, Kigali",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Kibagabaga+Kigali"
+  },
+  {
+    "id": "simba_nyanza",
+    "name": "Simba Supermarket Nyanza",
+    "latitude": -2.3536,
+    "longitude": 29.7394,
+    "locationNote": "Nyanza, Southern Province",
+    "mapUrl": "https://maps.google.com/?q=Simba+Supermarket+Nyanza+Rwanda"
   }
 ]
