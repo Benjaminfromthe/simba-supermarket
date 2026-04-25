@@ -21,12 +21,14 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import BranchDashboard from './pages/BranchDashboard';
 import BranchReviewsPage from './pages/BranchReviewsPage';
 import ScrollToTop from './components/ScrollToTop';
+import SpinWheel from './components/SpinWheel';
 
 export default function App() {
   return (
     <Router>
       <ScrollToTop />
       <Toaster position="top-right" />
+      <SpinWheel />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />

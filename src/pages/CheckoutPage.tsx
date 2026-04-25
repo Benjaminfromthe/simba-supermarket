@@ -300,7 +300,12 @@ export default function CheckoutPage() {
                 <button
                   onClick={handlePlaceOrder}
                   disabled={isProcessing || momoPhone.length < 9}
-                  className="w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition text-lg"
+                  className="btn-glow btn-shimmer w-full disabled:opacity-40 disabled:cursor-not-allowed py-4 rounded-xl flex items-center justify-center gap-2 text-lg"
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    e.currentTarget.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                    e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
+                  }}
                 >
                   {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ${DEPOSIT_AMOUNT.toLocaleString()} RWF Deposit & Confirm`}
                 </button>

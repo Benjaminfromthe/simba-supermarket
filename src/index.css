@@ -336,3 +336,59 @@ html.dark .pill.active { background: #F47A3E !important; color: #ffffff !importa
 .hyphens-auto { hyphens: auto; }
 .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* ═══════════════════════════════════════
+   CURSOR GLOW BUTTON
+═══════════════════════════════════════ */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  background: #F47A3E;
+  color: white;
+  font-weight: 700;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+}
+.btn-glow:hover::before { opacity: 1; }
+.btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(244, 122, 62, 0.5);
+}
+
+/* ═══════════════════════════════════════
+   SHIMMER CTA
+═══════════════════════════════════════ */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+  animation: shimmerSlide 2.5s infinite;
+}
+@keyframes shimmerSlide {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
