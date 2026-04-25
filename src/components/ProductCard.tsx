@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShoppingCart, Plus, Minus, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 import { Product, useCartStore } from '../store/useCartStore';
-import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
+import { getLocalizedProductCategory } from '../lib/localize';
 import { getCachedProductName } from './Navbar';
 
 export function ProductCardSkeleton() {
@@ -23,12 +23,20 @@ export function ProductCardSkeleton() {
 }
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const addItem = useCartStore(s => s.addItem);
   const [quantity, setQuantity] = useState(1);
   const [cartAnimating, setCartAnimating] = useState(false);
+  const [, forceUpdate] = useState(0);
 
-  const localizedName = getLocalizedProductName(product);
+  // Re-render when Groq translations arrive
+  useEffect(() => {
+    const handler = () => forceUpdate(n => n + 1);
+    window.addEventListener('simba-translated', handler);
+    return () => window.removeEventListener('simba-translated', handler);
+  }, []);
+
+  const localizedName = getCachedProductName((product.name || '').trim(), i18n.language);
   const oldPrice = Math.floor(product.price * 1.15);
 
   const handleAddToCart = (e?: React.MouseEvent) => {
