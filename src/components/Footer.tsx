@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import simbaLogo from '../assets/simba-logo.jpg';
 import { useTranslation } from 'react-i18next';
 import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail } from 'lucide-react';
 import branchesData from '../data/branches.json';
@@ -17,8 +18,7 @@ export default function Footer() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shrink-0">
-              <img src="/simba-logo.jpg" alt="Simba" className="w-9 h-9 object-contain"
-                onError={e => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerHTML='<span style="font-size:18px;font-weight:900;color:#F47A3E">S</span>'; }} />
+              <img src={simbaLogo} alt="Simba" className="w-9 h-9 object-contain" />
             </div>
             <div>
               <p className="font-black text-white text-base leading-none">Simba Supermarket</p>

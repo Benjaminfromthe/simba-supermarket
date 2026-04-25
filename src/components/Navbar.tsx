@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
 import { AnimatePresence, motion } from 'motion/react';
 import SmartSearchBar from './SmartSearchBar';
+import simbaLogo from '../assets/simba-logo.jpg';
 
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();
@@ -51,14 +52,9 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md overflow-hidden shrink-0">
               <img 
-                src="/simba-logo.jpg" 
-                alt="Simba" 
+                src={simbaLogo}
+                alt="Simba Supermarket" 
                 className="w-9 h-9 object-contain"
-                onError={(e) => {
-                  // Fallback to text logo if image fails
-                  (e.target as HTMLImageElement).style.display = 'none';
-                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<span style="font-size:18px;font-weight:900;color:#F47A3E;">S</span>';
-                }}
               />
             </div>
             <div className="hidden sm:block">
