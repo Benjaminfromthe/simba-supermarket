@@ -145,7 +145,7 @@ export default function HomePage() {
                   whileHover={{ scale: 1.03 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                   className={`bento-item ${BENTO_SIZES[i] || ''}`}
-                  onClick={() => window.location.href = `/shop?category=${encodeURIComponent(cat)}`}
+                  onClick={() => setSearchParams({ category: cat })}
                 >
                   <img src={CATEGORY_IMAGES[cat] || 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80'} alt={cat} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
