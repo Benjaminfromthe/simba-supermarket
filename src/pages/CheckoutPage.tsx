@@ -31,7 +31,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<Step>('branch');
   const [selectedBranch, setSelectedBranch] = useState<typeof branches[0] | null>(null);
   const [selectedTime, setSelectedTime] = useState('');
-  const [momoPhone, setMomoPhone] = useState('078');
+  const [momoPhone, setMomoPhone] = useState('');
   const [momoProvider, setMomoProvider] = useState<'mtn' | 'airtel'>('mtn');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
@@ -345,11 +345,11 @@ export default function CheckoutPage() {
                 <span>Subtotal</span><span>{getCartTotal().toLocaleString()} RWF</span>
               </div>
               <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                <span>Deposit</span><span className="text-amber-600">{DEPOSIT_AMOUNT.toLocaleString()} RWF</span>
+                <span>Deposit (non-refundable)</span><span className="text-amber-600">+{depositAmount.toLocaleString()} RWF</span>
               </div>
               <div className="flex justify-between font-bold text-base dark:text-white border-t dark:border-border pt-2">
                 <span>{t('total')}</span>
-                <span className="text-[#F47A3E]">{getCartTotal().toLocaleString()} RWF</span>
+                <span className="text-[#F47A3E]">{(getCartTotal() + depositAmount).toLocaleString()} RWF</span>
               </div>
             </div>
             {selectedBranch && (
