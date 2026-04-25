@@ -242,6 +242,11 @@ const resources = {
       momoPayment: "MoMo Payment",
       unlockedFreeDelivery: "You unlocked Free Delivery!",
       addMoreForFreeDelivery: "Add {{amount}} RWF more for Free Delivery",
+      checkStockAtBranch: "Check stock at branch",
+      selectBranchToCheck: "Select a branch...",
+      outOfStockAtBranch: "Out of stock at this branch",
+      itemsLeft: "items left",
+      checking: "Checking...",
     }
   },
   fr: {
@@ -484,6 +489,11 @@ const resources = {
       momoPayment: "Paiement MoMo",
       unlockedFreeDelivery: "Vous avez débloqué la Livraison Gratuite !",
       addMoreForFreeDelivery: "Ajoutez {{amount}} FRW de plus pour la Livraison Gratuite",
+      checkStockAtBranch: "Vérifier le stock en succursale",
+      selectBranchToCheck: "Choisir une succursale...",
+      outOfStockAtBranch: "Rupture de stock dans cette succursale",
+      itemsLeft: "articles restants",
+      checking: "Vérification...",
     }
   },
   rw: {
@@ -728,6 +738,11 @@ const resources = {
       momoPayment: "Kwishyura na MoMo",
       unlockedFreeDelivery: "Wahawe Gutwara Ubuntu!",
       addMoreForFreeDelivery: "Ongeraho {{amount}} RWF kugira ngo ubone Gutwara Ubuntu",
+      checkStockAtBranch: "Reba ibicuruzwa mu ishami",
+      selectBranchToCheck: "Hitamo ishami...",
+      outOfStockAtBranch: "Ntibihari muri iri shami",
+      itemsLeft: "bisigaye",
+      checking: "Turimo kureba...",
     }
   }
 };
