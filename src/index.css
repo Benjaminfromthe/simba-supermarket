@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
+/* Tell Tailwind v4 to use class-based dark mode */
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand: #F47A3E;
   --font-sans: "Poppins", system-ui, sans-serif;
@@ -59,88 +62,82 @@
   }
 }
 
-/* ═══════════════════════════════════════════
-   DARK MODE — ZERO TOLERANCE WHITE TEXT
-   Uses :is() to target all text elements
-═══════════════════════════════════════════ */
-.dark :is(h1, h2, h3, h4, h5, h6) {
+/* ═══════════════════════════════════════════════════
+   NUCLEAR DARK MODE FIX
+   Targets the html element with .dark class directly
+   This runs AFTER Tailwind so it always wins
+═══════════════════════════════════════════════════ */
+html.dark p,
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6,
+html.dark span,
+html.dark label,
+html.dark li,
+html.dark td,
+html.dark th,
+html.dark dt,
+html.dark dd,
+html.dark small,
+html.dark strong,
+html.dark em,
+html.dark blockquote {
   color: #FFFFFF !important;
 }
 
-.dark :is(p, span, label, li, td, th, dt, dd, caption, figcaption, blockquote, small) {
-  color: #FFFFFF !important;
-}
-
-/* Muted/secondary — still readable but slightly dimmed */
-.dark .text-muted-foreground,
-.dark .text-gray-400,
-.dark .text-gray-500 {
-  color: #94A3B8 !important;
-}
-
-/* Keep colored text colored */
-.dark .text-\[\#F47A3E\],
-.dark .text-orange-500,
-.dark .text-orange-400,
-.dark .text-green-500,
-.dark .text-green-400,
-.dark .text-red-500,
-.dark .text-red-400,
-.dark .text-yellow-300,
-.dark .text-yellow-400,
-.dark .text-blue-400,
-.dark .text-blue-500,
-.dark .text-primary {
+/* Keep orange/green/red/blue colored elements their color */
+html.dark [class*="text-orange"],
+html.dark [class*="text-green"],
+html.dark [class*="text-red"],
+html.dark [class*="text-yellow"],
+html.dark [class*="text-blue"],
+html.dark [class*="text-primary"],
+html.dark [class*="text-\[#F47A3E\]"],
+html.dark [class*="text-\[#25D366\]"] {
   color: inherit !important;
 }
 
-/* White text utilities in dark */
-.dark .text-gray-900,
-.dark .text-gray-800,
-.dark .text-gray-700,
-.dark .text-gray-600,
-.dark .text-foreground {
-  color: #FFFFFF !important;
-}
-
-.dark .text-gray-300,
-.dark .text-gray-200 {
-  color: #E2E8F0 !important;
+/* Muted text — visible but slightly dimmed */
+html.dark [class*="text-gray-400"],
+html.dark [class*="text-gray-500"],
+html.dark .text-muted-foreground {
+  color: #94A3B8 !important;
 }
 
 /* ── DARK BACKGROUNDS ── */
-.dark .bg-white { background-color: #1E293B !important; }
-.dark .bg-gray-50 { background-color: #0F172A !important; }
-.dark .bg-gray-100 { background-color: #1E293B !important; }
-.dark .bg-gray-800 { background-color: #1E293B !important; }
-.dark .bg-gray-900 { background-color: #0F172A !important; }
-.dark .bg-gray-950 { background-color: #0A0F1E !important; }
+html.dark .bg-white { background-color: #1E293B !important; }
+html.dark .bg-gray-50 { background-color: #0F172A !important; }
+html.dark .bg-gray-100 { background-color: #1E293B !important; }
+html.dark .bg-gray-800 { background-color: #1E293B !important; }
+html.dark .bg-gray-900 { background-color: #0F172A !important; }
+html.dark .bg-gray-950 { background-color: #0A0F1E !important; }
 
 /* ── DARK BORDERS ── */
-.dark .border-gray-100,
-.dark .border-gray-200,
-.dark .border-gray-300 { border-color: #334155 !important; }
+html.dark .border-gray-100,
+html.dark .border-gray-200,
+html.dark .border-gray-300 { border-color: #334155 !important; }
 
 /* ── INPUTS IN DARK ── */
-.dark input,
-.dark textarea,
-.dark select {
+html.dark input,
+html.dark textarea,
+html.dark select {
   background-color: #1E293B !important;
   color: #FFFFFF !important;
-  border-color: #334155 !important;
+  border-color: #4B5563 !important;
 }
-.dark input::placeholder,
-.dark textarea::placeholder { color: #64748B !important; }
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #64748B !important; }
 
-/* ── SEARCH BAR IN DARK ── */
-.dark .search-bar-container {
-  background-color: #1E293B !important;
-  border: 1px solid #334155 !important;
-}
+/* ── LINKS IN DARK ── */
+html.dark a:not([class*="text-"]) { color: #FFFFFF !important; }
+html.dark a:hover { color: #F47A3E !important; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    PREMIUM CARD
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .card-premium {
   background: #ffffff;
   border-radius: 16px;
@@ -153,45 +150,33 @@
   box-shadow: 0 12px 32px rgba(244,122,62,0.18);
   border-color: #F47A3E;
 }
-.dark .card-premium {
+html.dark .card-premium {
   background: #1E293B !important;
   border-color: #334155 !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
-.dark .card-premium:hover {
+html.dark .card-premium:hover {
   border-color: #F47A3E !important;
   box-shadow: 0 12px 32px rgba(244,122,62,0.2);
 }
-/* Force all text inside dark cards to white */
-.dark .card-premium * {
-  color: #FFFFFF;
-}
-.dark .card-premium .text-\[\#F47A3E\],
-.dark .card-premium .text-orange-500,
-.dark .card-premium .text-green-500,
-.dark .card-premium .text-red-500,
-.dark .card-premium .text-gray-400,
-.dark .card-premium .text-gray-500 {
-  color: inherit !important;
-}
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    GLASSMORPHISM NAVBAR
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .navbar-glass {
   background: rgba(255,255,255,0.93);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(229,231,235,0.8);
 }
-.dark .navbar-glass {
-  background: rgba(10,15,30,0.95);
-  border-bottom: 1px solid #1E293B;
+html.dark .navbar-glass {
+  background: rgba(10,15,30,0.95) !important;
+  border-bottom: 1px solid #1E293B !important;
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    ICON CIRCLE
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .icon-circle {
   width: 48px;
   height: 48px;
@@ -204,9 +189,9 @@
 }
 .icon-circle svg { color: #F47A3E !important; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    BUTTONS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .btn-primary {
   background: #F47A3E !important;
   color: #ffffff !important;
@@ -229,9 +214,9 @@
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* ═══════════════════════════════════════════
-   INPUT FIELD CLASS
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   INPUT FIELD
+═══════════════════════════════════════════════════ */
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -248,16 +233,16 @@
   border-color: #F47A3E;
   box-shadow: 0 0 0 3px rgba(244,122,62,0.12);
 }
-.dark .input-field {
+html.dark .input-field {
   background: #1E293B !important;
-  border-color: #334155 !important;
+  border-color: #4B5563 !important;
   color: #FFFFFF !important;
 }
-.dark .input-field::placeholder { color: #64748B; }
+html.dark .input-field::placeholder { color: #64748B; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    CATEGORY PILLS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .pill {
   padding: 0.375rem 1rem;
   border-radius: 999px;
@@ -272,25 +257,21 @@
   font-family: 'Poppins', sans-serif;
 }
 .pill:hover { border-color: #F47A3E; color: #F47A3E; }
-.pill.active { background: #F47A3E; border-color: #F47A3E; color: #ffffff !important; }
-.dark .pill {
-  background: #1E293B;
-  border-color: #334155;
-  color: #FFFFFF !important;
-}
-.dark .pill:hover { border-color: #F47A3E; color: #F47A3E !important; }
-.dark .pill.active { background: #F47A3E; color: #ffffff !important; }
+.pill.active { background: #F47A3E !important; border-color: #F47A3E !important; color: #ffffff !important; }
+html.dark .pill { background: #1E293B; border-color: #4B5563; color: #FFFFFF !important; }
+html.dark .pill:hover { border-color: #F47A3E; color: #F47A3E !important; }
+html.dark .pill.active { background: #F47A3E !important; color: #ffffff !important; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    SCROLLBAR
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    UTILITIES
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .hyphens-auto { hyphens: auto; }
 .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
