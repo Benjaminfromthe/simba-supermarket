@@ -134,6 +134,26 @@ export default function HomePage() {
                        {t("startShopping")}
                      </button>
                    </motion.div>
+
+                   {/* Value props */}
+                   <motion.div
+                     initial={{ opacity: 0 }}
+                     animate={{ opacity: 1 }}
+                     transition={{ duration: 0.5, delay: 0.8 }}
+                     className="flex flex-wrap gap-4 mt-8"
+                   >
+                     {[
+                       { icon: '⚡', label: t('fastPickup', '45-min Pick-up') },
+                       { icon: '📱', label: t('momoPayment', 'MoMo Payment') },
+                       { icon: '🛒', label: `789+ ${t('productsCount', 'Products')}` },
+                       { icon: '📍', label: t('branchesCount', '9 Branches') },
+                     ].map((v) => (
+                       <div key={v.label} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-semibold">
+                         <span>{v.icon}</span>
+                         <span>{v.label}</span>
+                       </div>
+                     ))}
+                   </motion.div>
                  </div>
                </motion.div>
             </div>

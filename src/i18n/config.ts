@@ -238,6 +238,10 @@ const resources = {
       backToSignIn: "Back to Sign In",
       aiSearch: "AI Search",
       askMeAnything: "Ask me anything...",
+      fastPickup: "45-min Pick-up",
+      momoPayment: "MoMo Payment",
+      unlockedFreeDelivery: "You unlocked Free Delivery!",
+      addMoreForFreeDelivery: "Add {{amount}} RWF more for Free Delivery",
     }
   },
   fr: {
@@ -476,6 +480,10 @@ const resources = {
       backToSignIn: "Retour à la connexion",
       aiSearch: "Recherche IA",
       askMeAnything: "Posez-moi une question...",
+      fastPickup: "Retrait en 45 min",
+      momoPayment: "Paiement MoMo",
+      unlockedFreeDelivery: "Vous avez débloqué la Livraison Gratuite !",
+      addMoreForFreeDelivery: "Ajoutez {{amount}} FRW de plus pour la Livraison Gratuite",
     }
   },
   rw: {
@@ -716,6 +724,10 @@ const resources = {
       backToSignIn: "Subira Kwinjira",
       aiSearch: "Gushakisha na AI",
       askMeAnything: "Mbaza ikibazo...",
+      fastPickup: "Gufata mu minota 45",
+      momoPayment: "Kwishyura na MoMo",
+      unlockedFreeDelivery: "Wahawe Gutwara Ubuntu!",
+      addMoreForFreeDelivery: "Ongeraho {{amount}} RWF kugira ngo ubone Gutwara Ubuntu",
     }
   }
 };

@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { getLocalizedProductName } from '../lib/localize';
+import { decrementStock } from '../lib/inventory';
 import branches from '../data/branches.json';
 
 type Step = 'branch' | 'timeslot' | 'payment' | 'pending' | 'success';
@@ -71,6 +72,8 @@ export default function CheckoutPage() {
         updatedAt: serverTimestamp(),
       });
       setOrderId(ref.id.slice(0, 8).toUpperCase());
+      // Decrement stock at selected branch
+      decrementStock(selectedBranch.id, items.map(i => ({ id: i.id, quantity: i.quantity })));
       setTimeout(() => {
         setIsProcessing(false);
         setStep('success');

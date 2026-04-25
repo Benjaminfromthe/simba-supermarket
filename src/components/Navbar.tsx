@@ -8,6 +8,55 @@ import { AnimatePresence, motion } from 'motion/react';
 import SmartSearchBar from './SmartSearchBar';
 import simbaLogo from '../assets/simba-logo-v2.jpg';
 
+const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
+const CACHE_KEY = 'simba-name-cache-v3';
+
+function getNameCache(): Record<string, string> {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } catch { return {}; }
+}
+function saveNameCache(c: Record<string, string>) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(c)); } catch {}
+}
+
+export function getCachedProductName(name: string, lang: string): string {
+  if (lang === 'en' || !name) return name;
+  try { return getNameCache()[`${lang}:${name}`] || name; } catch { return name; }
+}
+
+async function runTranslation(lang: string) {
+  if (!GROQ_KEY || lang === 'en') return;
+  try {
+    const mod = await import('../data/simba_products.json');
+    const products = Array.isArray(mod.default) ? mod.default : (mod.default as any).products || [];
+    const cache = getNameCache();
+    const names: string[] = products.map((p: any) => p.name).filter((n: string) => n && !cache[`${lang}:${n}`]);
+    if (!names.length) return;
+    const langName = lang === 'rw' ? 'Kinyarwanda' : 'French';
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_KEY}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: `Translate these supermarket product names into ${langName}. Keep brand names unchanged (Simba, Lentz, Inyange, Mukamira, Azam, Jambo, Crystal, Zesta, Herman, Nestle, Campari, Flora, Zima, ABK6, Basso, Kevian, Kenzy, Mila, DOLO, Sutai, River Dog, American Garden, Blue Band, Belle France, Boni, Greens, Kenton, Minimex, Toha, Sabroso, RS, Rinsun, Sinar, Smart, Clovers, Everyday, Golden Valley, Super Chef). Keep model codes and sizes unchanged. Only translate descriptive words. Return ONLY valid JSON: {"original": "translated"}` },
+          { role: 'user', content: JSON.stringify(names.slice(0, 40)) },
+        ],
+        temperature: 0.1, max_tokens: 2000,
+      }),
+    });
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content || '{}';
+    const json = content.match(/\{[\s\S]*\}/)?.[0] || '{}';
+    const translated = JSON.parse(json);
+    const updated = { ...cache };
+    for (const [orig, trans] of Object.entries(translated)) {
+      if (trans && typeof trans === 'string') updated[`${lang}:${orig}`] = (trans as string).trim();
+    }
+    saveNameCache(updated);
+    window.dispatchEvent(new CustomEvent('simba-translated'));
+  } catch { /* silent fail */ }
+}
+
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();
   const cartItems = useCartStore(s => s.items);
@@ -20,6 +69,16 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
     (localStorage.getItem('simba-theme') as 'light' | 'dark') || 'light'
   );
+
+  // Trigger product name translation when language changes
+  const translatedLangRef = useRef('en');
+  useEffect(() => {
+    const lang = i18n.language;
+    if (lang !== 'en' && lang !== translatedLangRef.current) {
+      translatedLangRef.current = lang;
+      runTranslation(lang);
+    }
+  }, [i18n.language]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');

@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 import { Product, useCartStore } from '../store/useCartStore';
 import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
+import { getCachedProductName } from './Navbar';
 
 export function ProductCardSkeleton() {
   return (
