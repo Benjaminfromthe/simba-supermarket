@@ -11,20 +11,28 @@ import { Product } from '../store/useCartStore';
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 const CATEGORIES = Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean).slice(0, 10) as string[];
 
+import catKitchenStorage from '../assets/cat-kitchen-storage.jpg';
+import catCosmetics from '../assets/cat-cosmetics.jpg';
+import catSports from '../assets/cat-sports.jpg';
+import catBaby from '../assets/cat-baby.jpg';
+import catKitchenware from '../assets/cat-kitchenware.jpg';
+import catCleaning from '../assets/cat-cleaning.jpg';
+import catFood from '../assets/cat-food.jpg';
+
 const CATEGORY_IMAGES: Record<string, string> = {
-  'Cosmetics & Personal Care': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80',
-  'Sports & Wellness': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80',
-  'Baby Products': 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&q=80',
-  'Kitchenware & Electronics': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
-  'Food Products': 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80',
+  'Kitchen Storage': catKitchenStorage,
+  'Cosmetics & Personal Care': catCosmetics,
+  'Sports & Wellness': catSports,
+  'Baby Products': catBaby,
+  'Kitchenware & Electronics': catKitchenware,
+  'Cleaning & Sanitary': catCleaning,
+  'Food Products': catFood,
   'Alcoholic Drinks': 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80',
   'General': 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80',
-  'Cleaning & Sanitary': 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80',
-  'Kitchen Storage': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
   'Pet Care': 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80',
 };
 
-const BENTO_SIZES = ['large', 'tall', '', 'wide', '', 'tall', '', '', 'wide', ''];
+const BENTO_SIZES = ['', '', '', '', '', '', '', '', '', ''];
 
 const getLocalizedCat = (catName: string) => getLocalizedCategoryName(catName);
 
