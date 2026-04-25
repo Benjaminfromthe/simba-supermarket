@@ -22,7 +22,7 @@ export function ProductCardSkeleton() {
   );
 }
 
-const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ product, compact = false }) => {
   const { t, i18n } = useTranslation();
   const addItem = useCartStore(s => s.addItem);
   const [quantity, setQuantity] = useState(1);
@@ -59,7 +59,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       className="product-card glass-card group"
     >
       {/* Image area */}
-      <Link to={`/product/${product.id}`} className="block relative overflow-hidden rounded-t-[20px] bg-white dark:bg-gray-800 aspect-square">
+      <Link to={`/product/${product.id}`} className={`block relative overflow-hidden rounded-t-[20px] bg-white dark:bg-gray-800 ${compact ? 'aspect-[4/3]' : 'aspect-square'}`}>
         <img
           src={product.image}
           alt={localizedName}
@@ -83,39 +83,50 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       </Link>
 
       {/* Info */}
-      <div className="p-4">
+      <div className={compact ? 'p-2.5' : 'p-4'}>
         <p className="text-[#F47A3E] text-[10px] font-bold uppercase tracking-widest mb-1 line-clamp-1">
           {getLocalizedProductCategory(product)}
         </p>
         <Link to={`/product/${product.id}`}>
-          <h3 className="font-semibold text-sm text-gray-900 dark:text-white line-clamp-2 leading-snug mb-3 min-h-[2.5rem] hover:text-[#F47A3E] transition-colors" style={{ fontFamily: 'Inter, sans-serif' }}>
+          <h3 className={`font-semibold text-gray-900 dark:text-white line-clamp-2 leading-snug hover:text-[#F47A3E] transition-colors ${compact ? 'text-xs mb-1.5 min-h-[2rem]' : 'text-sm mb-3 min-h-[2.5rem]'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
             {localizedName}
           </h3>
         </Link>
 
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg font-black text-[#F47A3E]">{product.price.toLocaleString()} RWF</span>
+        <div className={`flex items-center gap-2 ${compact ? 'mb-2' : 'mb-3'}`}>
+          <span className={`font-black text-[#F47A3E] ${compact ? 'text-sm' : 'text-lg'}`}>{product.price.toLocaleString()} RWF</span>
           <span className="text-xs text-gray-400 line-through">{oldPrice.toLocaleString()}</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden h-9 bg-gray-50 dark:bg-gray-800">
-            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-9 h-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-              <Minus className="w-3 h-3" />
-            </button>
-            <span className="w-7 text-center text-sm font-bold text-gray-800 dark:text-white">{quantity}</span>
-            <button onClick={() => setQuantity(quantity + 1)} className="w-9 h-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-              <Plus className="w-3 h-3" />
-            </button>
-          </div>
+        {/* Hide quantity selector in compact mode — just show Add to Cart */}
+        {compact ? (
           <button
             onClick={handleAddToCart}
-            className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${cartAnimating ? 'cart-pop bg-green-500 text-white' : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-[#F47A3E] dark:hover:bg-[#F47A3E] dark:hover:text-white'}`}
+            className={`w-full h-8 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${cartAnimating ? 'cart-pop bg-green-500 text-white' : 'bg-[#F47A3E] hover:bg-[#D46A2E] text-white'}`}
           >
-            <ShoppingCart className="w-3.5 h-3.5" />
+            <ShoppingCart className="w-3 h-3" />
             {t('addToCart')}
           </button>
-        </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden h-9 bg-gray-50 dark:bg-gray-800">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-9 h-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <Minus className="w-3 h-3" />
+              </button>
+              <span className="w-7 text-center text-sm font-bold text-gray-800 dark:text-white">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="w-9 h-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <Plus className="w-3 h-3" />
+              </button>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className={`flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${cartAnimating ? 'cart-pop bg-green-500 text-white' : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-[#F47A3E] dark:hover:bg-[#F47A3E] dark:hover:text-white'}`}
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              {t('addToCart')}
+            </button>
+          </div>
+        )}
       </div>
     </motion.div>
   );

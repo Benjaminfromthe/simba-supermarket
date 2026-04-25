@@ -175,9 +175,9 @@ export default function HomePage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredProducts.map(p => (
-              <ProductCard key={p.id} product={p as any} />
+              <ProductCard key={p.id} product={p as any} compact />
             ))}
           </div>
         )}
