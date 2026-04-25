@@ -7,6 +7,21 @@ import { Star, Store, Loader2, CheckCircle2, MapPin } from 'lucide-react';
 import branches from '../data/branches.json';
 import { Link } from 'react-router-dom';
 
+function openDirections(branch: typeof branches[0]) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        window.open(`https://www.google.com/maps/dir/${latitude},${longitude}/${branch.latitude},${branch.longitude}`, '_blank');
+      },
+      () => window.open(branch.mapUrl, '_blank'),
+      { timeout: 5000 }
+    );
+  } else {
+    window.open(branch.mapUrl, '_blank');
+  }
+}
+
 interface Review { id: string; branchId: string; userId: string; userEmail: string; rating: number; comment: string; createdAt: any; }
 
 export default function BranchReviewsPage() {
@@ -63,7 +78,10 @@ export default function BranchReviewsPage() {
             className={`card-premium p-4 cursor-pointer flex flex-col gap-2 ${selectedBranch === b.id ? 'border-[#F47A3E] bg-orange-50 dark:!bg-orange-950/20' : ''}`}>
             <Store className={`w-5 h-5 mb-2 ${selectedBranch === b.id ? 'text-[#F47A3E]' : 'text-gray-400'}`} />
             <p className={`text-sm font-bold leading-tight ${selectedBranch === b.id ? 'text-[#F47A3E]' : 'text-gray-800 dark:text-white'}`}>{b.name}</p>
-            <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" />{b.locationNote}</p>
+            <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1 cursor-pointer hover:text-[#F47A3E] transition-colors"
+              onClick={(e) => { e.stopPropagation(); openDirections(b); }}>
+              <MapPin className="w-3 h-3" />{b.locationNote} — Get directions
+            </p>
           </div>
         ))}
       </div>

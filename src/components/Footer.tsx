@@ -1,8 +1,28 @@
 import { Link } from 'react-router-dom';
 import simbaLogo from '../assets/simba-logo.jpg';
 import { useTranslation } from 'react-i18next';
-import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail, Navigation } from 'lucide-react';
 import branchesData from '../data/branches.json';
+
+function openDirections(branch: typeof branchesData[0]) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        // Google Maps directions: from user location to branch
+        const url = `https://www.google.com/maps/dir/${latitude},${longitude}/${branch.latitude},${branch.longitude}`;
+        window.open(url, '_blank');
+      },
+      () => {
+        // If user denies location, just show the branch on the map
+        window.open(branch.mapUrl, '_blank');
+      },
+      { timeout: 5000 }
+    );
+  } else {
+    window.open(branch.mapUrl, '_blank');
+  }
+}
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -59,11 +79,13 @@ export default function Footer() {
           <ul className="space-y-2">
             {branchesData.map(b => (
               <li key={b.id}>
-                <a href={b.mapUrl} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-gray-400 hover:text-[#F47A3E] text-sm font-medium transition-colors group">
-                  <MapPin className="w-3.5 h-3.5 text-[#F47A3E] shrink-0" />
+                <button
+                  onClick={() => openDirections(b)}
+                  className="flex items-center gap-2 text-gray-400 hover:text-[#F47A3E] text-sm font-medium transition-colors group w-full text-left"
+                >
+                  <Navigation className="w-3.5 h-3.5 text-[#F47A3E] shrink-0 group-hover:animate-pulse" />
                   {b.name}
-                </a>
+                </button>
               </li>
             ))}
           </ul>

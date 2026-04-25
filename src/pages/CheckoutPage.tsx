@@ -197,7 +197,20 @@ export default function CheckoutPage() {
                             </p>
                           </div>
                         </div>
-                        <a href={branch.mapUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-xs text-[#F47A3E] hover:underline font-bold">Map</a>
+                        <button
+                          onClick={(e) => { e.stopPropagation();
+                            if (navigator.geolocation) {
+                              navigator.geolocation.getCurrentPosition(
+                                pos => window.open(`https://www.google.com/maps/dir/${pos.coords.latitude},${pos.coords.longitude}/${branch.latitude},${branch.longitude}`, '_blank'),
+                                () => window.open(branch.mapUrl, '_blank'),
+                                { timeout: 5000 }
+                              );
+                            } else window.open(branch.mapUrl, '_blank');
+                          }}
+                          className="text-xs text-[#F47A3E] hover:underline font-bold"
+                        >
+                          Directions
+                        </button>
                       </div>
                     </button>
                   ))}
