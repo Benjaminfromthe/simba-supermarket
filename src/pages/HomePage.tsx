@@ -18,6 +18,7 @@ import catBaby from '../assets/cat-baby.jpg';
 import catKitchenware from '../assets/cat-kitchenware.jpg';
 import catCleaning from '../assets/cat-cleaning.jpg';
 import catFood from '../assets/cat-food.jpg';
+import catAlcoholic from '../assets/cat-alcholic.jpg';
 
 const CATEGORY_IMAGES: Record<string, string> = {
   'Kitchen Storage': catKitchenStorage,
@@ -27,7 +28,7 @@ const CATEGORY_IMAGES: Record<string, string> = {
   'Kitchenware & Electronics': catKitchenware,
   'Cleaning & Sanitary': catCleaning,
   'Food Products': catFood,
-  'Alcoholic Drinks': 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80',
+  'Alcoholic Drinks': catAlcoholic,
   'General': 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80',
   'Pet Care': 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80',
 };
