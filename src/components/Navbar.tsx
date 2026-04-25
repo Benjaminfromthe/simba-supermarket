@@ -64,14 +64,14 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
           </Link>
 
           {/* Desktop nav links */}
-          <nav className="hidden lg:flex items-center gap-6 text-white text-sm font-semibold">
-            <Link to="/" className="hover:text-orange-100 transition-colors">{t('home')}</Link>
-            <Link to="/shop" className="hover:text-orange-100 transition-colors">{t('shop')}</Link>
-            <Link to="/about" className="hover:text-orange-100 transition-colors">{t('about')}</Link>
-            <Link to="/contact" className="hover:text-orange-100 transition-colors">{t('contactUs')}</Link>
-            <Link to="/reviews" className="hover:text-orange-100 transition-colors">⭐ Reviews</Link>
-            {currentUser && <Link to="/orders" className="hover:text-orange-100 transition-colors">{t('myOrders')}</Link>}
-            {isAdmin && <Link to="/branch-dashboard" className="text-yellow-200 hover:text-yellow-100 transition-colors font-bold">Dashboard</Link>}
+          <nav className="hidden lg:flex items-center gap-3 text-white text-xs font-semibold flex-shrink-0">
+            <Link to="/" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('home')}</Link>
+            <Link to="/shop" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('shop')}</Link>
+            <Link to="/about" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('about')}</Link>
+            <Link to="/contact" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('contactUs')}</Link>
+            <Link to="/reviews" className="hover:text-orange-100 transition-colors whitespace-nowrap">⭐ Reviews</Link>
+            {currentUser && <Link to="/orders" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('myOrders')}</Link>}
+            {currentUser?.email === 'benjaminnshimiye633@gmail.com' && <Link to="/branch-dashboard" className="text-yellow-200 hover:text-yellow-100 transition-colors font-bold whitespace-nowrap">Dashboard</Link>}
           </nav>
 
           {/* Right actions */}
@@ -112,10 +112,11 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
               <AnimatePresence>
                 {langOpen && (
                   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden w-40 z-50">
+                    className="absolute right-0 top-full mt-2 rounded-xl shadow-2xl overflow-hidden w-44 z-[200]"
+                    style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}>
                     {langs.map(l => (
                       <button key={l.code} onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
-                        className={`w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700'}`}>
+                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'text-gray-900 hover:bg-orange-50'}`}>
                         {l.label}
                       </button>
                     ))}
