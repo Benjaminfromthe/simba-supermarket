@@ -6,7 +6,7 @@ import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
 import { AnimatePresence, motion } from 'motion/react';
 import SmartSearchBar from './SmartSearchBar';
-import simbaLogo from '../assets/simba-logo.jpg';
+import simbaLogo from '../assets/simba-logo-v2.jpg';
 
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();

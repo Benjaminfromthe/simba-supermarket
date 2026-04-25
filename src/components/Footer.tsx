@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import simbaLogo from '../assets/simba-logo.jpg';
+import simbaLogo from '../assets/simba-logo-v2.jpg';
 import { useTranslation } from 'react-i18next';
 import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail, Navigation } from 'lucide-react';
 import branchesData from '../data/branches.json';
