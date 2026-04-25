@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import productsData from '../data/simba_products.json';
-import ProductCard from '../components/ProductCard';
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
 import { ChevronRight, Search as SearchIcon, X, Filter } from 'lucide-react';
 import { getLocalizedProductCategory, getLocalizedProductName, getLocalizedCategoryName } from '../lib/localize';
 import { Product } from '../store/useCartStore';

@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 
 @variant dark (&:where(.dark, .dark *));
 
@@ -33,13 +33,7 @@
     --border: 36 20% 88%;
     --input: 36 20% 88%;
     --ring: 22 90% 58%;
-    /* Safari Earth Tones */
-    --cream: #FAF7F2;
-    --earth: #8B5E3C;
-    --sage: #6B7C5C;
-    --burnt-orange: #F47A3E;
   }
-
   .dark {
     --background: 222 47% 7%;
     --foreground: 0 0% 100%;
@@ -60,7 +54,6 @@
   html, body {
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
   }
   body {
     background-color: hsl(var(--background));
@@ -69,27 +62,32 @@
   /* Fluid serif headings */
   h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; }
   h2 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 800; }
-  h3 { font-family: 'Inter', sans-serif; font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 700; }
+  h3 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 700; }
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    NUCLEAR DARK MODE — html.dark selector
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 html.dark p, html.dark h1, html.dark h2, html.dark h3,
 html.dark h4, html.dark h5, html.dark h6, html.dark span,
 html.dark label, html.dark li, html.dark td, html.dark th,
-html.dark small, html.dark strong, html.dark em, html.dark dt, html.dark dd {
+html.dark small, html.dark strong, html.dark em, html.dark dt,
+html.dark dd, html.dark blockquote, html.dark figcaption {
   color: #FFFFFF !important;
 }
 html.dark [class*="text-orange"], html.dark [class*="text-green"],
 html.dark [class*="text-red"], html.dark [class*="text-yellow"],
-html.dark [class*="text-blue"], html.dark [class*="text-primary"] { color: inherit !important; }
-html.dark [class*="text-gray-400"], html.dark [class*="text-gray-500"],
+html.dark [class*="text-blue"], html.dark [class*="text-primary"] {
+  color: inherit !important;
+}
+html.dark [class*="text-gray-400"],
+html.dark [class*="text-gray-500"],
 html.dark .text-muted-foreground { color: #94A3B8 !important; }
 html.dark .text-gray-900, html.dark .text-gray-800,
 html.dark .text-gray-700, html.dark .text-gray-600,
 html.dark .text-foreground { color: #FFFFFF !important; }
 html.dark .text-gray-300, html.dark .text-gray-200 { color: #E2E8F0 !important; }
+
 html.dark .bg-white { background-color: #1E293B !important; }
 html.dark .bg-gray-50 { background-color: #0F172A !important; }
 html.dark .bg-gray-100 { background-color: #1E293B !important; }
@@ -106,119 +104,78 @@ html.dark input, html.dark textarea, html.dark select {
 html.dark input::placeholder, html.dark textarea::placeholder { color: #64748B !important; }
 html.dark a:not([class*="text-"]) { color: #FFFFFF !important; }
 
-/* ═══════════════════════════════════════════
-   GLASSMORPHIC CARDS
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   GLASSMORPHIC CARD
+═══════════════════════════════════════ */
 .glass-card {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .glass-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 48px rgba(244, 122, 62, 0.15);
+  box-shadow: 0 20px 40px rgba(244, 122, 62, 0.15);
+  border-color: rgba(244, 122, 62, 0.4);
 }
 html.dark .glass-card {
-  background: rgba(30, 41, 59, 0.75) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(30, 41, 59, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 html.dark .glass-card:hover {
-  box-shadow: 0 20px 48px rgba(244, 122, 62, 0.2);
+  border-color: rgba(244, 122, 62, 0.5) !important;
+  box-shadow: 0 20px 40px rgba(244, 122, 62, 0.2);
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    PREMIUM CARD (non-glass)
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .card-premium {
   background: #ffffff;
   border-radius: 20px;
   border: 1px solid #F0EDE8;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .card-premium:hover {
   transform: translateY(-5px);
-  box-shadow: 0 16px 40px rgba(244, 122, 62, 0.15);
+  box-shadow: 0 16px 40px rgba(244,122,62,0.15);
   border-color: #F47A3E;
 }
 html.dark .card-premium {
   background: #1E293B !important;
   border-color: #334155 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 html.dark .card-premium:hover {
   border-color: #F47A3E !important;
-  box-shadow: 0 16px 40px rgba(244, 122, 62, 0.2);
+  box-shadow: 0 16px 40px rgba(244,122,62,0.2);
 }
 
-/* ═══════════════════════════════════════════
-   GLASSMORPHISM NAVBAR
-═══════════════════════════════════════════ */
-.navbar-glass {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
-}
-html.dark .navbar-glass {
-  background: rgba(10, 15, 30, 0.92) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-}
-
-/* ═══════════════════════════════════════════
-   BENTO GRID
-═══════════════════════════════════════════ */
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 160px;
-  gap: 16px;
-}
-.bento-item {
-  border-radius: 24px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.bento-item:hover { transform: scale(1.02); box-shadow: 0 20px 48px rgba(0,0,0,0.15); }
-.bento-item.large { grid-column: span 2; grid-row: span 2; }
-.bento-item.wide { grid-column: span 2; }
-.bento-item.tall { grid-row: span 2; }
-@media (max-width: 768px) {
-  .bento-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; }
-  .bento-item.large { grid-column: span 2; }
-}
-@media (max-width: 480px) {
-  .bento-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 100px; }
-}
-
-/* ═══════════════════════════════════════════
-   MAGNETIC BUTTON
-═══════════════════════════════════════════ */
-.btn-magnetic {
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.btn-magnetic::after {
-  content: '';
+/* ═══════════════════════════════════════
+   PRODUCT CARD — Quick Add slide up
+═══════════════════════════════════════ */
+.product-card { position: relative; overflow: hidden; }
+.product-card .quick-add {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.2) 0%, transparent 60%);
-  opacity: 0;
-  transition: opacity 0.3s;
+  bottom: -48px;
+  left: 0; right: 0;
+  transition: bottom 0.3s ease;
+  z-index: 10;
 }
-.btn-magnetic:hover::after { opacity: 1; }
+.product-card:hover .quick-add { bottom: 0; }
+.product-card .product-img {
+  transition: transform 0.4s ease;
+}
+.product-card:hover .product-img { transform: scale(1.08); }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    SKELETON LOADER
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .skeleton {
   background: linear-gradient(90deg, #f0ede8 25%, #e8e4de 50%, #f0ede8 75%);
   background-size: 200% 100%;
@@ -234,46 +191,79 @@ html.dark .skeleton {
   100% { background-position: -200% 0; }
 }
 
-/* ═══════════════════════════════════════════
-   PRODUCT CARD QUICK ADD
-═══════════════════════════════════════════ */
-.product-card { position: relative; overflow: hidden; }
-.product-card .quick-add {
-  position: absolute;
-  bottom: -48px;
-  left: 0; right: 0;
-  transition: bottom 0.3s ease;
-  z-index: 10;
-}
-.product-card:hover .quick-add { bottom: 0; }
-.product-card .product-img {
-  transition: transform 0.4s ease;
-}
-.product-card:hover .product-img { transform: scale(1.08); }
-
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    CART POP ANIMATION
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 @keyframes cartPop {
   0% { transform: scale(1); }
   40% { transform: scale(1.4) rotate(-10deg); }
   70% { transform: scale(0.9) rotate(5deg); }
   100% { transform: scale(1) rotate(0deg); }
 }
-.cart-pop { animation: cartPop 0.4s ease forwards; }
+.cart-pop { animation: cartPop 0.4s ease; }
 
-/* ═══════════════════════════════════════════
-   PAGE FADE IN
-═══════════════════════════════════════════ */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
+/* ═══════════════════════════════════════
+   MAGNETIC BUTTON
+═══════════════════════════════════════ */
+.btn-magnetic {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.btn-magnetic:hover {
+  box-shadow: 0 8px 25px rgba(244, 122, 62, 0.4);
+}
+
+/* ═══════════════════════════════════════
+   GLASSMORPHISM NAVBAR
+═══════════════════════════════════════ */
+.navbar-glass {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(240, 237, 232, 0.8);
+}
+html.dark .navbar-glass {
+  background: rgba(10, 15, 30, 0.95) !important;
+  border-bottom: 1px solid #1E293B !important;
+}
+
+/* ═══════════════════════════════════════
+   BENTO GRID
+═══════════════════════════════════════ */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 160px;
+  gap: 16px;
+}
+.bento-item {
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.bento-item:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+.bento-item.large { grid-column: span 2; grid-row: span 2; }
+.bento-item.wide { grid-column: span 2; }
+.bento-item.tall { grid-row: span 2; }
+@media (max-width: 768px) {
+  .bento-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; }
+  .bento-item.large { grid-column: span 2; }
+}
+
+/* ═══════════════════════════════════════
+   PAGE FADE TRANSITION
+═══════════════════════════════════════ */
+.page-enter { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.page-enter { animation: fadeInUp 0.4s ease forwards; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    ICON CIRCLE
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .icon-circle {
   width: 48px; height: 48px; min-width: 48px;
   border-radius: 50%;
@@ -282,9 +272,9 @@ html.dark .skeleton {
 }
 .icon-circle svg { color: #F47A3E !important; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    BUTTONS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .btn-primary {
   background: #F47A3E !important;
   color: #ffffff !important;
@@ -300,17 +290,17 @@ html.dark .skeleton {
 .btn-primary:hover {
   background: #D46A2E !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(244, 122, 62, 0.4);
+  box-shadow: 0 8px 24px rgba(244,122,62,0.4);
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    INPUT FIELD
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .input-field {
   width: 100%; padding: 0.75rem 1rem;
-  border-radius: 14px; border: 1px solid #E8E4DE;
-  background: #FAF7F2; color: #1A1A1A;
+  border-radius: 12px; border: 1px solid #E8E4DE;
+  background: #FAFAF8; color: #1A1A1A;
   font-family: 'Inter', sans-serif; font-size: 0.875rem;
   transition: border-color 0.2s, box-shadow 0.2s; outline: none;
 }
@@ -318,14 +308,15 @@ html.dark .skeleton {
 html.dark .input-field { background: #1E293B !important; border-color: #4B5563 !important; color: #FFFFFF !important; }
 html.dark .input-field::placeholder { color: #64748B; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    CATEGORY PILLS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .pill {
   padding: 0.4rem 1.1rem; border-radius: 999px;
   font-size: 0.8125rem; font-weight: 600;
-  border: 1px solid #E8E4DE; background: #FAF7F2; color: #5C4A3A;
-  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  border: 1px solid #E8E4DE; background: #ffffff;
+  color: #4A3728; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
   font-family: 'Inter', sans-serif;
 }
 .pill:hover { border-color: #F47A3E; color: #F47A3E; background: rgba(244,122,62,0.05); }
@@ -334,17 +325,18 @@ html.dark .pill { background: #1E293B; border-color: #4B5563; color: #FFFFFF !im
 html.dark .pill:hover { border-color: #F47A3E; color: #F47A3E !important; }
 html.dark .pill.active { background: #F47A3E !important; color: #ffffff !important; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    SCROLLBAR
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    UTILITIES
-═══════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .font-serif { font-family: 'Playfair Display', Georgia, serif !important; }
+.font-sans { font-family: 'Inter', system-ui, sans-serif !important; }
 .hyphens-auto { hyphens: auto; }
 .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
