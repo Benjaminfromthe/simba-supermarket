@@ -3,8 +3,10 @@ import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from 'f
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle2, Package, User, Store, Loader2, ChevronDown } from 'lucide-react';
+import { Clock, CheckCircle2, Package, User, Store, Loader2, AlertTriangle, Flag } from 'lucide-react';
 import branches from '../data/branches.json';
+import { markOutOfStock, getLowStock } from '../lib/inventory';
+import { flagNoShow } from '../lib/noshow';
 
 const STAFF_MEMBERS = ['Alice K.', 'Bob M.', 'Claire U.', 'David N.', 'Eve R.'];
 
@@ -179,6 +181,25 @@ export default function BranchDashboard() {
                     >
                       <CheckCircle2 className="w-3 h-3" /> Complete
                     </button>
+                  )}
+
+                  {/* Flag no-show — only on completed orders */}
+                  {order.status === 'completed' && order.userId && !order.flagged && (
+                    <button
+                      onClick={async () => {
+                        await flagNoShow(order.userId, order.id);
+                        await updateOrder(order.id, { flagged: true });
+                      }}
+                      className="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                      title="Flag customer as no-show"
+                    >
+                      <Flag className="w-3 h-3" /> No-Show
+                    </button>
+                  )}
+                  {order.flagged && (
+                    <span className="text-xs text-red-500 font-bold flex items-center gap-1">
+                      <Flag className="w-3 h-3" /> Flagged
+                    </span>
                   )}
 
                   {order.assignedTo && (

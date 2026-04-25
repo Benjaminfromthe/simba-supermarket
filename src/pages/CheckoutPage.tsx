@@ -8,6 +8,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { getLocalizedProductName } from '../lib/localize';
 import { decrementStock } from '../lib/inventory';
+import { getDepositAmount } from '../lib/noshow';
 import branches from '../data/branches.json';
 
 type Step = 'branch' | 'timeslot' | 'payment' | 'pending' | 'success';
@@ -34,10 +35,18 @@ export default function CheckoutPage() {
   const [momoProvider, setMomoProvider] = useState<'mtn' | 'airtel'>('mtn');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [depositAmount, setDepositAmount] = useState(500);
 
   useEffect(() => {
     if (!currentUser) navigate('/login');
   }, [currentUser, navigate]);
+
+  // Load dynamic deposit based on no-show history
+  useEffect(() => {
+    if (currentUser) {
+      getDepositAmount(currentUser.uid).then(setDepositAmount);
+    }
+  }, [currentUser]);
 
   if (items.length === 0 && step !== 'success') {
     return (
@@ -64,7 +73,7 @@ export default function CheckoutPage() {
         pickupTime: selectedTime,
         momoPhone,
         momoProvider,
-        depositAmount: DEPOSIT_AMOUNT,
+        depositAmount: depositAmount,
         totalAmount: getCartTotal(),
         status: 'pending',
         items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.price, image: i.image })),
