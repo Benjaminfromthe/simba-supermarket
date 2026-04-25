@@ -28,11 +28,11 @@ export default function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-gray-950 text-white mt-16">
+    <footer className="bg-gray-950 text-white mt-8">
       {/* Orange top accent */}
-      <div className="h-1 bg-gradient-to-r from-[#F47A3E] via-orange-400 to-[#F47A3E]" />
+      <div className="h-0.5 bg-gradient-to-r from-[#F47A3E] via-orange-400 to-[#F47A3E]" />
 
-      <div className="container mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="container mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
         {/* Brand */}
         <div className="space-y-4">
@@ -45,7 +45,7 @@ export default function Footer() {
               <p className="text-[#F47A3E] text-xs italic mt-0.5">"Unlimited Shopping At One Stop!"</p>
             </div>
           </div>
-          <p className="text-gray-400 text-sm leading-relaxed">
+          <p className="text-gray-400 text-xs leading-relaxed">
             {t('footerDescMobile')}
           </p>
           <a href="https://wa.me/250788316316" target="_blank" rel="noopener noreferrer"
@@ -56,8 +56,8 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div>
-          <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">{t('quickLinks')}</h4>
-          <ul className="space-y-2.5">
+          <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-3 pb-1.5 border-b border-gray-800">{t('quickLinks')}</h4>
+          <ul className="space-y-1.5">
             {[
               { to: '/', label: t('home') },
               { to: '/shop', label: t('shop') },
@@ -67,7 +67,7 @@ export default function Footer() {
               { to: '/reviews', label: '⭐ Reviews' },
             ].map(l => (
               <li key={l.to}>
-                <Link to={l.to} className="text-gray-400 hover:text-[#F47A3E] text-sm font-medium transition-colors">{l.label}</Link>
+                <Link to={l.to} className="text-gray-400 hover:text-[#F47A3E] text-xs font-medium transition-colors">{l.label}</Link>
               </li>
             ))}
           </ul>
@@ -75,15 +75,15 @@ export default function Footer() {
 
         {/* Branches */}
         <div>
-          <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">{t('ourBranches')}</h4>
-          <ul className="space-y-2">
+          <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-3 pb-1.5 border-b border-gray-800">{t('ourBranches')}</h4>
+          <ul className="space-y-1.5">
             {branchesData.map(b => (
               <li key={b.id}>
                 <button
                   onClick={() => openDirections(b)}
-                  className="flex items-center gap-2 text-gray-400 hover:text-[#F47A3E] text-sm font-medium transition-colors group w-full text-left"
+                  className="flex items-center gap-1.5 text-gray-400 hover:text-[#F47A3E] text-xs font-medium transition-colors group w-full text-left"
                 >
-                  <Navigation className="w-3.5 h-3.5 text-[#F47A3E] shrink-0 group-hover:animate-pulse" />
+                  <Navigation className="w-3 h-3 text-[#F47A3E] shrink-0" />
                   {b.name}
                 </button>
               </li>
@@ -93,28 +93,28 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">{t('getInTouch')}</h4>
-          <ul className="space-y-3 mb-6">
-            <li className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
-                <Phone className="w-4 h-4 text-[#F47A3E]" />
+          <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-3 pb-1.5 border-b border-gray-800">{t('getInTouch')}</h4>
+          <ul className="space-y-2 mb-4">
+            <li className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
+                <Phone className="w-3 h-3 text-[#F47A3E]" />
               </div>
               <div>
-                <p className="text-white text-sm font-bold">+250 788 316 316</p>
-                <p className="text-gray-500 text-xs">{t('customerSupport')}</p>
+                <p className="text-white text-xs font-bold">+250 788 316 316</p>
+                <p className="text-gray-500 text-[10px]">{t('customerSupport')}</p>
               </div>
             </li>
-            <li className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
-                <Mail className="w-4 h-4 text-[#F47A3E]" />
+            <li className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
+                <Mail className="w-3 h-3 text-[#F47A3E]" />
               </div>
               <div>
-                <p className="text-white text-sm font-bold">orders@simba.rw</p>
-                <p className="text-gray-500 text-xs">{t('onlineShopSupport')}</p>
+                <p className="text-white text-xs font-bold">orders@simba.rw</p>
+                <p className="text-gray-500 text-[10px]">{t('onlineShopSupport')}</p>
               </div>
             </li>
           </ul>
-          <p className="text-gray-500 text-xs uppercase tracking-widest mb-3">{t('followSimba')}</p>
+          <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-2">{t('followSimba')}</p>
           <div className="flex gap-2">
             {[
               { href: 'https://www.facebook.com/simbasupermarket', icon: <Facebook className="w-4 h-4" />, color: 'hover:bg-[#1877F2]' },
@@ -133,7 +133,7 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-gray-800">
-        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
+        <div className="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] text-gray-500">
           <p>© {new Date().getFullYear()} {t('allRightsReserved')}</p>
           <div className="flex gap-4">
             <Link to="/privacy" className="hover:text-gray-300 transition-colors">{t('privacyPolicy')}</Link>
