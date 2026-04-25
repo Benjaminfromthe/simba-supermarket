@@ -54,16 +54,15 @@ export default function ShopPage() {
       {/* Page header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-black dark:text-white">{t('shop')}</h1>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-white">{t('shop')}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">{filteredProducts.length} {t('productsFoundText')}</p>
         </div>
-        {/* Sort dropdown */}
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-gray-400" />
+          <SlidersHorizontal className="w-4 h-4 text-gray-500 dark:text-gray-300" />
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
-            className="text-sm font-bold border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-white dark:bg-card dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
+            className="text-sm font-bold border border-gray-200 dark:border-[#334155] rounded-xl px-3 py-2 bg-white dark:bg-[#1E293B] text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
           >
             <option value="featured">{t('featured')}</option>
             <option value="price-low">{t('priceLowHigh')}</option>

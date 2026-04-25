@@ -57,7 +57,7 @@ export default function SignupPage() {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-base font-bold mb-1 text-gray-900 dark:text-gray-100">{t('emailAddress', 'Email Address')}</label>
+            <label className="block text-sm font-semibold mb-1.5 text-gray-800 dark:text-white">{t('emailAddress', 'Email Address')}</label>
             <input 
               type="email" 
               required 
@@ -68,7 +68,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-base font-bold mb-1 text-gray-900 dark:text-gray-100">{t('password', 'Password')}</label>
+            <label className="block text-sm font-semibold mb-1.5 text-gray-800 dark:text-white">{t('password', 'Password')}</label>
             <input 
               type="password" 
               required 
@@ -79,7 +79,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-base font-bold mb-1 text-gray-900 dark:text-gray-100">{t('confirmPassword', 'Confirm Password')}</label>
+            <label className="block text-sm font-semibold mb-1.5 text-gray-800 dark:text-white">{t('confirmPassword', 'Confirm Password')}</label>
             <input 
               type="password" 
               required 
@@ -122,5 +122,6 @@ export default function SignupPage() {
     </div>
   );
 }
+
 
 

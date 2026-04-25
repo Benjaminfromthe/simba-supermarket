@@ -187,7 +187,7 @@ export default function SmartSearchBar() {
 
   return (
     <div ref={ref} className="relative w-full max-w-2xl">
-      <form onSubmit={handleSubmit} className="flex rounded-full border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm bg-white dark:bg-gray-800">
+      <form onSubmit={handleSubmit} className="flex rounded-full border border-gray-200 dark:border-[#334155] overflow-hidden shadow-sm bg-white dark:bg-[#1E293B]">
         <div className="flex items-center pl-4 text-gray-400">
           {loading
             ? <Loader2 className="w-4 h-4 animate-spin text-[#F47A3E]" />
@@ -200,7 +200,7 @@ export default function SmartSearchBar() {
           onChange={e => handleInput(e.target.value)}
           onFocus={() => query && setOpen(true)}
           placeholder={t('search')}
-          className="flex-1 px-3 py-2.5 text-sm font-medium outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400"
+          className="flex-1 px-3 py-2.5 text-sm font-medium outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
         />
         {query && (
           <button type="button" onClick={() => { setQuery(''); setResult(null); setOpen(false); }} className="px-2 text-gray-400 hover:text-gray-600">

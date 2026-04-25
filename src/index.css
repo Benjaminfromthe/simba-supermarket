@@ -35,139 +35,178 @@
   .dark {
     --background: 222 47% 7%;
     --foreground: 0 0% 100%;
-    --card: 222 35% 13%;
+    --card: 215 28% 17%;
     --card-foreground: 0 0% 100%;
     --primary: 22 90% 58%;
     --primary-foreground: 0 0% 100%;
-    --muted: 222 35% 17%;
-    --muted-foreground: 0 0% 72%;
-    --border: 222 35% 20%;
-    --input: 222 35% 20%;
+    --muted: 215 28% 20%;
+    --muted-foreground: 0 0% 80%;
+    --border: 215 28% 22%;
+    --input: 215 28% 22%;
     --ring: 22 90% 58%;
   }
 }
 
 @layer base {
   * { box-sizing: border-box; }
-
   html, body {
     font-family: 'Poppins', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
 }
 
-/* ══════════════════════════════════════
-   DARK MODE — targeted fixes only
-   (avoid overriding div broadly)
-══════════════════════════════════════ */
-
-/* Text elements that need to be white in dark mode */
-.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-  color: #FFFFFF;
-}
-.dark p {
-  color: #E2E8F0;
-}
-.dark label {
-  color: #E2E8F0;
-}
-.dark span:not(.badge):not([class*="text-"]) {
-  color: #E2E8F0;
+/* ═══════════════════════════════════════════
+   DARK MODE — ZERO TOLERANCE WHITE TEXT
+   Uses :is() to target all text elements
+═══════════════════════════════════════════ */
+.dark :is(h1, h2, h3, h4, h5, h6) {
+  color: #FFFFFF !important;
 }
 
-/* Force white on specific utility classes in dark mode */
-.dark .text-gray-900 { color: #F1F5F9 !important; }
-.dark .text-gray-800 { color: #E2E8F0 !important; }
-.dark .text-gray-700 { color: #CBD5E1 !important; }
-.dark .text-gray-600 { color: #94A3B8 !important; }
-.dark .text-gray-500 { color: #94A3B8 !important; }
-.dark .text-gray-400 { color: #64748B !important; }
-.dark .text-foreground { color: #FFFFFF !important; }
+.dark :is(p, span, label, li, td, th, dt, dd, caption, figcaption, blockquote, small) {
+  color: #FFFFFF !important;
+}
 
-/* Dark backgrounds */
-.dark .bg-white { background-color: hsl(222 35% 13%) !important; }
-.dark .bg-gray-50 { background-color: hsl(222 47% 9%) !important; }
-.dark .bg-gray-100 { background-color: hsl(222 35% 15%) !important; }
-.dark .bg-gray-800 { background-color: hsl(222 35% 17%) !important; }
-.dark .bg-gray-900 { background-color: hsl(222 47% 7%) !important; }
-.dark .bg-gray-950 { background-color: hsl(222 47% 5%) !important; }
+/* Muted/secondary — still readable but slightly dimmed */
+.dark .text-muted-foreground,
+.dark .text-gray-400,
+.dark .text-gray-500 {
+  color: #94A3B8 !important;
+}
 
-/* Dark borders */
+/* Keep colored text colored */
+.dark .text-\[\#F47A3E\],
+.dark .text-orange-500,
+.dark .text-orange-400,
+.dark .text-green-500,
+.dark .text-green-400,
+.dark .text-red-500,
+.dark .text-red-400,
+.dark .text-yellow-300,
+.dark .text-yellow-400,
+.dark .text-blue-400,
+.dark .text-blue-500,
+.dark .text-primary {
+  color: inherit !important;
+}
+
+/* White text utilities in dark */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-foreground {
+  color: #FFFFFF !important;
+}
+
+.dark .text-gray-300,
+.dark .text-gray-200 {
+  color: #E2E8F0 !important;
+}
+
+/* ── DARK BACKGROUNDS ── */
+.dark .bg-white { background-color: #1E293B !important; }
+.dark .bg-gray-50 { background-color: #0F172A !important; }
+.dark .bg-gray-100 { background-color: #1E293B !important; }
+.dark .bg-gray-800 { background-color: #1E293B !important; }
+.dark .bg-gray-900 { background-color: #0F172A !important; }
+.dark .bg-gray-950 { background-color: #0A0F1E !important; }
+
+/* ── DARK BORDERS ── */
 .dark .border-gray-100,
 .dark .border-gray-200,
-.dark .border-gray-300 { border-color: hsl(222 35% 20%) !important; }
+.dark .border-gray-300 { border-color: #334155 !important; }
 
-/* Input fields in dark mode */
-.dark input, .dark textarea, .dark select {
-  background-color: hsl(222 35% 17%) !important;
+/* ── INPUTS IN DARK ── */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1E293B !important;
   color: #FFFFFF !important;
-  border-color: hsl(222 35% 22%) !important;
+  border-color: #334155 !important;
 }
 .dark input::placeholder,
 .dark textarea::placeholder { color: #64748B !important; }
 
-/* ══════════════════════════════════════
+/* ── SEARCH BAR IN DARK ── */
+.dark .search-bar-container {
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+}
+
+/* ═══════════════════════════════════════════
    PREMIUM CARD
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .card-premium {
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #E5E7EB;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .card-premium:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(244, 122, 62, 0.18);
+  box-shadow: 0 12px 32px rgba(244,122,62,0.18);
   border-color: #F47A3E;
 }
 .dark .card-premium {
-  background: hsl(222 35% 13%);
-  border-color: hsl(222 35% 20%);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
 .dark .card-premium:hover {
-  border-color: #F47A3E;
-  box-shadow: 0 12px 32px rgba(244, 122, 62, 0.2);
+  border-color: #F47A3E !important;
+  box-shadow: 0 12px 32px rgba(244,122,62,0.2);
+}
+/* Force all text inside dark cards to white */
+.dark .card-premium * {
+  color: #FFFFFF;
+}
+.dark .card-premium .text-\[\#F47A3E\],
+.dark .card-premium .text-orange-500,
+.dark .card-premium .text-green-500,
+.dark .card-premium .text-red-500,
+.dark .card-premium .text-gray-400,
+.dark .card-premium .text-gray-500 {
+  color: inherit !important;
 }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
    GLASSMORPHISM NAVBAR
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .navbar-glass {
-  background: rgba(255, 255, 255, 0.93);
+  background: rgba(255,255,255,0.93);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  border-bottom: 1px solid rgba(229,231,235,0.8);
 }
 .dark .navbar-glass {
-  background: rgba(10, 15, 30, 0.93);
-  border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+  background: rgba(10,15,30,0.95);
+  border-bottom: 1px solid #1E293B;
 }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
    ICON CIRCLE
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .icon-circle {
   width: 48px;
   height: 48px;
   min-width: 48px;
   border-radius: 50%;
-  background: rgba(244, 122, 62, 0.1);
+  background: rgba(244,122,62,0.1);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .icon-circle svg { color: #F47A3E !important; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
    BUTTONS
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .btn-primary {
   background: #F47A3E !important;
   color: #ffffff !important;
@@ -181,21 +220,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
 }
 .btn-primary:hover {
   background: #D46A2E !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(244, 122, 62, 0.35);
+  box-shadow: 0 6px 20px rgba(244,122,62,0.35);
 }
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* ══════════════════════════════════════
-   INPUT FIELD
-══════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   INPUT FIELD CLASS
+═══════════════════════════════════════════ */
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -210,18 +246,18 @@
 }
 .input-field:focus {
   border-color: #F47A3E;
-  box-shadow: 0 0 0 3px rgba(244, 122, 62, 0.12);
+  box-shadow: 0 0 0 3px rgba(244,122,62,0.12);
 }
 .dark .input-field {
-  background: hsl(222 35% 17%) !important;
-  border-color: hsl(222 35% 22%) !important;
+  background: #1E293B !important;
+  border-color: #334155 !important;
   color: #FFFFFF !important;
 }
 .dark .input-field::placeholder { color: #64748B; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
    CATEGORY PILLS
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .pill {
   padding: 0.375rem 1rem;
   border-radius: 999px;
@@ -236,21 +272,25 @@
   font-family: 'Poppins', sans-serif;
 }
 .pill:hover { border-color: #F47A3E; color: #F47A3E; }
-.pill.active { background: #F47A3E; border-color: #F47A3E; color: #ffffff; }
-.dark .pill { background: hsl(222 35% 15%); border-color: hsl(222 35% 22%); color: #FFFFFF; }
-.dark .pill:hover { border-color: #F47A3E; color: #F47A3E; }
-.dark .pill.active { background: #F47A3E; color: #ffffff; }
+.pill.active { background: #F47A3E; border-color: #F47A3E; color: #ffffff !important; }
+.dark .pill {
+  background: #1E293B;
+  border-color: #334155;
+  color: #FFFFFF !important;
+}
+.dark .pill:hover { border-color: #F47A3E; color: #F47A3E !important; }
+.dark .pill.active { background: #F47A3E; color: #ffffff !important; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
    SCROLLBAR
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════
    UTILITIES
-══════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .hyphens-auto { hyphens: auto; }
 .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
