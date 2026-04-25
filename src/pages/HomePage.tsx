@@ -1,21 +1,32 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import productsData from '../data/simba_products.json';
 import ProductCard from '../components/ProductCard';
-import { ChevronRight, Truck, ShieldCheck, Search as SearchIcon, X, Filter, ShoppingCart, MessageCircle, Phone } from 'lucide-react';
-import { getLocalizedProductCategory, getLocalizedProductName } from '../lib/localize';
+import { ChevronRight, Search as SearchIcon, X, Filter } from 'lucide-react';
+import { getLocalizedProductCategory, getLocalizedProductName, getLocalizedCategoryName } from '../lib/localize';
 import { Product } from '../store/useCartStore';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
-
 const CATEGORIES = Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean).slice(0, 10) as string[];
 
-const getLocalizedCat = (catName: string) => {
-  const p = productsList.find((p: any) => p.category === catName);
-  return p ? getLocalizedProductCategory(p) : catName;
-}
+const CATEGORY_IMAGES: Record<string, string> = {
+  'Cosmetics & Personal Care': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80',
+  'Sports & Wellness': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80',
+  'Baby Products': 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&q=80',
+  'Kitchenware & Electronics': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
+  'Food Products': 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80',
+  'Alcoholic Drinks': 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80',
+  'General': 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80',
+  'Cleaning & Sanitary': 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80',
+  'Kitchen Storage': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
+  'Pet Care': 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80',
+};
+
+const BENTO_SIZES = ['large', 'tall', '', 'wide', '', 'tall', '', '', 'wide', ''];
+
+const getLocalizedCat = (catName: string) => getLocalizedCategoryName(catName);
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -53,7 +64,12 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-12 text-foreground min-h-screen">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col gap-10 pb-16 text-foreground min-h-screen"
+    >
       
       {/* Show regular HomePage content only if NOT filtered */}
       {!isFiltered && (
@@ -114,7 +130,33 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Categories Grid removed — use Shop page */}
+          {/* BENTO GRID CATEGORIES */}
+          <section className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-serif text-2xl font-black text-gray-900 dark:text-white">Shop by Category</h2>
+              <Link to="/shop" className="text-[#F47A3E] text-sm font-semibold hover:underline flex items-center gap-1">
+                {t('viewAll')} <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="bento-grid">
+              {CATEGORIES.map((cat, i) => (
+                <motion.div
+                  key={cat}
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                  className={`bento-item ${BENTO_SIZES[i] || ''}`}
+                  onClick={() => window.location.href = `/shop?category=${encodeURIComponent(cat)}`}
+                >
+                  <img src={CATEGORY_IMAGES[cat] || 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80'} alt={cat} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-white font-bold text-sm leading-tight hyphens-auto">{getLocalizedCat(cat)}</p>
+                    <p className="text-orange-300 text-xs mt-0.5">{productsList.filter((p: any) => p.category === cat).length} items</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
         </>
       )}
 
@@ -166,7 +208,7 @@ export default function HomePage() {
         )}
       </section>
       
-    </div>
+    </motion.div>
   );
 }
 

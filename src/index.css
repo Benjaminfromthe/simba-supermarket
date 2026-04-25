@@ -1,12 +1,12 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
-/* Tell Tailwind v4 to use class-based dark mode */
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-brand: #F47A3E;
-  --font-sans: "Poppins", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -22,30 +22,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 97%;
-    --foreground: 0 0% 8%;
+    --background: 36 33% 97%;
+    --foreground: 20 14% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 8%;
+    --card-foreground: 20 14% 10%;
     --primary: 22 90% 58%;
     --primary-foreground: 0 0% 100%;
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 40%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
+    --muted: 36 20% 93%;
+    --muted-foreground: 20 10% 40%;
+    --border: 36 20% 88%;
+    --input: 36 20% 88%;
     --ring: 22 90% 58%;
+    /* Safari Earth Tones */
+    --cream: #FAF7F2;
+    --earth: #8B5E3C;
+    --sage: #6B7C5C;
+    --burnt-orange: #F47A3E;
   }
 
   .dark {
     --background: 222 47% 7%;
     --foreground: 0 0% 100%;
-    --card: 215 28% 17%;
+    --card: 215 28% 13%;
     --card-foreground: 0 0% 100%;
     --primary: 22 90% 58%;
     --primary-foreground: 0 0% 100%;
-    --muted: 215 28% 20%;
-    --muted-foreground: 0 0% 80%;
-    --border: 215 28% 22%;
-    --input: 215 28% 22%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 0 0% 75%;
+    --border: 215 28% 20%;
+    --input: 215 28% 20%;
     --ring: 22 90% 58%;
   }
 }
@@ -53,225 +58,293 @@
 @layer base {
   * { box-sizing: border-box; }
   html, body {
-    font-family: 'Poppins', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+  /* Fluid serif headings */
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; }
+  h2 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 800; }
+  h3 { font-family: 'Inter', sans-serif; font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 700; }
 }
 
-/* ═══════════════════════════════════════════════════
-   NUCLEAR DARK MODE FIX
-   Targets the html element with .dark class directly
-   This runs AFTER Tailwind so it always wins
-═══════════════════════════════════════════════════ */
-html.dark p,
-html.dark h1,
-html.dark h2,
-html.dark h3,
-html.dark h4,
-html.dark h5,
-html.dark h6,
-html.dark span,
-html.dark label,
-html.dark li,
-html.dark td,
-html.dark th,
-html.dark dt,
-html.dark dd,
-html.dark small,
-html.dark strong,
-html.dark em,
-html.dark blockquote {
+/* ═══════════════════════════════════════════
+   NUCLEAR DARK MODE — html.dark selector
+═══════════════════════════════════════════ */
+html.dark p, html.dark h1, html.dark h2, html.dark h3,
+html.dark h4, html.dark h5, html.dark h6, html.dark span,
+html.dark label, html.dark li, html.dark td, html.dark th,
+html.dark small, html.dark strong, html.dark em, html.dark dt, html.dark dd {
   color: #FFFFFF !important;
 }
-
-/* Keep orange/green/red/blue colored elements their color */
-html.dark [class*="text-orange"],
-html.dark [class*="text-green"],
-html.dark [class*="text-red"],
-html.dark [class*="text-yellow"],
-html.dark [class*="text-blue"],
-html.dark [class*="text-primary"],
-html.dark [class*="text-\[#F47A3E\]"],
-html.dark [class*="text-\[#25D366\]"] {
-  color: inherit !important;
-}
-
-/* Muted text — visible but slightly dimmed */
-html.dark [class*="text-gray-400"],
-html.dark [class*="text-gray-500"],
-html.dark .text-muted-foreground {
-  color: #94A3B8 !important;
-}
-
-/* ── DARK BACKGROUNDS ── */
+html.dark [class*="text-orange"], html.dark [class*="text-green"],
+html.dark [class*="text-red"], html.dark [class*="text-yellow"],
+html.dark [class*="text-blue"], html.dark [class*="text-primary"] { color: inherit !important; }
+html.dark [class*="text-gray-400"], html.dark [class*="text-gray-500"],
+html.dark .text-muted-foreground { color: #94A3B8 !important; }
+html.dark .text-gray-900, html.dark .text-gray-800,
+html.dark .text-gray-700, html.dark .text-gray-600,
+html.dark .text-foreground { color: #FFFFFF !important; }
+html.dark .text-gray-300, html.dark .text-gray-200 { color: #E2E8F0 !important; }
 html.dark .bg-white { background-color: #1E293B !important; }
 html.dark .bg-gray-50 { background-color: #0F172A !important; }
 html.dark .bg-gray-100 { background-color: #1E293B !important; }
 html.dark .bg-gray-800 { background-color: #1E293B !important; }
 html.dark .bg-gray-900 { background-color: #0F172A !important; }
 html.dark .bg-gray-950 { background-color: #0A0F1E !important; }
-
-/* ── DARK BORDERS ── */
-html.dark .border-gray-100,
-html.dark .border-gray-200,
+html.dark .border-gray-100, html.dark .border-gray-200,
 html.dark .border-gray-300 { border-color: #334155 !important; }
-
-/* ── INPUTS IN DARK ── */
-html.dark input,
-html.dark textarea,
-html.dark select {
+html.dark input, html.dark textarea, html.dark select {
   background-color: #1E293B !important;
   color: #FFFFFF !important;
   border-color: #4B5563 !important;
 }
-html.dark input::placeholder,
-html.dark textarea::placeholder { color: #64748B !important; }
-
-/* ── LINKS IN DARK ── */
+html.dark input::placeholder, html.dark textarea::placeholder { color: #64748B !important; }
 html.dark a:not([class*="text-"]) { color: #FFFFFF !important; }
-html.dark a:hover { color: #F47A3E !important; }
 
-/* ═══════════════════════════════════════════════════
-   PREMIUM CARD
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   GLASSMORPHIC CARDS
+═══════════════════════════════════════════ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(244, 122, 62, 0.15);
+}
+html.dark .glass-card {
+  background: rgba(30, 41, 59, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+html.dark .glass-card:hover {
+  box-shadow: 0 20px 48px rgba(244, 122, 62, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   PREMIUM CARD (non-glass)
+═══════════════════════════════════════════ */
 .card-premium {
   background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  border-radius: 20px;
+  border: 1px solid #F0EDE8;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .card-premium:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(244,122,62,0.18);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(244, 122, 62, 0.15);
   border-color: #F47A3E;
 }
 html.dark .card-premium {
   background: #1E293B !important;
   border-color: #334155 !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 html.dark .card-premium:hover {
   border-color: #F47A3E !important;
-  box-shadow: 0 12px 32px rgba(244,122,62,0.2);
+  box-shadow: 0 16px 40px rgba(244, 122, 62, 0.2);
 }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    GLASSMORPHISM NAVBAR
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .navbar-glass {
-  background: rgba(255,255,255,0.93);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(229,231,235,0.8);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.6);
 }
 html.dark .navbar-glass {
-  background: rgba(10,15,30,0.95) !important;
-  border-bottom: 1px solid #1E293B !important;
+  background: rgba(10, 15, 30, 0.92) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
+   BENTO GRID
+═══════════════════════════════════════════ */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 160px;
+  gap: 16px;
+}
+.bento-item {
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.bento-item:hover { transform: scale(1.02); box-shadow: 0 20px 48px rgba(0,0,0,0.15); }
+.bento-item.large { grid-column: span 2; grid-row: span 2; }
+.bento-item.wide { grid-column: span 2; }
+.bento-item.tall { grid-row: span 2; }
+@media (max-width: 768px) {
+  .bento-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; }
+  .bento-item.large { grid-column: span 2; }
+}
+@media (max-width: 480px) {
+  .bento-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 100px; }
+}
+
+/* ═══════════════════════════════════════════
+   MAGNETIC BUTTON
+═══════════════════════════════════════════ */
+.btn-magnetic {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-magnetic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.2) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-magnetic:hover::after { opacity: 1; }
+
+/* ═══════════════════════════════════════════
+   SKELETON LOADER
+═══════════════════════════════════════════ */
+.skeleton {
+  background: linear-gradient(90deg, #f0ede8 25%, #e8e4de 50%, #f0ede8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+html.dark .skeleton {
+  background: linear-gradient(90deg, #1E293B 25%, #2D3F55 50%, #1E293B 75%);
+  background-size: 200% 100%;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCT CARD QUICK ADD
+═══════════════════════════════════════════ */
+.product-card { position: relative; overflow: hidden; }
+.product-card .quick-add {
+  position: absolute;
+  bottom: -48px;
+  left: 0; right: 0;
+  transition: bottom 0.3s ease;
+  z-index: 10;
+}
+.product-card:hover .quick-add { bottom: 0; }
+.product-card .product-img {
+  transition: transform 0.4s ease;
+}
+.product-card:hover .product-img { transform: scale(1.08); }
+
+/* ═══════════════════════════════════════════
+   CART POP ANIMATION
+═══════════════════════════════════════════ */
+@keyframes cartPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.4) rotate(-10deg); }
+  70% { transform: scale(0.9) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.cart-pop { animation: cartPop 0.4s ease forwards; }
+
+/* ═══════════════════════════════════════════
+   PAGE FADE IN
+═══════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: fadeInUp 0.4s ease forwards; }
+
+/* ═══════════════════════════════════════════
    ICON CIRCLE
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .icon-circle {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
+  width: 48px; height: 48px; min-width: 48px;
   border-radius: 50%;
-  background: rgba(244,122,62,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(244, 122, 62, 0.1);
+  display: flex; align-items: center; justify-content: center;
 }
 .icon-circle svg { color: #F47A3E !important; }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    BUTTONS
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .btn-primary {
   background: #F47A3E !important;
   color: #ffffff !important;
   font-weight: 700;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 0.75rem 1.5rem;
   border: none;
   cursor: pointer;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-  font-family: 'Poppins', sans-serif;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
 }
 .btn-primary:hover {
   background: #D46A2E !important;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(244,122,62,0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(244, 122, 62, 0.4);
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    INPUT FIELD
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .input-field {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  border: 1px solid #E5E7EB;
-  background: #F9FAFB;
-  color: #1A1A1A;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.875rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
+  width: 100%; padding: 0.75rem 1rem;
+  border-radius: 14px; border: 1px solid #E8E4DE;
+  background: #FAF7F2; color: #1A1A1A;
+  font-family: 'Inter', sans-serif; font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s; outline: none;
 }
-.input-field:focus {
-  border-color: #F47A3E;
-  box-shadow: 0 0 0 3px rgba(244,122,62,0.12);
-}
-html.dark .input-field {
-  background: #1E293B !important;
-  border-color: #4B5563 !important;
-  color: #FFFFFF !important;
-}
+.input-field:focus { border-color: #F47A3E; box-shadow: 0 0 0 3px rgba(244,122,62,0.12); }
+html.dark .input-field { background: #1E293B !important; border-color: #4B5563 !important; color: #FFFFFF !important; }
 html.dark .input-field::placeholder { color: #64748B; }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    CATEGORY PILLS
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 .pill {
-  padding: 0.375rem 1rem;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  border: 1px solid #E5E7EB;
-  background: #ffffff;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  font-family: 'Poppins', sans-serif;
+  padding: 0.4rem 1.1rem; border-radius: 999px;
+  font-size: 0.8125rem; font-weight: 600;
+  border: 1px solid #E8E4DE; background: #FAF7F2; color: #5C4A3A;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  font-family: 'Inter', sans-serif;
 }
-.pill:hover { border-color: #F47A3E; color: #F47A3E; }
+.pill:hover { border-color: #F47A3E; color: #F47A3E; background: rgba(244,122,62,0.05); }
 .pill.active { background: #F47A3E !important; border-color: #F47A3E !important; color: #ffffff !important; }
 html.dark .pill { background: #1E293B; border-color: #4B5563; color: #FFFFFF !important; }
 html.dark .pill:hover { border-color: #F47A3E; color: #F47A3E !important; }
 html.dark .pill.active { background: #F47A3E !important; color: #ffffff !important; }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    SCROLLBAR
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    UTILITIES
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
+.font-serif { font-family: 'Playfair Display', Georgia, serif !important; }
 .hyphens-auto { hyphens: auto; }
 .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
