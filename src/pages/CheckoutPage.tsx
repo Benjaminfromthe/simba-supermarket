@@ -35,8 +35,14 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [depositAmount, setDepositAmount] = useState(500);
-  // Branch ratings: { branchId -> { avg, count } }
   const [branchRatings, setBranchRatings] = useState<Record<string, { avg: number; count: number }>>({});
+
+  // Scroll to top of page whenever step changes so user sees the new step title
+  useEffect(() => {
+    const header = document.querySelector('header');
+    const headerH = header ? header.getBoundingClientRect().height : 80;
+    window.scrollTo({ top: headerH, behavior: 'smooth' });
+  }, [step]);
 
   useEffect(() => {
     if (!currentUser) navigate('/login', { state: { from: '/checkout' } });
