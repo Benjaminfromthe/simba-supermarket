@@ -27,6 +27,7 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
   const addItem = useCartStore(s => s.addItem);
   const [quantity, setQuantity] = useState(1);
   const [cartAnimating, setCartAnimating] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const [, forceUpdate] = useState(0);
 
   // Re-render when Groq translations arrive
@@ -60,12 +61,19 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
     >
       {/* Image area */}
       <Link to={`/product/${product.id}`} className={`block relative overflow-hidden rounded-t-[20px] bg-white dark:bg-gray-800 ${compact ? 'aspect-[4/3]' : 'aspect-square'}`}>
-        <img
-          src={product.image}
-          alt={localizedName}
-          className="product-img w-full h-full object-contain p-4"
-          onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300?text=Simba'; }}
-        />
+        {imgError || !product.image ? (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-orange-50 dark:bg-gray-800 gap-2">
+            <span className="text-4xl">🛒</span>
+            <span className="text-[10px] font-bold text-[#F47A3E] uppercase tracking-wide">Simba</span>
+          </div>
+        ) : (
+          <img
+            src={product.image}
+            alt={localizedName}
+            className="product-img w-full h-full object-contain p-4"
+            onError={() => setImgError(true)}
+          />
+        )}
         {/* Sale badge */}
         <span className="absolute top-3 left-3 bg-[#F47A3E] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide z-10">
           {t('sale')}
