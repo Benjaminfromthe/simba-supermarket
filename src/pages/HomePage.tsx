@@ -92,7 +92,7 @@ export default function HomePage() {
                   {[
                     { icon: '⚡', label: t('fastPickup', '45-min Pick-up') },
                     { icon: '📱', label: t('momoPayment', 'MoMo Payment') },
-                    { icon: '🛒', label: `789+ ${t('productsCount', 'Products')}` },
+                    { icon: '🛒', label: `789+ ${t('products', 'Products')}` },
                     { icon: '📍', label: '9 Branches' },
                   ].map(v => (
                     <span key={v.label} className="flex items-center gap-1 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs font-semibold">
