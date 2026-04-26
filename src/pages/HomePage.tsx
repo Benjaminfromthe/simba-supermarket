@@ -67,8 +67,8 @@ export default function HomePage() {
   // Brief skeleton on first mount so the grid doesn't pop in abruptly
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setReady(true), 300);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setReady(true), 150);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -86,7 +86,7 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
-              className="relative rounded-2xl overflow-hidden h-[320px] md:h-[420px] flex items-center"
+              className="relative rounded-2xl overflow-hidden h-[280px] md:h-[420px] flex items-center"
             >
               <img
                 src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=2000"
@@ -104,7 +104,7 @@ export default function HomePage() {
                 <h1 className="text-xl md:text-4xl font-black text-white leading-tight mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
                   {t('qualityFirst')}. <span className="text-[#FF8A00]">{t('deliveredFast')}.</span>
                 </h1>
-                <p className="text-gray-300 text-xs md:text-sm mb-3 max-w-sm hidden md:block">{t('heroDescription')}</p>
+                <p className="text-gray-300 text-xs md:text-sm mb-3 max-w-sm block">{t('heroDescription')}</p>
                 {/* Value prop badges — flex-wrap so they never overflow */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {[
