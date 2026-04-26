@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Package, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface OrderItem {
   id: string | number;
@@ -17,147 +18,170 @@ interface Order {
   id: string;
   userId: string;
   branchId: string;
+  branchName?: string;
+  pickupTime?: string;
   totalAmount: number;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  depositAmount?: number;
+  status: string;
   items: OrderItem[];
   createdAt: Timestamp;
+  updatedAt?: Timestamp;
 }
+
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
+  pending:   { label: 'Pending',          color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-900/20',  icon: <Clock className="w-4 h-4" /> },
+  accepted:  { label: 'Accepted',         color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20',     icon: <CheckCircle2 className="w-4 h-4" /> },
+  preparing: { label: 'Being Prepared',   color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20', icon: <Loader2 className="w-4 h-4 animate-spin" /> },
+  ready:     { label: '🎉 Ready for Pick-up!', color: 'text-green-700', bg: 'bg-green-50 dark:bg-green-900/20', icon: <Bell className="w-4 h-4" /> },
+  completed: { label: 'Completed',        color: 'text-gray-600',   bg: 'bg-gray-50 dark:bg-gray-800',        icon: <CheckCircle2 className="w-4 h-4" /> },
+  cancelled: { label: 'Cancelled',        color: 'text-red-600',    bg: 'bg-red-50 dark:bg-red-900/20',       icon: <XCircle className="w-4 h-4" /> },
+};
 
 export default function OrdersPage() {
   const { currentUser } = useAuth();
   const { t } = useTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [readyOrders, setReadyOrders] = useState<Order[]>([]);
 
+  // Real-time listener — updates instantly when branch marks order ready
   useEffect(() => {
-    async function fetchOrders() {
-      if (!currentUser) return;
-      try {
-        const q = query(
-          collection(db, 'orders'),
-          where('userId', '==', currentUser.uid),
-          orderBy('createdAt', 'desc')
-        );
-        const querySnapshot = await getDocs(q);
-        const fetchedOrders: Order[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedOrders.push({ id: doc.id, ...doc.data() } as Order);
-        });
-        setOrders(fetchedOrders);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchOrders();
+    if (!currentUser) return;
+    const q = query(
+      collection(db, 'orders'),
+      where('userId', '==', currentUser.uid),
+      orderBy('createdAt', 'desc')
+    );
+    const unsub = onSnapshot(q, (snap) => {
+      const fetched = snap.docs.map(d => ({ id: d.id, ...d.data() } as Order));
+      setOrders(fetched);
+      setReadyOrders(fetched.filter(o => o.status === 'ready'));
+      setLoading(false);
+    }, (err) => {
+      console.error(err);
+      setLoading(false);
+    });
+    return unsub;
   }, [currentUser]);
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-32 flex justify-center items-center">
+      <div className="container mx-auto px-4 py-32 flex justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-[#F47A3E]" />
       </div>
     );
   }
 
-  const getStatusDisplay = (status: Order['status']) => {
-    switch (status) {
-      case 'pending':
-        return <div className="flex items-center gap-1.5 text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-1 rounded-full text-sm font-bold"><Clock className="w-4 h-4" /> {t('statusPending', 'Pending')}</div>;
-      case 'processing':
-        return <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full text-sm font-bold"><Loader2 className="w-4 h-4 animate-spin" /> {t('statusProcessing', 'Processing')}</div>;
-      case 'completed':
-        return <div className="flex items-center gap-1.5 text-green-600 bg-green-50 dark:bg-green-900/20 px-3 py-1 rounded-full text-sm font-bold"><CheckCircle2 className="w-4 h-4" /> {t('statusCompleted', 'Completed')}</div>;
-      case 'cancelled':
-        return <div className="flex items-center gap-1.5 text-red-600 bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-full text-sm font-bold"><XCircle className="w-4 h-4" /> {t('statusCancelled', 'Cancelled')}</div>;
-      default:
-        return null;
-    }
+  const getStatus = (status: string) => {
+    const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
+    return (
+      <div className={`flex items-center gap-1.5 ${cfg.color} ${cfg.bg} px-3 py-1 rounded-full text-sm font-bold`}>
+        {cfg.icon} {cfg.label}
+      </div>
+    );
   };
 
   return (
-    <div className=" min-h-screen py-10 md:py-16 text-foreground">
+    <div className="min-h-screen py-10 text-foreground">
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="flex items-center gap-3 mb-8">
-          <Package className="w-8 h-8 text-[#F47A3E]" />
-          <h1 className="text-3xl font-bold font-serif">{t('orderHistory', 'Order History')}</h1>
+
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <Package className="w-7 h-7 text-[#F47A3E]" />
+          <h1 className="text-2xl font-bold dark:text-white">{t('orderHistory')}</h1>
         </div>
 
+        {/* READY FOR PICK-UP BANNER */}
+        {readyOrders.length > 0 && (
+          <div className="mb-6 space-y-3">
+            {readyOrders.map(order => (
+              <div key={order.id} className="bg-green-500 text-white rounded-2xl p-4 flex items-center gap-4 shadow-lg animate-pulse">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                  <Bell className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-black text-lg">🎉 Your order is ready for pick-up!</p>
+                  <p className="text-green-100 text-sm">
+                    Head to <strong>{order.branchName || order.branchId}</strong>
+                    {order.pickupTime && ` — your slot: ${order.pickupTime}`}
+                  </p>
+                  <p className="text-green-100 text-xs mt-0.5">Order #{order.id.slice(0, 8).toUpperCase()}</p>
+                </div>
+                <MapPin className="w-6 h-6 shrink-0 opacity-70" />
+              </div>
+            ))}
+          </div>
+        )}
+
         {orders.length === 0 ? (
-          <div className="text-center py-20 bg-white dark:bg-card border dark:border-border rounded-2xl shadow-sm">
-            <Package className="w-16 h-16 mx-auto text-muted-foreground opacity-20 mb-4" />
-            <h2 className="text-xl font-bold mb-2">{t('noOrdersFound', 'No orders found')}</h2>
-            <p className="text-muted-foreground mb-6">{t('noOrdersText', "You haven't placed any orders yet.")}</p>
-            <a href="/shop" className="bg-[#F47A3E] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#D46A2E] transition-colors inline-block">
-              {t('startShopping', 'Start Shopping')}
-            </a>
+          <div className="text-center py-20 bg-white dark:bg-[#1E293B] border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm">
+            <Package className="w-14 h-14 mx-auto text-gray-300 dark:text-gray-600 mb-4" />
+            <h2 className="text-xl font-bold mb-2 dark:text-white">{t('noOrdersFound')}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">{t('noOrdersText')}</p>
+            <Link to="/shop" className="bg-[#F47A3E] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#D46A2E] transition-colors inline-block">
+              {t('startShopping')}
+            </Link>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b dark:border-border pb-4 mb-4">
+              <div key={order.id} className={`bg-white dark:bg-[#1E293B] border rounded-2xl p-5 shadow-sm transition-all ${order.status === 'ready' ? 'border-green-400 dark:border-green-600 shadow-green-100 dark:shadow-green-900/20' : 'border-gray-100 dark:border-gray-700'}`}>
+                {/* Order header */}
+                <div className="flex flex-wrap items-start justify-between gap-3 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
                   <div>
-                    <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block mb-1">
-                      {t('orderId', 'Order ID')}
-                    </span>
-                    <span className="font-mono text-sm">{order.id}</span>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{t('orderId')}</p>
+                    <p className="font-mono text-sm font-bold dark:text-white">#{order.id.slice(0, 8).toUpperCase()}</p>
                   </div>
+                  {order.branchName && (
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Branch</p>
+                      <p className="text-sm font-bold dark:text-white flex items-center gap-1">
+                        <Store className="w-3.5 h-3.5 text-[#F47A3E]" /> {order.branchName}
+                      </p>
+                    </div>
+                  )}
+                  {order.pickupTime && (
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Pick-up Time</p>
+                      <p className="text-sm font-bold dark:text-white flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-[#F47A3E]" /> {order.pickupTime}
+                      </p>
+                    </div>
+                  )}
                   <div>
-                    <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block mb-1">
-                      {t('date', 'Date')}
-                    </span>
-                    <span className="text-sm font-medium">
-                      {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }) : 'N/A'}
-                    </span>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{t('status')}</p>
+                    {getStatus(order.status)}
                   </div>
-                  <div>
-                    <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block mb-1">
-                      {t('status', 'Status')}
-                    </span>
-                    {getStatusDisplay(order.status)}
-                  </div>
-                  <div className="md:text-right">
-                    <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block mb-1">
-                      {t('total', 'Total')}
-                    </span>
-                    <span className="text-lg font-bold text-primary">
-                      {t('priceRwf', { price: order.totalAmount.toLocaleString() })}
-                    </span>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{t('total')}</p>
+                    <p className="text-lg font-black text-[#F47A3E]">{order.totalAmount?.toLocaleString()} RWF</p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">{t('items', 'Items')}</h3>
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-4 bg-muted/30 p-3 rounded-xl border dark:border-border/50">
+                {/* Items */}
+                <div className="space-y-2">
+                  {order.items?.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 p-2.5 rounded-xl">
                       {item.image ? (
-                        <img src={item.image} alt={item.name} className="w-12 h-12 rounded object-cover border dark:border-border" />
+                        <img src={item.image} alt={item.name} className="w-10 h-10 rounded-lg object-contain bg-white dark:bg-gray-700 shrink-0" />
                       ) : (
-                        <div className="w-12 h-12 rounded bg-muted flex items-center justify-center">
-                          <Package className="w-5 h-5 text-muted-foreground" />
+                        <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                          <Package className="w-4 h-4 text-gray-400" />
                         </div>
                       )}
-                      <div className="flex-1">
-                        <p className="font-medium text-sm line-clamp-1">{item.name}</p>
-                        <p className="text-sm text-muted-foreground mt-0.5">
-                          {t('qty', 'Qty')}: <span className="font-bold">{item.quantity}</span> &times; {t('priceRwf', { price: item.price.toLocaleString() })}
-                        </p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold dark:text-white line-clamp-1">{item.name}</p>
+                        <p className="text-xs text-gray-400">×{item.quantity} — {item.price?.toLocaleString()} RWF each</p>
                       </div>
-                      <div className="font-bold text-sm">
-                        {t('priceRwf', { price: (item.price * item.quantity).toLocaleString() })}
-                      </div>
+                      <p className="text-sm font-bold text-[#F47A3E] shrink-0">{(item.price * item.quantity)?.toLocaleString()} RWF</p>
                     </div>
                   ))}
                 </div>
+
+                {/* Date */}
+                <p className="text-xs text-gray-400 mt-3">
+                  {order.createdAt?.toDate?.()?.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) || ''}
+                </p>
               </div>
             ))}
           </div>
@@ -166,4 +190,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-

@@ -83,6 +83,16 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     localStorage.setItem('simba-theme', theme);
   }, [theme]);
 
+  // Trigger product name translation when language changes to RW or FR
+  const translatedLangRef = useRef('en');
+  useEffect(() => {
+    const lang = i18n.language;
+    if (lang !== 'en' && lang !== translatedLangRef.current) {
+      translatedLangRef.current = lang;
+      runTranslation(lang);
+    }
+  }, [i18n.language]);
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
