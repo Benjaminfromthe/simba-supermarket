@@ -2,11 +2,61 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        workbox: {
+          // Cache all JS/CSS/HTML chunks — app shell loads instantly on repeat visits
+          globPatterns: ['**/*.{js,css,html,ico,svg}'],
+          // Cache product images from Cloudinary (up to 200, 30 days)
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'cloudinary-images',
+                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+            {
+              urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'unsplash-images',
+                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: { cacheName: 'google-fonts' },
+            },
+          ],
+        },
+        manifest: {
+          name: 'Simba Supermarket',
+          short_name: 'Simba',
+          description: "Rwanda's #1 Supermarket — Order online, pick up fast",
+          theme_color: '#F47A3E',
+          background_color: '#FAFAFA',
+          display: 'standalone',
+          start_url: '/',
+          icons: [
+            { src: '/simba-logo.jpg', sizes: '192x192', type: 'image/jpeg' },
+            { src: '/simba-logo.jpg', sizes: '512x512', type: 'image/jpeg' },
+          ],
+        },
+      }),
+    ],
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
@@ -23,16 +73,11 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            // React core
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            // Firebase (largest dependency)
+            'vendor-react':    ['react', 'react-dom', 'react-router-dom'],
             'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-            // Animation + UI libs
-            'vendor-ui': ['framer-motion', 'motion', 'lucide-react'],
-            // i18n
-            'vendor-i18n': ['i18next', 'react-i18next'],
-            // State + toast
-            'vendor-misc': ['zustand', 'react-hot-toast'],
+            'vendor-ui':       ['framer-motion', 'motion', 'lucide-react'],
+            'vendor-i18n':     ['i18next', 'react-i18next'],
+            'vendor-misc':     ['zustand', 'react-hot-toast'],
           },
         },
       },

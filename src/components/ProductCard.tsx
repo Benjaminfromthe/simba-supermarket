@@ -39,6 +39,7 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
 
   const localizedName = getCachedProductName((product.name || '').trim(), i18n.language);
   const oldPrice = Math.floor(product.price * 1.15);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const handleAddToCart = (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -70,7 +71,9 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
           <img
             src={product.image}
             alt={localizedName}
-            className="product-img w-full h-full object-contain p-4"
+            loading="lazy"
+            className={`product-img w-full h-full object-contain p-4 transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
           />
         )}

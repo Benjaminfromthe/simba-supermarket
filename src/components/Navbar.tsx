@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import SmartSearchBar from './SmartSearchBar';
 import simbaLogo from '../assets/simba-logo-v2.jpg';
+import PreloadLink from './PreloadLink';
 
 const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
 const CACHE_KEY = 'simba-name-cache-v3';
@@ -125,7 +126,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
 
           <nav className="hidden lg:flex items-center gap-3 text-white text-xs font-semibold flex-shrink-0">
             {navLinks.map(link => (
-              <Link
+              <PreloadLink
                 key={link.to + link.label}
                 to={link.to}
                 className={`transition-colors whitespace-nowrap ${
@@ -137,7 +138,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                 }`}
               >
                 {link.label}
-              </Link>
+              </PreloadLink>
             ))}
           </nav>
 
