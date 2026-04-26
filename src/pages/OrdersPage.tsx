@@ -29,13 +29,13 @@ interface Order {
   updatedAt?: Timestamp;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
-  pending:   { label: 'Pending',          color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-900/20',  icon: <Clock className="w-4 h-4" /> },
-  accepted:  { label: 'Accepted',         color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20',     icon: <CheckCircle2 className="w-4 h-4" /> },
-  preparing: { label: 'Being Prepared',   color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20', icon: <Loader2 className="w-4 h-4 animate-spin" /> },
-  ready:     { label: '🎉 Ready for Pick-up!', color: 'text-green-700', bg: 'bg-green-50 dark:bg-green-900/20', icon: <Bell className="w-4 h-4" /> },
-  completed: { label: 'Completed',        color: 'text-gray-600',   bg: 'bg-gray-50 dark:bg-gray-800',        icon: <CheckCircle2 className="w-4 h-4" /> },
-  cancelled: { label: 'Cancelled',        color: 'text-red-600',    bg: 'bg-red-50 dark:bg-red-900/20',       icon: <XCircle className="w-4 h-4" /> },
+const STATUS_STYLE: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
+  pending:   { color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-900/20',  icon: <Clock className="w-4 h-4" /> },
+  accepted:  { color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20',     icon: <CheckCircle2 className="w-4 h-4" /> },
+  preparing: { color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20', icon: <Loader2 className="w-4 h-4 animate-spin" /> },
+  ready:     { color: 'text-green-700',  bg: 'bg-green-50 dark:bg-green-900/20',   icon: <Bell className="w-4 h-4" /> },
+  completed: { color: 'text-gray-600',   bg: 'bg-gray-50 dark:bg-gray-800',        icon: <CheckCircle2 className="w-4 h-4" /> },
+  cancelled: { color: 'text-red-600',    bg: 'bg-red-50 dark:bg-red-900/20',       icon: <XCircle className="w-4 h-4" /> },
 };
 
 export default function OrdersPage() {
@@ -74,10 +74,18 @@ export default function OrdersPage() {
   }
 
   const getStatus = (status: string) => {
-    const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
+    const cfg = STATUS_STYLE[status] || STATUS_STYLE.pending;
+    const labelKey: Record<string, string> = {
+      pending:   'statusPending',
+      accepted:  'statusAccepted',
+      preparing: 'statusPreparing',
+      ready:     'statusReady',
+      completed: 'statusCompleted',
+      cancelled: 'statusCancelled',
+    };
     return (
       <div className={`flex items-center gap-1.5 ${cfg.color} ${cfg.bg} px-3 py-1 rounded-full text-sm font-bold`}>
-        {cfg.icon} {cfg.label}
+        {cfg.icon} {status === 'ready' ? `🎉 ${t(labelKey[status] || status)}` : t(labelKey[status] || status)}
       </div>
     );
   };
@@ -100,12 +108,12 @@ export default function OrdersPage() {
                   <Bell className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-lg">🎉 Your order is ready for pick-up!</p>
+                  <p className="font-black text-lg">🎉 {t('statusReady')}</p>
                   <p className="text-green-100 text-sm">
-                    Head to <strong>{order.branchName || order.branchId}</strong>
-                    {order.pickupTime && ` — your slot: ${order.pickupTime}`}
+                    {t('branch')}: <strong>{order.branchName || order.branchId}</strong>
+                    {order.pickupTime && ` — ${t('pickupTime')}: ${order.pickupTime}`}
                   </p>
-                  <p className="text-green-100 text-xs mt-0.5">Order #{order.id.slice(0, 8).toUpperCase()}</p>
+                  <p className="text-green-100 text-xs mt-0.5">{t('orderId')} #{order.id.slice(0, 8).toUpperCase()}</p>
                 </div>
                 <MapPin className="w-6 h-6 shrink-0 opacity-70" />
               </div>
@@ -134,7 +142,7 @@ export default function OrdersPage() {
                   </div>
                   {order.branchName && (
                     <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Branch</p>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{t('branch')}</p>
                       <p className="text-sm font-bold dark:text-white flex items-center gap-1">
                         <Store className="w-3.5 h-3.5 text-[#F47A3E]" /> {order.branchName}
                       </p>
@@ -142,7 +150,7 @@ export default function OrdersPage() {
                   )}
                   {order.pickupTime && (
                     <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Pick-up Time</p>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{t('pickupTime')}</p>
                       <p className="text-sm font-bold dark:text-white flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5 text-[#F47A3E]" /> {order.pickupTime}
                       </p>
