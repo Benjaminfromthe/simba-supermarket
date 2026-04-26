@@ -1,12 +1,10 @@
-// Add this import at the top with the other imports:
-import ConversationalSearch from './ConversationalSearch';
-
-.import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import CartDrawer from './CartDrawer';
 import CartProgressBar from './CartProgressBar';
+import ConversationalSearch from './ConversationalSearch';
 import { useState } from 'react';
 
 export default function Layout() {
@@ -32,6 +30,7 @@ export default function Layout() {
       </main>
       <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-    <ConversationalSearch /></div>
+      <ConversationalSearch />
+    </div>
   );
 }
