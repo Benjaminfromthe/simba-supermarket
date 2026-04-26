@@ -25,14 +25,12 @@ interface Order {
 }
 
 export default function AdminOrdersPage() {
-  const { currentUser } = useAuth();
+  const { currentUser, isAdmin } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
-
-  const isAdmin = currentUser?.email === 'benjaminnshimiye633@gmail.com';
 
   useEffect(() => {
     if (!currentUser) return;

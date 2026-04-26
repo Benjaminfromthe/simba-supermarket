@@ -22,7 +22,7 @@ export default function ContactPage() {
     },
     {
       icon: <MessageCircle className="w-5 h-5" />,
-      title: 'WhatsApp',
+      title: t('whatsapp'),
       value: '+250 788 316 316',
       sub: t('whatsappDesc'),
       href: 'https://wa.me/250788316316',
@@ -89,21 +89,21 @@ export default function ContactPage() {
                 <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-8 h-8 text-green-500" />
                 </div>
-                <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-1">Message sent!</h3>
-                <p className="text-gray-500 text-sm">We'll get back to you within 24 hours.</p>
-                <button onClick={() => setSent(false)} className="mt-4 text-[#F47A3E] text-sm font-semibold hover:underline">Send another</button>
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-1">{t('messageSent')}</h3>
+                <p className="text-gray-500 text-sm">{t('replyWithin24Hours')}</p>
+                <button onClick={() => setSent(false)} className="mt-4 text-[#F47A3E] text-sm font-semibold hover:underline">{t('sendAnother')}</button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Full Name</label>
-                    <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} required placeholder="Your name"
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('fullName')}</label>
+                    <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} required placeholder={t('yourName')}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#F47A3E] transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">{t('emailAddress')}</label>
-                    <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required placeholder="your@email.com"
+                    <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required placeholder={t('yourEmail')}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#F47A3E] transition-all" />
                   </div>
                 </div>

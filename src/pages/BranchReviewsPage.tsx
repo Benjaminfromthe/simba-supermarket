@@ -184,7 +184,7 @@ export default function BranchReviewsPage() {
                 <div className="flex gap-0.5 mb-1">
                   {[1, 2, 3, 4, 5].map(s => <Star key={s} className={`w-5 h-5 ${s <= Math.round(avgRating) ? 'fill-[#F47A3E] text-[#F47A3E]' : 'text-gray-200 dark:text-gray-700'}`} />)}
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{reviews.length} review{reviews.length !== 1 ? 's' : ''}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('reviewCount', { count: reviews.length })}</p>
                 <p className="text-xs font-bold text-gray-700 dark:text-gray-300">{branch?.name}</p>
               </div>
             </div>

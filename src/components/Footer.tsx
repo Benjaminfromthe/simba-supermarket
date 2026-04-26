@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import simbaLogo from '../assets/simba-logo-v2.jpg';
 import { useTranslation } from 'react-i18next';
-import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, MapPin, Phone, Mail, Navigation } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, MessageCircle, Phone, Mail, Navigation } from 'lucide-react';
 import branchesData from '../data/branches.json';
 
 function openDirections(branch: typeof branchesData[0]) {
@@ -9,12 +9,10 @@ function openDirections(branch: typeof branchesData[0]) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        // Google Maps directions: from user location to branch
         const url = `https://www.google.com/maps/dir/${latitude},${longitude}/${branch.latitude},${branch.longitude}`;
         window.open(url, '_blank');
       },
       () => {
-        // If user denies location, just show the branch on the map
         window.open(branch.mapUrl, '_blank');
       },
       { timeout: 5000 }
@@ -29,12 +27,9 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-950 text-white mt-8">
-      {/* Orange top accent */}
       <div className="h-0.5 bg-gradient-to-r from-[#F47A3E] via-orange-400 to-[#F47A3E]" />
 
       <div className="container mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-        {/* Brand */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shrink-0">
@@ -42,19 +37,20 @@ export default function Footer() {
             </div>
             <div>
               <p className="font-black text-white text-base leading-none">Simba Supermarket</p>
-              <p className="text-[#F47A3E] text-xs italic mt-0.5">"Unlimited Shopping At One Stop!"</p>
+              <p className="text-[#F47A3E] text-xs italic mt-0.5">{t('slogan')}</p>
             </div>
           </div>
-          <p className="text-gray-400 text-xs leading-relaxed">
-            {t('footerDescMobile')}
-          </p>
-          <a href="https://wa.me/250788316316" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
+          <p className="text-gray-400 text-xs leading-relaxed">{t('footerDescMobile')}</p>
+          <a
+            href="https://wa.me/250788316316"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors"
+          >
             <MessageCircle className="w-4 h-4" /> {t('chatWithSimba')}
           </a>
         </div>
 
-        {/* Quick Links */}
         <div>
           <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-3 pb-1.5 border-b border-gray-800">{t('quickLinks')}</h4>
           <ul className="space-y-1.5">
@@ -64,34 +60,32 @@ export default function Footer() {
               { to: '/orders', label: t('myOrders') },
               { to: '/about', label: t('about') },
               { to: '/contact', label: t('contactUs') },
-              { to: '/reviews', label: '⭐ Reviews' },
-            ].map(l => (
-              <li key={l.to}>
-                <Link to={l.to} className="text-gray-400 hover:text-[#F47A3E] text-xs font-medium transition-colors">{l.label}</Link>
+              { to: '/reviews', label: t('reviewsNav') },
+            ].map(link => (
+              <li key={link.to}>
+                <Link to={link.to} className="text-gray-400 hover:text-[#F47A3E] text-xs font-medium transition-colors">{link.label}</Link>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Branches */}
         <div>
           <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-3 pb-1.5 border-b border-gray-800">{t('ourBranches')}</h4>
           <ul className="space-y-1.5">
-            {branchesData.map(b => (
-              <li key={b.id}>
+            {branchesData.map(branch => (
+              <li key={branch.id}>
                 <button
-                  onClick={() => openDirections(b)}
+                  onClick={() => openDirections(branch)}
                   className="flex items-center gap-1.5 text-gray-400 hover:text-[#F47A3E] text-xs font-medium transition-colors group w-full text-left"
                 >
                   <Navigation className="w-3 h-3 text-[#F47A3E] shrink-0" />
-                  {b.name}
+                  {branch.name}
                 </button>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Contact */}
         <div>
           <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-3 pb-1.5 border-b border-gray-800">{t('getInTouch')}</h4>
           <ul className="space-y-2 mb-4">
@@ -121,17 +115,21 @@ export default function Footer() {
               { href: 'https://www.instagram.com/simba_supermarket/', icon: <Instagram className="w-4 h-4" />, color: 'hover:bg-[#E4405F]' },
               { href: 'https://x.com/SimbaRwanda', icon: <Twitter className="w-4 h-4" />, color: 'hover:bg-gray-700' },
               { href: 'https://www.linkedin.com/company/simba-supermarket-ltd-rwanda/', icon: <Linkedin className="w-4 h-4" />, color: 'hover:bg-[#0077B5]' },
-            ].map((s, i) => (
-              <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                className={`w-8 h-8 bg-gray-800 ${s.color} rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all`}>
-                {s.icon}
+            ].map((social, index) => (
+              <a
+                key={index}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-8 h-8 bg-gray-800 ${social.color} rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all`}
+              >
+                {social.icon}
               </a>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Bottom bar */}
       <div className="border-t border-gray-800">
         <div className="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] text-gray-500">
           <p>© {new Date().getFullYear()} {t('allRightsReserved')}</p>

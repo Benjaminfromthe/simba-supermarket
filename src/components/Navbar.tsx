@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
@@ -54,23 +54,21 @@ async function runTranslation(lang: string) {
     }
     saveNameCache(updated);
     window.dispatchEvent(new CustomEvent('simba-translated'));
-  } catch { /* silent fail */ }
+  } catch {}
 }
 
 export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { t, i18n } = useTranslation();
   const cartItems = useCartStore(s => s.items);
   const cartCount = cartItems.reduce((a, i) => a + i.quantity, 0);
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, signOut, isAdmin, isBranchOperator } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
-
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
     (localStorage.getItem('simba-theme') as 'light' | 'dark') || 'light'
   );
 
-  // Trigger product name translation when language changes
   const translatedLangRef = useRef('en');
   useEffect(() => {
     const lang = i18n.language;
@@ -99,22 +97,23 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     { code: 'rw', label: 'Kinyarwanda' },
   ];
 
-  const isAdmin = currentUser?.email === 'benjaminnshimiye633@gmail.com';
+  const navLinks = [
+    { to: '/', label: t('home') },
+    { to: '/shop', label: t('shop') },
+    { to: '/about', label: t('about') },
+    { to: '/contact', label: t('contactUs') },
+    { to: '/reviews', label: t('reviewsNav') },
+    ...(currentUser ? [{ to: '/orders', label: t('myOrders') }] : []),
+    ...(isBranchOperator ? [{ to: '/branch-dashboard', label: t('branchPortal') }] : []),
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm">
-      {/* Top orange bar */}
       <div className="bg-[#F47A3E]">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
-
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md overflow-hidden shrink-0">
-              <img 
-                src={simbaLogo}
-                alt="Simba Supermarket" 
-                className="w-9 h-9 object-contain"
-              />
+              <img src={simbaLogo} alt="Simba Supermarket" className="w-9 h-9 object-contain" />
             </div>
             <div className="hidden sm:block">
               <p className="text-white font-black text-lg leading-none">Simba</p>
@@ -122,20 +121,19 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
             </div>
           </Link>
 
-          {/* Desktop nav links */}
           <nav className="hidden lg:flex items-center gap-3 text-white text-xs font-semibold flex-shrink-0">
-            <Link to="/" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('home')}</Link>
-            <Link to="/shop" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('shop')}</Link>
-            <Link to="/about" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('about')}</Link>
-            <Link to="/contact" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('contactUs')}</Link>
-            <Link to="/reviews" className="hover:text-orange-100 transition-colors whitespace-nowrap">⭐ Reviews</Link>
-            {currentUser && <Link to="/orders" className="hover:text-orange-100 transition-colors whitespace-nowrap">{t('myOrders')}</Link>}
-            {currentUser?.email === 'benjaminnshimiye633@gmail.com' && <Link to="/branch-dashboard" className="text-yellow-200 hover:text-yellow-100 transition-colors font-bold whitespace-nowrap">Dashboard</Link>}
+            {navLinks.map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`transition-colors whitespace-nowrap ${link.to === '/branch-dashboard' ? 'text-yellow-200 hover:text-yellow-100 font-bold' : 'hover:text-orange-100'}`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Right actions */}
           <div className="flex items-center gap-2">
-            {/* Auth */}
             <div className="hidden lg:flex items-center gap-2">
               {!currentUser ? (
                 <>
@@ -156,12 +154,10 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
 
             <div className="w-px h-5 bg-white/30 hidden lg:block" />
 
-            {/* Dark mode */}
             <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className="p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            {/* Language */}
             <div className="relative" ref={langRef}>
               <button onClick={() => setLangOpen(!langOpen)} className="flex items-center gap-1 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
                 <Globe className="w-4 h-4" />
@@ -170,12 +166,20 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
               </button>
               <AnimatePresence>
                 {langOpen && (
-                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.15 }}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
                     className="absolute right-0 top-full mt-2 rounded-xl shadow-2xl overflow-hidden w-44 z-[200]"
-                    style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}>
+                    style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}
+                  >
                     {langs.map(l => (
-                      <button key={l.code} onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
-                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'text-gray-900 hover:bg-orange-50'}`}>
+                      <button
+                        key={l.code}
+                        onClick={() => { i18n.changeLanguage(l.code); setLangOpen(false); }}
+                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'text-gray-900 hover:bg-orange-50'}`}
+                      >
                         {l.label}
                       </button>
                     ))}
@@ -184,7 +188,6 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
               </AnimatePresence>
             </div>
 
-            {/* Cart */}
             <button onClick={onOpenCart} className="relative p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
@@ -194,7 +197,6 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
               )}
             </button>
 
-            {/* Mobile menu toggle */}
             <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-2 text-white">
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -202,30 +204,28 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
         </div>
       </div>
 
-      {/* Search bar — glassmorphism */}
       <div className="navbar-glass border-b border-gray-100 dark:border-gray-800 py-2.5">
         <div className="container mx-auto px-4 flex justify-center">
           <SmartSearchBar />
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-hidden"
+          >
             <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
-              {[
-                { to: '/', label: t('home') },
-                { to: '/shop', label: t('shop') },
-                { to: '/about', label: t('about') },
-                { to: '/contact', label: t('contactUs') },
-                { to: '/reviews', label: '⭐ Reviews' },
-                ...(currentUser ? [{ to: '/orders', label: t('myOrders') }] : []),
-                ...(isAdmin ? [{ to: '/branch-dashboard', label: 'Dashboard' }] : []),
-              ].map(item => (
-                <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
-                  className="px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-800 transition-colors">
+              {navLinks.map(item => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMobileOpen(false)}
+                  className="px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-800 transition-colors"
+                >
                   {item.label}
                 </Link>
               ))}
@@ -241,8 +241,11 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
               </div>
               <div className="flex gap-2 mt-1">
                 {langs.map(l => (
-                  <button key={l.code} onClick={() => { i18n.changeLanguage(l.code); setMobileOpen(false); }}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}>
+                  <button
+                    key={l.code}
+                    onClick={() => { i18n.changeLanguage(l.code); setMobileOpen(false); }}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-colors ${i18n.language === l.code ? 'bg-[#F47A3E] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}
+                  >
                     {l.code.toUpperCase()}
                   </button>
                 ))}

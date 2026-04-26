@@ -309,6 +309,17 @@ const resources = {
       staffCanUpdateStock: "Staff can update branch stock directly from assigned items.",
       notAssignedYet: "Not assigned yet",
       orderManagement: "Order Management",
+      branchPortal: "Branch Portal",
+      reviewsNav: "Reviews",
+      noShow: "No-Show",
+      activeLabel: "active",
+      messageSent: "Message sent!",
+      replyWithin24Hours: "We'll get back to you within 24 hours.",
+      sendAnother: "Send another",
+      yourName: "Your name",
+      yourEmail: "your@email.com",
+      reviewCount: "{{count}} review",
+      reviewCount_plural: "{{count}} reviews",
     }
   },
   fr: {
@@ -618,6 +629,17 @@ const resources = {
       staffCanUpdateStock: "Le personnel peut mettre à jour le stock directement depuis les articles assignés.",
       notAssignedYet: "Pas encore assigné",
       orderManagement: "Gestion des commandes",
+      branchPortal: "Portail succursale",
+      reviewsNav: "Avis",
+      noShow: "Absence",
+      activeLabel: "actif",
+      messageSent: "Message envoyé !",
+      replyWithin24Hours: "Nous vous répondrons sous 24 heures.",
+      sendAnother: "Envoyer un autre",
+      yourName: "Votre nom",
+      yourEmail: "votre@email.com",
+      reviewCount: "{{count}} avis",
+      reviewCount_plural: "{{count}} avis",
     }
   },
   rw: {
@@ -929,6 +951,17 @@ const resources = {
       staffCanUpdateStock: "Abakozi bashobora kuvugurura ububiko bahereye ku bicuruzwa bahawe.",
       notAssignedYet: "Ntirahabwa umuntu",
       orderManagement: "Gucunga komande",
+      branchPortal: "Aho amashami acungirwa",
+      reviewsNav: "Isuzuma",
+      noShow: "Ntiyaje",
+      activeLabel: "bikora",
+      messageSent: "Ubutumwa bwoherejwe!",
+      replyWithin24Hours: "Turagusubiza mu masaha 24.",
+      sendAnother: "Ohereza ubundi",
+      yourName: "Amazina yawe",
+      yourEmail: "imeyili@yawe.com",
+      reviewCount: "{{count}} isuzuma",
+      reviewCount_plural: "{{count}} amatisuzuma",
     }
   }
 };

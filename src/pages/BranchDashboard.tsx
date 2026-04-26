@@ -33,26 +33,33 @@ const productNameById = new Map(productList.map(product => [String(product.id), 
 
 export default function BranchDashboard() {
   const { t } = useTranslation();
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile, isAdmin, isManager, isStaff, isBranchOperator } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBranchId, setSelectedBranchId] = useState(branches[0].id);
+  const [selectedBranchId, setSelectedBranchId] = useState(userProfile?.branchId || branches[0].id);
   const [activeTab, setActiveTab] = useState<DashboardTab>('pending');
-  const [dashboardRole, setDashboardRole] = useState<DashboardRole>('manager');
-  const [selectedStaff, setSelectedStaff] = useState(STAFF_MEMBERS[0]);
+  const [dashboardRole, setDashboardRole] = useState<DashboardRole>(isStaff ? 'staff' : 'manager');
+  const [selectedStaff, setSelectedStaff] = useState(userProfile?.staffName || STAFF_MEMBERS[0]);
   const [lowStock, setLowStock] = useState<InventoryAlert[]>([]);
   const [loadingInventory, setLoadingInventory] = useState(true);
+  const branchLocked = !!userProfile?.branchId;
 
   useEffect(() => {
     if (!currentUser) {
       navigate('/login');
       return;
     }
-    if (currentUser.email !== 'benjaminnshimiye633@gmail.com') {
+    if (!isBranchOperator) {
       navigate('/');
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, isBranchOperator, navigate]);
+
+  useEffect(() => {
+    if (userProfile?.branchId) setSelectedBranchId(userProfile.branchId);
+    if (userProfile?.staffName) setSelectedStaff(userProfile.staffName);
+    if (!isAdmin) setDashboardRole(isStaff ? 'staff' : 'manager');
+  }, [isAdmin, isStaff, userProfile]);
 
   useEffect(() => {
     const q = query(
@@ -122,24 +129,31 @@ export default function BranchDashboard() {
             <select
               value={selectedBranchId}
               onChange={e => setSelectedBranchId(e.target.value)}
+              disabled={branchLocked}
               className="bg-white/20 border border-white/30 text-white rounded-lg px-3 py-2 text-sm font-bold focus:outline-none"
             >
               {branches.map(b => <option key={b.id} value={b.id} className="text-gray-900">{b.name}</option>)}
             </select>
-            <div className="flex rounded-xl overflow-hidden border border-white/30">
-              <button
-                onClick={() => setDashboardRole('manager')}
-                className={`px-4 py-2 text-sm font-bold ${dashboardRole === 'manager' ? 'bg-white text-[#F47A3E]' : 'bg-white/10 text-white'}`}
-              >
-                {t('managerView')}
-              </button>
-              <button
-                onClick={() => setDashboardRole('staff')}
-                className={`px-4 py-2 text-sm font-bold ${dashboardRole === 'staff' ? 'bg-white text-[#F47A3E]' : 'bg-white/10 text-white'}`}
-              >
-                {t('staffView')}
-              </button>
-            </div>
+            {isAdmin ? (
+              <div className="flex rounded-xl overflow-hidden border border-white/30">
+                <button
+                  onClick={() => setDashboardRole('manager')}
+                  className={`px-4 py-2 text-sm font-bold ${dashboardRole === 'manager' ? 'bg-white text-[#F47A3E]' : 'bg-white/10 text-white'}`}
+                >
+                  {t('managerView')}
+                </button>
+                <button
+                  onClick={() => setDashboardRole('staff')}
+                  className={`px-4 py-2 text-sm font-bold ${dashboardRole === 'staff' ? 'bg-white text-[#F47A3E]' : 'bg-white/10 text-white'}`}
+                >
+                  {t('staffView')}
+                </button>
+              </div>
+            ) : (
+              <div className="px-4 py-2 rounded-xl bg-white/15 text-sm font-bold">
+                {dashboardRole === 'manager' ? t('managerView') : t('staffView')}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -162,6 +176,7 @@ export default function BranchDashboard() {
                     <select
                       value={selectedStaff}
                       onChange={e => setSelectedStaff(e.target.value)}
+                      disabled={!isAdmin}
                       className="border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm font-semibold bg-white dark:bg-gray-900"
                     >
                       {STAFF_MEMBERS.map(member => <option key={member} value={member}>{member}</option>)}
@@ -295,7 +310,7 @@ export default function BranchDashboard() {
                           }}
                           className="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition"
                         >
-                          <Flag className="w-3 h-3" /> No-Show
+                          <Flag className="w-3 h-3" /> {t('noShow')}
                         </button>
                       )}
 
@@ -360,7 +375,7 @@ export default function BranchDashboard() {
                   return (
                     <div key={member} className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800 px-3 py-2">
                       <span className="text-sm font-semibold dark:text-white">{member}</span>
-                      <span className="text-xs font-bold text-[#F47A3E]">{activeOrders} active</span>
+                      <span className="text-xs font-bold text-[#F47A3E]">{activeOrders} {t('activeLabel')}</span>
                     </div>
                   );
                 })}
