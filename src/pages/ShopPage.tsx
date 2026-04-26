@@ -170,7 +170,7 @@ export default function ShopPage() {
         <div>
           {aiLoading && (
             <p className="text-sm text-orange-500 flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> Thinking...
+              <Loader2 className="w-4 h-4 animate-spin" /> {t('searching')}
             </p>
           )}
         </div>
@@ -202,7 +202,7 @@ export default function ShopPage() {
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-orange-600 dark:text-orange-400 font-bold uppercase tracking-widest">Smart Search Results</p>
+              <p className="text-xs text-orange-600 dark:text-orange-400 font-bold uppercase tracking-widest">{t('aiSearch')}</p>
               <p className="text-gray-900 dark:text-white font-medium italic">"{queryParam}"</p>
             </div>
           </div>

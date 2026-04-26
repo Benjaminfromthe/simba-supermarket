@@ -77,7 +77,7 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
             className="w-full bg-[#F47A3E] hover:bg-[#D46A2E] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-lg"
           >
             <Zap className="w-3.5 h-3.5" />
-            Quick Add
+            {t('quickAdd', 'Quick Add')}
           </button>
         </div>
       </Link>

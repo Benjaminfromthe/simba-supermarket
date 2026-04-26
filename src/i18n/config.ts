@@ -328,6 +328,7 @@ const resources = {
       suggestionBaby: "Baby products",
       suggestionBreakfast: "Something for breakfast",
       shopByCategory: "Shop by Category",
+      quickAdd: "Quick Add",
     }
   },
   fr: {
@@ -656,6 +657,7 @@ const resources = {
       suggestionBaby: "Produits bébé",
       suggestionBreakfast: "Quelque chose pour le petit-déjeuner",
       shopByCategory: "Acheter par Catégorie",
+      quickAdd: "Ajouter vite",
     }
   },
   rw: {
@@ -987,6 +989,7 @@ const resources = {
       suggestionBaby: "Ibicuruzwa by'uruhinja",
       suggestionBreakfast: "Ikintu cyo mu gitondo",
       shopByCategory: "Gura ukurikije Icyiciro",
+      quickAdd: "Ongeraho vuba",
     }
   }
 };
