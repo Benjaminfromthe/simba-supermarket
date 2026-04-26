@@ -55,6 +55,20 @@ export default function LoginPage() {
         <p className="text-white/60 text-sm font-medium">{t('signInToAccount', 'Sign in to your account')}</p>
       </div>
 
+      {/* Demo credentials for judges */}
+      <div className="mb-5 rounded-xl p-3 text-xs" style={{ background: 'rgba(244,122,62,0.15)', border: '1px solid rgba(244,122,62,0.3)' }}>
+        <p className="text-[#F47A3E] font-black mb-1.5 uppercase tracking-wide text-[10px]">🎯 Demo Accounts</p>
+        <div className="space-y-1 text-white/70">
+          <button
+            type="button"
+            onClick={() => { setEmail('benjaminnshimiye633@gmail.com'); setPassword('demo1234'); }}
+            className="w-full text-left hover:text-white transition-colors"
+          >
+            👑 Admin: benjaminnshimiye633@gmail.com / demo1234
+          </button>
+        </div>
+      </div>
+
       {error && (
         <div className="bg-red-500/20 border border-red-400/40 text-red-300 p-3 rounded-xl text-sm mb-5">
           {error}

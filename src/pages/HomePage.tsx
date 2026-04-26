@@ -86,7 +86,7 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
-              className="relative rounded-2xl overflow-hidden h-[220px] md:h-[280px] flex items-center"
+              className="relative rounded-2xl overflow-hidden h-[320px] md:h-[420px] flex items-center"
             >
               <img
                 src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=2000"
@@ -141,27 +141,28 @@ export default function HomePage() {
               <h2 className="text-sm font-black text-gray-700 dark:text-white uppercase tracking-widest">{t('shopByCategory', 'Shop by Category')}</h2>
               <Link to="/shop" className="text-[#F47A3E] text-xs font-semibold hover:underline">{t('viewAll')} →</Link>
             </div>
-            {/* Scrollable circles */}
+            {/* Scrollable circles — navigate to ShopPage with category filter */}
             <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
               {CATEGORIES.map(cat => (
-                <motion.button
+                <motion.div
                   key={cat}
                   whileHover={{ scale: 1.06 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setSearchParams({ category: cat })}
-                  className="flex flex-col items-center gap-1.5 shrink-0 group"
+                  className="flex flex-col items-center gap-1.5 shrink-0 group cursor-pointer"
                 >
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100 dark:border-gray-700 group-hover:border-[#F47A3E] transition-all shadow-sm">
-                    <img
-                      src={CATEGORY_IMAGES[cat] || CATEGORY_IMAGES['General']}
-                      alt={cat}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                  <span className="text-[10px] font-semibold text-gray-700 dark:text-white text-center leading-tight max-w-[56px] hyphens-auto">
-                    {getLocalizedCat(cat)}
-                  </span>
-                </motion.button>
+                  <Link to={`/shop?category=${encodeURIComponent(cat)}`} className="flex flex-col items-center gap-1.5">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100 dark:border-gray-700 group-hover:border-[#F47A3E] transition-all shadow-sm">
+                      <img
+                        src={CATEGORY_IMAGES[cat] || CATEGORY_IMAGES['General']}
+                        alt={cat}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                    <span className="text-[10px] font-semibold text-gray-700 dark:text-white text-center leading-tight max-w-[56px] hyphens-auto">
+                      {getLocalizedCat(cat)}
+                    </span>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </section>
