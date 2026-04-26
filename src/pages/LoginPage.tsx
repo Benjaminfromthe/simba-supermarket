@@ -45,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthBackground>
+    <AuthBackground isTypingPassword={password.length > 0}>
       {/* Header */}
       <div className="text-center mb-8">
         <div className="w-14 h-14 bg-[#F47A3E]/20 border border-[#F47A3E]/40 rounded-2xl flex items-center justify-center mx-auto mb-4">
