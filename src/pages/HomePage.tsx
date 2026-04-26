@@ -101,7 +101,14 @@ export default function HomePage() {
                   ))}
                 </div>
                 <button
-                  onClick={() => document.getElementById('deals')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => {
+                    const el = document.getElementById('deals');
+                    if (el) {
+                      const offset = 80; // account for sticky navbar height
+                      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+                      window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                  }}
                   className="bg-[#F47A3E] hover:bg-[#D46A2E] text-white px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-105 active:scale-95"
                 >
                   {t('startShopping')} →
