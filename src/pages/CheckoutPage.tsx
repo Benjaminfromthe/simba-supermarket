@@ -186,7 +186,7 @@ export default function CheckoutPage() {
   return (
     <PageTransition
       title={t('checkout')}
-      subtitle={`${items.length} item${items.length !== 1 ? 's' : ''} · ${getCartTotal().toLocaleString()} RWF`}
+      subtitle={`${items.length} ${t('items', 'items')} · ${getCartTotal().toLocaleString()} RWF`}
       icon={<Store className="w-5 h-5" />}
     >
     <div className="bg-gray-50 min-h-screen py-8 text-foreground">

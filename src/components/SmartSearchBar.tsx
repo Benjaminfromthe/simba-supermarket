@@ -4,132 +4,15 @@ import { Search, Sparkles, Loader2, X, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCartStore, Product } from '../store/useCartStore';
-import productsData from '../data/simba_products.json';
 import toast from 'react-hot-toast';
-
-const ALL_PRODUCTS: Product[] = (Array.isArray(productsData) ? productsData : (productsData as any).products) || [];
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
-
-interface AIResult {
-  message: string;
-  products: Product[];
-}
-
-function localSearch(query: string): Product[] {
-  const q = query.toLowerCase();
-  const underMatch = q.match(/(?:under|below|less than|cheaper than|max|at most)\s*(\d+)/);
-  const overMatch = q.match(/(?:over|above|more than|at least|min)\s*(\d+)/);
-  const maxPrice = underMatch ? parseInt(underMatch[1]) : null;
-  const minPrice = overMatch ? parseInt(overMatch[1]) : null;
-
-  const cleanQ = q
-    .replace(/(?:under|below|less than|cheaper than|max|at most|over|above|more than|at least|min)\s*\d+/g, '')
-    .replace(/rwf|rfw|frw/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const results = ALL_PRODUCTS.filter(p => {
-    const name = p.name.toLowerCase();
-    const cat = p.category.toLowerCase();
-
-    if (maxPrice && p.price > maxPrice) return false;
-    if (minPrice && p.price < minPrice) return false;
-    if (!cleanQ) return true;
-
-    const words = cleanQ.split(' ').filter(w => w.length > 2);
-    return words.some(w => name.includes(w) || cat.includes(w));
-  });
-
-  return results.slice(0, 8);
-}
-
-async function askGroqAI(query: string): Promise<AIResult> {
-  const localResults = localSearch(query);
-  const isSimple = query.length < 15 && !query.includes(' ');
-  if (isSimple && localResults.length > 0) {
-    return { message: '', products: localResults };
-  }
-
-  if (!GROQ_API_KEY) {
-    return {
-      message: localResults.length > 0 ? `Found ${localResults.length} products for you:` : "I couldn't find matching products. Try browsing our shop!",
-      products: localResults,
-    };
-  }
-
-  try {
-    // Send ALL products in compressed format to stay within token limits
-    // Format: "id|name|price|category" — ~60% fewer tokens than verbose format
-    const catalog = ALL_PRODUCTS
-      .map(p => `${p.id}|${p.name}|${p.price}|${p.category}`)
-      .join('\n');
-
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a smart shopping assistant for Simba Supermarket in Kigali, Rwanda. Prices are in RWF.
-
-Understand natural language requests and find matching products from the catalog below.
-Catalog format per line: id|name|price|category
-
-Rules:
-- "milk under 1000" → find milk products with price <= 1000
-- "something for breakfast" → find breakfast-related products  
-- "cheap cooking oil" → find lowest-priced cooking oil
-- Respond ONLY with valid JSON: {"message": "friendly 1-sentence response in the user's language", "productIds": [id1, id2, ...]}
-- Max 6 IDs. Only use IDs from the catalog below.
-- If nothing matches: {"message": "friendly apology", "productIds": []}
-
-CATALOG (${ALL_PRODUCTS.length} products):
-${catalog}`,
-          },
-          { role: 'user', content: query },
-        ],
-        temperature: 0.1,
-        max_tokens: 200,
-      }),
-    });
-
-    const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || '{}';
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      const aiProducts = (parsed.productIds || [])
-        .map((id: number) => ALL_PRODUCTS.find(p => p.id === id || p.id === String(id)))
-        .filter(Boolean) as Product[];
-
-      const finalProducts = aiProducts.length > 0 ? aiProducts : localResults;
-      return {
-        message: parsed.message || (finalProducts.length > 0 ? "Here's what I found for you:" : 'No products found.'),
-        products: finalProducts,
-      };
-    }
-  } catch (err) {
-    console.error('Groq error:', err);
-  }
-
-  return {
-    message: localResults.length > 0 ? `Found ${localResults.length} products matching your request:` : "I couldn't find that. Try browsing our full shop!",
-    products: localResults,
-  };
-}
+import { groqConversationalSearch, type GroqResult } from '../lib/groq';
 
 export default function SmartSearchBar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem } = useCartStore();
   const [query, setQuery] = useState('');
-  const [result, setResult] = useState<AIResult | null>(null);
+  const [result, setResult] = useState<GroqResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -145,16 +28,12 @@ export default function SmartSearchBar() {
 
   const handleInput = (val: string) => {
     setQuery(val);
-    if (!val.trim()) {
-      setResult(null);
-      setOpen(false);
-      return;
-    }
+    if (!val.trim()) { setResult(null); setOpen(false); return; }
     setOpen(true);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-      const res = await askGroqAI(val);
+      const res = await groqConversationalSearch(val);
       setResult(res);
       setLoading(false);
     }, 500);
@@ -162,17 +41,14 @@ export default function SmartSearchBar() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      navigate(`/shop?q=${encodeURIComponent(query)}`);
-      setOpen(false);
-    }
+    if (query.trim()) { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }
   };
 
   const handleAdd = (product: Product) => {
     addItem(product, 1);
     toast.success(`${product.name} ${t('addedToCartToast')}`, {
       icon: '🛒',
-      style: { borderRadius: '12px', background: '#1A1A1A', color: '#fff', fontFamily: 'Poppins, sans-serif' },
+      style: { borderRadius: '12px', background: '#1A1A1A', color: '#fff' },
     });
   };
 
@@ -216,14 +92,12 @@ export default function SmartSearchBar() {
               <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">{result.message}</p>
             </div>
           )}
-
           {loading && (
             <div className="px-4 py-6 flex items-center justify-center gap-3 text-gray-400">
               <Loader2 className="w-5 h-5 animate-spin text-[#F47A3E]" />
               <span className="text-sm font-medium">{t('searchingWithAI')}</span>
             </div>
           )}
-
           {!loading && result && (
             result.products.length === 0 ? (
               <div className="px-4 py-8 text-center">
@@ -237,12 +111,8 @@ export default function SmartSearchBar() {
                 <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-gray-800">
                   {result.products.map(p => (
                     <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="w-12 h-12 object-contain rounded-xl bg-gray-50 dark:bg-gray-700 shrink-0 p-1"
-                        onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }}
-                      />
+                      <img src={p.image} alt={p.name} className="w-12 h-12 object-contain rounded-xl bg-gray-50 dark:bg-gray-700 shrink-0 p-1"
+                        onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }} />
                       <div className="flex-1 min-w-0 cursor-pointer" onClick={() => { navigate(`/product/${p.id}`); setOpen(false); }}>
                         <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{p.name}</p>
                         <p className="text-xs text-gray-400 dark:text-gray-500">{p.category}</p>
@@ -255,22 +125,20 @@ export default function SmartSearchBar() {
                     </div>
                   ))}
                 </div>
-                <button
-                  onClick={() => { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }}
-                  className="w-full py-3 text-center text-sm text-[#F47A3E] font-bold hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors border-t border-gray-50 dark:border-gray-800"
-                >
+                <button onClick={() => { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }}
+                  className="w-full py-3 text-center text-sm text-[#F47A3E] font-bold hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors border-t border-gray-50 dark:border-gray-800">
                   {t('seeAllResults', { query })} →
                 </button>
               </>
             )
           )}
-
           {!loading && !result && (
             <div className="p-3">
               <p className="text-xs text-gray-400 font-medium px-2 mb-2">{t('tryAsking')}</p>
               <div className="flex flex-wrap gap-2">
                 {suggestions.map(s => (
-                  <button key={s.key} onClick={() => handleInput(t(s.key, s.fallback))} className="text-xs bg-orange-50 dark:bg-orange-950/20 text-[#F47A3E] px-3 py-1.5 rounded-full font-medium hover:bg-orange-100 transition-colors">
+                  <button key={s.key} onClick={() => handleInput(t(s.key, s.fallback))}
+                    className="text-xs bg-orange-50 dark:bg-orange-950/20 text-[#F47A3E] px-3 py-1.5 rounded-full font-medium hover:bg-orange-100 transition-colors">
                     {t(s.key, s.fallback)}
                   </button>
                 ))}

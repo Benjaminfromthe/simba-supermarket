@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, Timestamp, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store } from 'lucide-react';
+import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 
@@ -44,6 +44,18 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [readyOrders, setReadyOrders] = useState<Order[]>([]);
+  const [cancelling, setCancelling] = useState<string | null>(null);
+
+  const handleCancel = async (orderId: string) => {
+    setCancelling(orderId);
+    try {
+      await updateDoc(doc(db, 'orders', orderId), {
+        status: 'cancelled',
+        updatedAt: serverTimestamp(),
+      });
+    } catch (e) { console.error(e); }
+    setCancelling(null);
+  };
 
   // Real-time listener — updates instantly when branch marks order ready
   useEffect(() => {
@@ -186,10 +198,37 @@ export default function OrdersPage() {
                   ))}
                 </div>
 
-                {/* Date */}
-                <p className="text-xs text-gray-400 mt-3">
-                  {order.createdAt?.toDate?.()?.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) || ''}
-                </p>
+                {/* Date + Actions */}
+                <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
+                  <p className="text-xs text-gray-400">
+                    {order.createdAt?.toDate?.()?.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) || ''}
+                  </p>
+                  <div className="flex gap-2">
+                    {/* Cancel — only on pending orders */}
+                    {order.status === 'pending' && (
+                      <button
+                        onClick={() => handleCancel(order.id)}
+                        disabled={cancelling === order.id}
+                        className="flex items-center gap-1 text-xs font-bold text-red-500 border border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-xl transition-colors disabled:opacity-50"
+                      >
+                        {cancelling === order.id
+                          ? <Loader2 className="w-3 h-3 animate-spin" />
+                          : <XCircle className="w-3 h-3" />}
+                        {t('cancelOrder', 'Cancel Order')}
+                      </button>
+                    )}
+                    {/* Review prompt — only on completed orders */}
+                    {order.status === 'completed' && (
+                      <Link
+                        to="/reviews"
+                        className="flex items-center gap-1 text-xs font-bold text-[#F47A3E] border border-orange-200 hover:bg-orange-50 dark:hover:bg-orange-900/20 px-3 py-1.5 rounded-xl transition-colors"
+                      >
+                        <Star className="w-3 h-3 fill-[#F47A3E]" />
+                        {t('rateExperience', 'Rate your experience')}
+                      </Link>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import { SlidersHorizontal, X, Sparkles, Loader2, Search } from 'lucide-react';
 import productsData from '../data/simba_products.json';
 import { Product } from '../store/useCartStore';
 import { getLocalizedCategoryName } from '../lib/localize';
+import { groqIdSearch, localSearch } from '../lib/groq';
 
 // Components
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
@@ -16,96 +17,6 @@ import { ShoppingBag } from 'lucide-react';
 // --- Constants & Config ---
 const productsList = (Array.isArray(productsData) ? productsData : ((productsData as any).products || [])) as Product[];
 const CATEGORIES = ["All", ...Array.from(new Set(productsList.map(p => p.category))).filter(Boolean)];
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
-
-// --- Search Logic ---
-
-/**
- * Strips filler words to improve search accuracy
- */
-function extractKeywords(query: string): string[] {
-  const stopWords = new Set(['i', 'need', 'want', 'looking', 'for', 'buy', 'get', 'show', 'please', 'the', 'some']);
-  return query.toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .split(/\s+/)
-    .filter(w => w.length > 1 && !stopWords.has(w));
-}
-
-/**
- * Fallback search if AI fails or is offline
- */
-function smartLocalSearch(query: string): Product[] {
-  const keywords = extractKeywords(query);
-  if (keywords.length === 0) return productsList.slice(0, 24);
-
-  const scored = productsList.map(p => {
-    const name = p.name.toLowerCase();
-    const cat = (p.category || '').toLowerCase();
-    let score = 0;
-
-    keywords.forEach(kw => {
-      if (name.includes(kw)) score += 10;
-      if (cat.includes(kw)) score += 5;
-      if (name.split(' ').some(w => w.startsWith(kw))) score += 2;
-    });
-
-    return { product: p, score };
-  });
-
-  return scored
-    .filter(s => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 24)
-    .map(s => s.product);
-}
-
-/**
- * Semantic search using Groq (Llama 3)
- */
-async function groqSearch(query: string): Promise<Product[]> {
-  if (!GROQ_API_KEY) return smartLocalSearch(query);
-
-  try {
-    // All products in compressed format: id:name(category) — covers full 789-product catalog
-    const catalogSnippet = productsList
-      .map(p => `${p.id}:${p.name}(${p.category})@${p.price}`)
-      .join('|');
-
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': `Bearer ${GROQ_API_KEY}` 
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { 
-            role: 'system', 
-            content: `You are a Simba Supermarket assistant in Kigali, Rwanda. Return ONLY JSON: { "ids": [number, number] }. Max 24 IDs. Catalog format id:name(category)@price — use ONLY these IDs:\n${catalogSnippet}` 
-          },
-          { role: 'user', content: query },
-        ],
-        temperature: 0.1,
-      }),
-    });
-
-    const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || '{}';
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      const found = (parsed.ids || [])
-        .map((id: any) => productsList.find(p => String(p.id) === String(id)))
-        .filter(Boolean);
-      if (found.length > 0) return found;
-    }
-  } catch (err) {
-    console.error('Groq Error:', err);
-  }
-  return smartLocalSearch(query);
-}
 
 // --- Main Component ---
 export default function ShopPage() {
@@ -127,7 +38,7 @@ export default function ShopPage() {
     lastQuery.current = queryParam;
 
     setAiLoading(true);
-    groqSearch(queryParam).then(results => {
+    groqIdSearch(queryParam, 24).then(results => {
       setAiProducts(results);
       setAiLoading(false);
     });
