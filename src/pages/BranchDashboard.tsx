@@ -28,6 +28,10 @@ export default function BranchDashboard() {
 
   useEffect(() => {
     if (!currentUser) { navigate('/login'); return; }
+    // Role-based access — only admin can access dashboard
+    if (currentUser.email !== 'benjaminnshimiye633@gmail.com') {
+      navigate('/');
+    }
   }, [currentUser, navigate]);
 
   useEffect(() => {

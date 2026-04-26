@@ -70,9 +70,9 @@ async function askGroqAI(query: string): Promise<AIResult> {
   }
 
   try {
-    // Build compact catalog — limit to 200 products to stay under token limits
-    const catalogSample = ALL_PRODUCTS.slice(0, 200);
-    const catalog = catalogSample.map(p => `${p.id}|${p.name}|${p.category}|${p.price}RWF`).join('\n');
+    // Build compact catalog — max 100 products, only essential fields
+    const catalogSample = ALL_PRODUCTS.slice(0, 100);
+    const catalog = catalogSample.map(p => `${p.id}|${p.name}|${p.price}RWF`).join('\n');
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',

@@ -74,7 +74,7 @@ export default function CheckoutPage() {
         momoPhone,
         momoProvider,
         depositAmount: depositAmount,
-        totalAmount: getCartTotal(),
+        totalAmount: getCartTotal() + depositAmount,
         status: 'pending',
         items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.price, image: i.image })),
         createdAt: serverTimestamp(),
@@ -304,10 +304,20 @@ export default function CheckoutPage() {
                   <input
                     type="tel"
                     value={momoPhone}
-                    onChange={(e) => setMomoPhone(e.target.value)}
-                    placeholder={momoProvider === 'mtn' ? '078 XXX XXXX' : '073 XXX XXXX'}
+                    onChange={(e) => {
+                      // Prevent double prefix — strip leading zeros/prefix then reformat
+                      let val = e.target.value.replace(/\s/g, '');
+                      // If user types 078 and field already has 078, don't double it
+                      if (val.startsWith('078078') || val.startsWith('073073')) {
+                        val = val.slice(3);
+                      }
+                      setMomoPhone(val);
+                    }}
+                    placeholder={momoProvider === 'mtn' ? '0781234567' : '0731234567'}
+                    maxLength={10}
                     className="w-full border-2 border-gray-300 dark:border-gray-600 rounded-xl p-3 font-mono text-lg bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
                   />
+                  <p className="text-xs text-gray-400 mt-1">Enter 10-digit number e.g. 0781234567</p>
                 </div>
 
                 <button
