@@ -4,7 +4,7 @@ import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, LogOut } from 'lu
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import SmartSearchBar from './SmartSearchBar';
 import simbaLogo from '../assets/simba-logo-v2.jpg';
 
@@ -82,16 +82,6 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('simba-theme', theme);
   }, [theme]);
-
-  // Trigger product name translation when language changes to RW or FR
-  const translatedLangRef = useRef('en');
-  useEffect(() => {
-    const lang = i18n.language;
-    if (lang !== 'en' && lang !== translatedLangRef.current) {
-      translatedLangRef.current = lang;
-      runTranslation(lang);
-    }
-  }, [i18n.language]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
