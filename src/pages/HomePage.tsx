@@ -27,6 +27,7 @@ const CATEGORY_IMAGES: Record<string, string> = {
 };
 
 // Curated showcase IDs — recognizable everyday products across categories
+// Updated: shampoo, baby milk, bread, olive oil, cleaning cloth
 const FEATURED_IDS = [29001, 58001, 61005, 61010, 65001, 103001, 29002, 61012];
 const FEATURED_PRODUCTS = FEATURED_IDS
   .map(id => productsList.find((p: any) => p.id === id))
