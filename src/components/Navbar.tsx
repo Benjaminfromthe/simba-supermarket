@@ -70,6 +70,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   );
 
   const translatedLangRef = useRef('en');
+
   useEffect(() => {
     const lang = i18n.language;
     if (lang !== 'en' && lang !== translatedLangRef.current) {
