@@ -58,8 +58,10 @@ async function askGroqAI(query: string): Promise<AIResult> {
   }
 
   try {
-    const catalog = ALL_PRODUCTS.slice(0, 100)
-      .map(p => `Product: ${p.name}, Price: ${p.price} RWF, Category: ${p.category}`)
+    // Send ALL products in compressed format to stay within token limits
+    // Format: "id|name|price|category" — ~60% fewer tokens than verbose format
+    const catalog = ALL_PRODUCTS
+      .map(p => `${p.id}|${p.name}|${p.price}|${p.category}`)
       .join('\n');
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -73,25 +75,26 @@ async function askGroqAI(query: string): Promise<AIResult> {
         messages: [
           {
             role: 'system',
-            content: `You are a smart shopping assistant for Simba Supermarket in Kigali, Rwanda. All prices are in RWF (Rwandan Francs).
+            content: `You are a smart shopping assistant for Simba Supermarket in Kigali, Rwanda. Prices are in RWF.
 
-Your job: understand what the customer wants (including price constraints like "under 1000 RWF") and find the best matching products from the catalog.
+Understand natural language requests and find matching products from the catalog below.
+Catalog format per line: id|name|price|category
 
 Rules:
-- Understand natural language: "I want milk under 1000" = find milk products with price <= 1000 RWF
-- "something for breakfast" = find breakfast-related products
-- "cheap cooking oil" = find low-priced cooking oil
-- Always respond with JSON only: {"message": "friendly 1-sentence response", "productIds": [id1, id2, ...]}
-- Max 6 product IDs. Only use IDs from the catalog.
-- If nothing matches, return {"message": "friendly apology", "productIds": []}
+- "milk under 1000" → find milk products with price <= 1000
+- "something for breakfast" → find breakfast-related products  
+- "cheap cooking oil" → find lowest-priced cooking oil
+- Respond ONLY with valid JSON: {"message": "friendly 1-sentence response in the user's language", "productIds": [id1, id2, ...]}
+- Max 6 IDs. Only use IDs from the catalog below.
+- If nothing matches: {"message": "friendly apology", "productIds": []}
 
-PRODUCT CATALOG (Product: name, Price: RWF, Category: category):
+CATALOG (${ALL_PRODUCTS.length} products):
 ${catalog}`,
           },
           { role: 'user', content: query },
         ],
         temperature: 0.1,
-        max_tokens: 400,
+        max_tokens: 200,
       }),
     });
 

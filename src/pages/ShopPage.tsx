@@ -66,8 +66,9 @@ async function groqSearch(query: string): Promise<Product[]> {
   if (!GROQ_API_KEY) return smartLocalSearch(query);
 
   try {
-    const catalogSnippet = productsList.slice(0, 150)
-      .map(p => `${p.id}:${p.name}(${p.category})`)
+    // All products in compressed format: id:name(category) — covers full 789-product catalog
+    const catalogSnippet = productsList
+      .map(p => `${p.id}:${p.name}(${p.category})@${p.price}`)
       .join('|');
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -81,7 +82,7 @@ async function groqSearch(query: string): Promise<Product[]> {
         messages: [
           { 
             role: 'system', 
-            content: `You are a Simba Supermarket assistant. Return ONLY JSON: { "ids": [number, number] }. Use these IDs: ${catalogSnippet}` 
+            content: `You are a Simba Supermarket assistant in Kigali, Rwanda. Return ONLY JSON: { "ids": [number, number] }. Max 24 IDs. Catalog format id:name(category)@price — use ONLY these IDs:\n${catalogSnippet}` 
           },
           { role: 'user', content: query },
         ],
