@@ -148,7 +148,7 @@ export default function CheckoutPage() {
         </div>
         <h2 className="text-2xl font-bold mb-2 dark:text-white">Check your phone</h2>
         <p className="text-gray-500 dark:text-gray-400 mb-2">
-          A MoMo prompt for <strong className="text-[#F47A3E]">{DEPOSIT_AMOUNT.toLocaleString()} RWF</strong> deposit has been sent to
+          A MoMo prompt for <strong className="text-[#F47A3E]">{depositAmount.toLocaleString()} RWF</strong> deposit has been sent to
         </p>
         <p className="text-xl font-bold text-[#F47A3E] mb-6">{momoPhone}</p>
         <div className="flex items-center justify-center gap-2 text-gray-400">
@@ -281,7 +281,8 @@ export default function CheckoutPage() {
                 </h2>
                 <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-5">
                   <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
-                    ⚠️ A <strong>{DEPOSIT_AMOUNT.toLocaleString()} RWF</strong> non-refundable deposit is required to confirm your pick-up order. This ensures your order is prepared on time.
+                    ⚠️ A <strong>{depositAmount.toLocaleString()} RWF</strong> non-refundable deposit is required to confirm your pick-up order. This ensures your order is prepared on time.
+                    {depositAmount > 500 && <span className="block mt-1 text-red-600 dark:text-red-400 font-bold">⚠️ Higher deposit due to previous no-shows.</span>}
                   </p>
                 </div>
 
@@ -319,7 +320,7 @@ export default function CheckoutPage() {
                     e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
                   }}
                 >
-                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ${DEPOSIT_AMOUNT.toLocaleString()} RWF Deposit & Confirm`}
+                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ${depositAmount.toLocaleString()} RWF Deposit & Confirm`}
                 </button>
               </div>
             )}
