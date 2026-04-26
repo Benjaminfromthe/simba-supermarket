@@ -1,10 +1,12 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { Sparkles, Send, X, Loader2, ShoppingCart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useCartStore, Product } from '../store/useCartStore';
 import productsData from '../data/simba_products.json';
 
 const productsList: Product[] = (Array.isArray(productsData) ? productsData : (productsData as any).products) || [];
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -12,10 +14,7 @@ interface Message {
   products?: Product[];
 }
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
-
 async function askGroq(userMessage: string): Promise<{ text: string; products: Product[] }> {
-  // Build a compact catalog summary (name + category + price) for context
   const catalog = productsList.slice(0, 200).map(p => `${p.id}|${p.name}|${p.category}|${p.price}RWF`).join('\n');
 
   const systemPrompt = `You are a helpful shopping assistant for Simba Supermarket in Kigali, Rwanda.
@@ -46,8 +45,6 @@ ${catalog}`;
 
     const data = await res.json();
     const content = data.choices?.[0]?.message?.content || '{}';
-
-    // Parse JSON from response
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
@@ -60,7 +57,6 @@ ${catalog}`;
     console.error('Groq error:', err);
   }
 
-  // Fallback: keyword search
   const q = userMessage.toLowerCase();
   const fallback = productsList.filter(p =>
     p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
@@ -72,9 +68,10 @@ ${catalog}`;
 }
 
 export default function ConversationalSearch() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', text: "Hi! 👋 I'm Simba's AI assistant. Ask me anything like \"Do you have fresh milk?\" or \"I need something for breakfast\"" }
+    { role: 'assistant', text: t('aiAssistantIntro') },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -98,25 +95,22 @@ export default function ConversationalSearch() {
 
   return (
     <>
-      {/* Floating button */}
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-40 bg-[#F47A3E] hover:bg-[#D46A2E] text-white rounded-full p-4 shadow-2xl flex items-center gap-2 transition-all hover:scale-105"
       >
         <Sparkles className="w-5 h-5" />
-        <span className="font-bold text-sm hidden sm:inline">AI Search</span>
+        <span className="font-bold text-sm hidden sm:inline">{t('aiSearch')}</span>
       </button>
 
-      {/* Chat panel */}
       {open && (
         <div className="fixed bottom-20 right-4 sm:right-6 z-50 w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden" style={{ height: '520px' }}>
-          {/* Header */}
           <div className="bg-[#F47A3E] text-white p-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5" />
               <div>
-                <p className="font-bold text-sm">Simba AI Assistant</p>
-                <p className="text-orange-100 text-xs">Powered by Groq</p>
+                <p className="font-bold text-sm">{t('simbaAIAssistant')}</p>
+                <p className="text-orange-100 text-xs">{t('poweredByGroq')}</p>
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition">
@@ -124,7 +118,6 @@ export default function ConversationalSearch() {
             </button>
           </div>
 
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -139,10 +132,7 @@ export default function ConversationalSearch() {
                             <p className="text-xs font-bold text-gray-800 dark:text-white line-clamp-1">{p.name}</p>
                             <p className="text-xs text-[#F47A3E] font-bold">{p.price.toLocaleString()} RWF</p>
                           </div>
-                          <button
-                            onClick={() => addItem(p)}
-                            className="shrink-0 bg-[#F47A3E] text-white p-1.5 rounded-lg hover:bg-[#D46A2E] transition"
-                          >
+                          <button onClick={() => addItem(p)} className="shrink-0 bg-[#F47A3E] text-white p-1.5 rounded-lg hover:bg-[#D46A2E] transition">
                             <ShoppingCart className="w-3 h-3" />
                           </button>
                         </div>
@@ -156,14 +146,13 @@ export default function ConversationalSearch() {
               <div className="flex justify-start">
                 <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-[#F47A3E]" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Searching...</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('searching')}</span>
                 </div>
               </div>
             )}
             <div ref={bottomRef} />
           </div>
 
-          {/* Input */}
           <div className="p-3 border-t border-gray-100 dark:border-gray-800 shrink-0">
             <div className="flex gap-2">
               <input
@@ -171,14 +160,10 @@ export default function ConversationalSearch() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSend()}
-                placeholder="Ask me anything..."
+                placeholder={t('askMeAnything')}
                 className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F47A3E] dark:text-white dark:placeholder-gray-400"
               />
-              <button
-                onClick={handleSend}
-                disabled={!input.trim() || loading}
-                className="bg-[#F47A3E] disabled:opacity-40 text-white p-2.5 rounded-xl hover:bg-[#D46A2E] transition"
-              >
+              <button onClick={handleSend} disabled={!input.trim() || loading} className="bg-[#F47A3E] disabled:opacity-40 text-white p-2.5 rounded-xl hover:bg-[#D46A2E] transition">
                 <Send className="w-4 h-4" />
               </button>
             </div>

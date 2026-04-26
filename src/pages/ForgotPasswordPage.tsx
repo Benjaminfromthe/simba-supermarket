@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
       await sendPasswordResetEmail(auth, email);
       setSent(true);
     } catch (err: any) {
-      setError(err.message || 'Failed to send reset email');
+      setError(err.message || t('failedToSendResetEmail'));
     } finally {
       setLoading(false);
     }
@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted/20 px-4 py-12">
       <div className="bg-white dark:bg-card border dark:border-border rounded-2xl shadow-sm p-8 w-full max-w-md">
         <Link to="/login" className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#F47A3E] mb-6 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> {t('signIn', 'Back to Sign In')}
+          <ArrowLeft className="w-4 h-4" /> {t('backToSignIn')}
         </Link>
 
         {sent ? (
@@ -38,19 +38,19 @@ export default function ForgotPasswordPage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-green-500" />
             </div>
-            <h2 className="text-xl font-bold mb-2 dark:text-white">Check your email</h2>
+            <h2 className="text-xl font-bold mb-2 dark:text-white">{t('checkYourEmail')}</h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-              We sent a password reset link to <strong>{email}</strong>
+              {t('resetLinkSent')} <strong>{email}</strong>
             </p>
             <Link to="/login" className="text-[#F47A3E] font-bold hover:underline text-sm">
-              Back to Sign In
+              {t('backToSignIn')}
             </Link>
           </div>
         ) : (
           <>
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold mb-2 text-[#F47A3E]">Reset Password</h1>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Enter your email and we'll send you a reset link</p>
+              <h1 className="text-2xl font-bold mb-2 text-[#F47A3E]">{t('resetPassword')}</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">{t('resetPasswordInstructions')}</p>
             </div>
 
             {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4">{error}</div>}
@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder={t('enterEmailReset')}
                   className="w-full border-2 border-gray-300 dark:border-gray-600 rounded-xl p-3 bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
                 />
               </div>
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
                 disabled={loading}
                 className="w-full bg-[#F47A3E] hover:opacity-90 text-white font-bold py-3 rounded-xl transition flex justify-center items-center gap-2"
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Reset Link'}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('sendResetLink')}
               </button>
             </form>
           </>

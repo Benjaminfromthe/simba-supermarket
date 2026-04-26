@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle2, Package, User, Store, Loader2, AlertTriangle, Flag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Clock, CheckCircle2, Package, User, Store, Loader2, Flag, Boxes, AlertTriangle } from 'lucide-react';
 import branches from '../data/branches.json';
+import productsData from '../data/simba_products.json';
 import { markOutOfStock, getLowStock } from '../lib/inventory';
 import { flagNoShow } from '../lib/noshow';
 
@@ -18,17 +20,35 @@ const STATUS_COLORS: Record<string, string> = {
   completed: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
 };
 
+type DashboardRole = 'manager' | 'staff';
+type DashboardTab = 'pending' | 'preparing' | 'ready' | 'all';
+
+interface InventoryAlert {
+  productId: string;
+  stock: number;
+}
+
+const productList = (Array.isArray(productsData) ? productsData : (productsData as any).products || []) as Array<{ id: string | number; name: string }>;
+const productNameById = new Map(productList.map(product => [String(product.id), product.name]));
+
 export default function BranchDashboard() {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBranchId, setSelectedBranchId] = useState(branches[0].id);
-  const [activeTab, setActiveTab] = useState<'pending' | 'preparing' | 'ready' | 'all'>('pending');
+  const [activeTab, setActiveTab] = useState<DashboardTab>('pending');
+  const [dashboardRole, setDashboardRole] = useState<DashboardRole>('manager');
+  const [selectedStaff, setSelectedStaff] = useState(STAFF_MEMBERS[0]);
+  const [lowStock, setLowStock] = useState<InventoryAlert[]>([]);
+  const [loadingInventory, setLoadingInventory] = useState(true);
 
   useEffect(() => {
-    if (!currentUser) { navigate('/login'); return; }
-    // Role-based access — only admin can access dashboard
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
     if (currentUser.email !== 'benjaminnshimiye633@gmail.com') {
       navigate('/');
     }
@@ -47,11 +67,19 @@ export default function BranchDashboard() {
     return unsub;
   }, [selectedBranchId]);
 
+  useEffect(() => {
+    const loadLowStock = async () => {
+      setLoadingInventory(true);
+      const records = await getLowStock(selectedBranchId);
+      setLowStock(records);
+      setLoadingInventory(false);
+    };
+    loadLowStock();
+  }, [selectedBranchId, orders.length]);
+
   const updateOrder = async (orderId: string, data: Record<string, any>) => {
     await updateDoc(doc(db, 'orders', orderId), { ...data, updatedAt: new Date() });
   };
-
-  const filtered = orders.filter(o => activeTab === 'all' ? true : o.status === activeTab);
 
   const counts = {
     pending: orders.filter(o => o.status === 'pending').length,
@@ -59,165 +87,288 @@ export default function BranchDashboard() {
     ready: orders.filter(o => o.status === 'ready').length,
   };
 
+  const visibleOrders = useMemo(() => {
+    const roleFiltered = dashboardRole === 'manager'
+      ? orders
+      : orders.filter(order => order.assignedTo === selectedStaff || (order.status === 'pending' && !order.assignedTo));
+
+    return roleFiltered.filter(order => {
+      if (activeTab === 'all') return true;
+      if (activeTab === 'preparing') return order.status === 'preparing' || order.status === 'accepted';
+      return order.status === activeTab;
+    });
+  }, [activeTab, dashboardRole, orders, selectedStaff]);
+
+  const markItemUnavailable = async (productId: string | number) => {
+    await markOutOfStock(selectedBranchId, productId);
+    const records = await getLowStock(selectedBranchId);
+    setLowStock(records);
+  };
+
+  const tabs: DashboardTab[] = ['pending', 'preparing', 'ready', 'all'];
+
   return (
-    <div className="min-h-screen bg-gray-50 dark: text-foreground">
+    <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="bg-[#F47A3E] text-white py-4 px-4">
-        <div className="container mx-auto flex items-center justify-between">
+        <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <Store className="w-6 h-6" />
             <div>
-              <h1 className="font-bold text-lg">Branch Dashboard</h1>
-              <p className="text-orange-100 text-xs">Order Management</p>
+              <h1 className="font-bold text-lg">{t('branchDashboard')}</h1>
+              <p className="text-orange-100 text-xs">{t('orderManagement')}</p>
             </div>
           </div>
-          <select
-            value={selectedBranchId}
-            onChange={e => setSelectedBranchId(e.target.value)}
-            className="bg-white/20 border border-white/30 text-white rounded-lg px-3 py-1.5 text-sm font-bold focus:outline-none"
-          >
-            {branches.map(b => <option key={b.id} value={b.id} className="text-gray-900">{b.name}</option>)}
-          </select>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <select
+              value={selectedBranchId}
+              onChange={e => setSelectedBranchId(e.target.value)}
+              className="bg-white/20 border border-white/30 text-white rounded-lg px-3 py-2 text-sm font-bold focus:outline-none"
+            >
+              {branches.map(b => <option key={b.id} value={b.id} className="text-gray-900">{b.name}</option>)}
+            </select>
+            <div className="flex rounded-xl overflow-hidden border border-white/30">
+              <button
+                onClick={() => setDashboardRole('manager')}
+                className={`px-4 py-2 text-sm font-bold ${dashboardRole === 'manager' ? 'bg-white text-[#F47A3E]' : 'bg-white/10 text-white'}`}
+              >
+                {t('managerView')}
+              </button>
+              <button
+                onClick={() => setDashboardRole('staff')}
+                className={`px-4 py-2 text-sm font-bold ${dashboardRole === 'staff' ? 'bg-white text-[#F47A3E]' : 'bg-white/10 text-white'}`}
+              >
+                {t('staffView')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {[
-            { label: 'Pending', count: counts.pending, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-900/20' },
-            { label: 'Preparing', count: counts.preparing, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-            { label: 'Ready', count: counts.ready, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-          ].map(s => (
-            <div key={s.label} className={`${s.bg} rounded-2xl p-4 text-center`}>
-              <p className={`text-3xl font-black ${s.color}`}>{s.count}</p>
-              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-2 mb-4 overflow-x-auto">
-          {(['pending', 'preparing', 'ready', 'all'] as const).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeTab === tab ? 'bg-[#F47A3E] text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700'}`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              {tab !== 'all' && counts[tab as keyof typeof counts] > 0 && (
-                <span className="ml-1.5 bg-white/30 text-xs px-1.5 py-0.5 rounded-full">{counts[tab as keyof typeof counts]}</span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Orders */}
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#F47A3E]" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
-            <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-bold">No orders in this category</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filtered.map(order => (
-              <div key={order.id} className="bg-white dark:bg-card border dark:border-border rounded-2xl p-5 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="font-bold dark:text-white">#{order.id.slice(0, 8).toUpperCase()}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
-                      <Clock className="w-3 h-3" /> Pick-up: {order.pickupTime || 'Not set'}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                      <User className="w-3 h-3" /> {order.userEmail}
-                    </p>
-                  </div>
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${STATUS_COLORS[order.status] || STATUS_COLORS.pending}`}>
-                    {order.status?.toUpperCase()}
-                  </span>
+        <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-card rounded-2xl p-5 shadow-sm border dark:border-border">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-bold">{t('workflowPreview')}</p>
+                  <h2 className="text-xl font-black dark:text-white">{dashboardRole === 'manager' ? t('managerView') : t('staffView')}</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {dashboardRole === 'manager' ? t('managerWorkflowDescription') : t('staffWorkflowDescription')}
+                  </p>
                 </div>
+                {dashboardRole === 'staff' && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-gray-500 dark:text-gray-400">{t('staffMember')}</span>
+                    <select
+                      value={selectedStaff}
+                      onChange={e => setSelectedStaff(e.target.value)}
+                      className="border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm font-semibold bg-white dark:bg-gray-900"
+                    >
+                      {STAFF_MEMBERS.map(member => <option key={member} value={member}>{member}</option>)}
+                    </select>
+                  </div>
+                )}
+              </div>
+            </div>
 
-                {/* Items */}
-                <div className="flex gap-2 mb-3 flex-wrap">
-                  {order.items?.slice(0, 4).map((item: any) => (
-                    <div key={item.id} className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700 rounded-lg px-2 py-1">
-                      <img src={item.image} alt={item.name} className="w-6 h-6 object-contain" />
-                      <span className="text-xs dark:text-white line-clamp-1 max-w-[80px]">{item.name}</span>
-                      <span className="text-xs text-gray-400">×{item.quantity}</span>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { label: t('pending'), count: counts.pending, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-900/20' },
+                { label: t('preparing'), count: counts.preparing, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+                { label: t('ready'), count: counts.ready, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
+              ].map(card => (
+                <div key={card.label} className={`${card.bg} rounded-2xl p-4 text-center`}>
+                  <p className={`text-3xl font-black ${card.color}`}>{card.count}</p>
+                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{card.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto">
+              {tabs.map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeTab === tab ? 'bg-[#F47A3E] text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700'}`}
+                >
+                  {tab === 'all' ? t('viewAll') : t(tab)}
+                </button>
+              ))}
+            </div>
+
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="w-8 h-8 animate-spin text-[#F47A3E]" />
+              </div>
+            ) : visibleOrders.length === 0 ? (
+              <div className="text-center py-20 text-gray-400 bg-white dark:bg-card rounded-2xl border dark:border-border">
+                <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <p className="font-bold">{t('noOrdersInCategory')}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {visibleOrders.map(order => (
+                  <div key={order.id} className="bg-white dark:bg-card border dark:border-border rounded-2xl p-5 shadow-sm">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
+                      <div>
+                        <p className="font-bold dark:text-white">#{order.id.slice(0, 8).toUpperCase()}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
+                          <Clock className="w-3 h-3" /> {t('pickupTime')}: {order.pickupTime || t('notAssignedYet')}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <User className="w-3 h-3" /> {order.userEmail}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {t('assignedTo')}: <span className="font-semibold">{order.assignedTo || t('notAssignedYet')}</span>
+                        </p>
+                      </div>
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${STATUS_COLORS[order.status] || STATUS_COLORS.pending}`}>
+                        {order.status?.toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="flex gap-2 mb-4 flex-wrap">
+                      {order.items?.slice(0, 4).map((item: any) => (
+                        <div key={item.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-700 rounded-lg px-2 py-1.5">
+                          <img src={item.image} alt={item.name} className="w-6 h-6 object-contain" />
+                          <div>
+                            <span className="text-xs dark:text-white line-clamp-1 max-w-[100px] block">{item.name}</span>
+                            <span className="text-[11px] text-gray-400">x{item.quantity}</span>
+                          </div>
+                          <button
+                            onClick={() => markItemUnavailable(item.id)}
+                            className="text-[11px] font-bold text-red-500 hover:text-red-600"
+                          >
+                            {t('markItemOutOfStock')}
+                          </button>
+                        </div>
+                      ))}
+                      {order.items?.length > 4 && <span className="text-xs text-gray-400 self-center">+{order.items.length - 4} more</span>}
+                    </div>
+
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="text-sm font-bold text-[#F47A3E]">{order.totalAmount?.toLocaleString()} RWF</span>
+
+                      {dashboardRole === 'manager' && (order.status === 'pending' || order.status === 'accepted') && (
+                        <select
+                          defaultValue={order.assignedTo || ''}
+                          onChange={e => updateOrder(order.id, { assignedTo: e.target.value, status: 'accepted' })}
+                          className="text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#F47A3E]"
+                        >
+                          <option value="">{t('assignToStaff')}</option>
+                          {STAFF_MEMBERS.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      )}
+
+                      {dashboardRole === 'staff' && order.assignedTo === selectedStaff && (order.status === 'accepted' || order.status === 'pending') && (
+                        <button
+                          onClick={() => updateOrder(order.id, { status: 'preparing', assignedTo: selectedStaff })}
+                          className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                        >
+                          <Package className="w-3 h-3" /> {t('markPreparing')}
+                        </button>
+                      )}
+
+                      {order.status === 'preparing' && (
+                        <button
+                          onClick={() => updateOrder(order.id, { status: 'ready' })}
+                          className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> {t('markReady')}
+                        </button>
+                      )}
+
+                      {order.status === 'ready' && (
+                        <button
+                          onClick={() => updateOrder(order.id, { status: 'completed' })}
+                          className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> {t('complete')}
+                        </button>
+                      )}
+
+                      {dashboardRole === 'manager' && order.status === 'completed' && order.userId && !order.flagged && (
+                        <button
+                          onClick={async () => {
+                            await flagNoShow(order.userId, order.id);
+                            await updateOrder(order.id, { flagged: true });
+                          }}
+                          className="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                        >
+                          <Flag className="w-3 h-3" /> No-Show
+                        </button>
+                      )}
+
+                      {order.flagged && (
+                        <span className="text-xs text-red-500 font-bold flex items-center gap-1">
+                          <Flag className="w-3 h-3" /> Flagged
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-card rounded-2xl p-5 shadow-sm border dark:border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <Boxes className="w-5 h-5 text-[#F47A3E]" />
+                <h3 className="font-bold text-lg dark:text-white">{t('inventoryOverview')}</h3>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('stockTrackedByBranch')}</p>
+              <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3 text-sm text-amber-800 dark:text-amber-300 mb-4">
+                {t('staffCanUpdateStock')}
+              </div>
+
+              {loadingInventory ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="w-5 h-5 animate-spin text-[#F47A3E]" />
+                </div>
+              ) : lowStock.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <AlertTriangle className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <p className="text-sm font-semibold">{t('noLowStockItems')}</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-bold">{t('lowStockItems')}</p>
+                  {lowStock.map(item => (
+                    <div key={item.productId} className="rounded-xl border border-gray-100 dark:border-gray-800 p-3 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-sm dark:text-white">{productNameById.get(item.productId) || item.productId}</p>
+                        <p className="text-xs text-red-500 font-bold">{item.stock} {t('itemsLeft')}</p>
+                      </div>
+                      <button
+                        onClick={() => markItemUnavailable(item.productId)}
+                        className="text-xs font-bold text-red-500 hover:text-red-600"
+                      >
+                        {t('markItemOutOfStock')}
+                      </button>
                     </div>
                   ))}
-                  {order.items?.length > 4 && <span className="text-xs text-gray-400 self-center">+{order.items.length - 4} more</span>}
                 </div>
+              )}
+            </div>
 
-                <div className="flex items-center gap-3 flex-wrap">
-                  <span className="text-sm font-bold text-[#F47A3E]">{order.totalAmount?.toLocaleString()} RWF</span>
-
-                  {/* Assign to staff */}
-                  {(order.status === 'pending' || order.status === 'accepted') && (
-                    <div className="flex items-center gap-2 flex-1">
-                      <select
-                        defaultValue={order.assignedTo || ''}
-                        onChange={e => updateOrder(order.id, { assignedTo: e.target.value, status: 'preparing' })}
-                        className="flex-1 text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#F47A3E]"
-                      >
-                        <option value="">Assign to staff...</option>
-                        {STAFF_MEMBERS.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
+            <div className="bg-white dark:bg-card rounded-2xl p-5 shadow-sm border dark:border-border">
+              <h3 className="font-bold text-lg dark:text-white mb-3">{t('staffMember')}</h3>
+              <div className="space-y-2">
+                {STAFF_MEMBERS.map(member => {
+                  const activeOrders = orders.filter(order => order.assignedTo === member && order.status !== 'completed').length;
+                  return (
+                    <div key={member} className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800 px-3 py-2">
+                      <span className="text-sm font-semibold dark:text-white">{member}</span>
+                      <span className="text-xs font-bold text-[#F47A3E]">{activeOrders} active</span>
                     </div>
-                  )}
-
-                  {order.status === 'preparing' && (
-                    <button
-                      onClick={() => updateOrder(order.id, { status: 'ready' })}
-                      className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
-                    >
-                      <CheckCircle2 className="w-3 h-3" /> Mark Ready
-                    </button>
-                  )}
-
-                  {order.status === 'ready' && (
-                    <button
-                      onClick={() => updateOrder(order.id, { status: 'completed' })}
-                      className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
-                    >
-                      <CheckCircle2 className="w-3 h-3" /> Complete
-                    </button>
-                  )}
-
-                  {/* Flag no-show — only on completed orders */}
-                  {order.status === 'completed' && order.userId && !order.flagged && (
-                    <button
-                      onClick={async () => {
-                        await flagNoShow(order.userId, order.id);
-                        await updateOrder(order.id, { flagged: true });
-                      }}
-                      className="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition"
-                      title="Flag customer as no-show"
-                    >
-                      <Flag className="w-3 h-3" /> No-Show
-                    </button>
-                  )}
-                  {order.flagged && (
-                    <span className="text-xs text-red-500 font-bold flex items-center gap-1">
-                      <Flag className="w-3 h-3" /> Flagged
-                    </span>
-                  )}
-
-                  {order.assignedTo && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                      <User className="w-3 h-3" /> {order.assignedTo}
-                    </span>
-                  )}
-                </div>
+                  );
+                })}
               </div>
-            ))}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
 }
-

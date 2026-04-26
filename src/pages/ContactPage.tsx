@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Send, CheckCircle2 } from 'lucide-react';
 
@@ -7,7 +7,7 @@ export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSent(true);
   };

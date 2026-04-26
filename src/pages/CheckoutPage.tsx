@@ -20,8 +20,6 @@ const PICKUP_TIMES = [
   '17:00 - 18:00', '18:00 - 19:00', '19:00 - 20:00',
 ];
 
-const DEPOSIT_AMOUNT = 500;
-
 export default function CheckoutPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -41,7 +39,6 @@ export default function CheckoutPage() {
     if (!currentUser) navigate('/login');
   }, [currentUser, navigate]);
 
-  // Load dynamic deposit based on no-show history
   useEffect(() => {
     if (currentUser) {
       getDepositAmount(currentUser.uid).then(setDepositAmount);
@@ -73,7 +70,7 @@ export default function CheckoutPage() {
         pickupTime: selectedTime,
         momoPhone,
         momoProvider,
-        depositAmount: depositAmount,
+        depositAmount,
         totalAmount: getCartTotal() + depositAmount,
         status: 'pending',
         items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.price, image: i.image })),
@@ -81,7 +78,6 @@ export default function CheckoutPage() {
         updatedAt: serverTimestamp(),
       });
       setOrderId(ref.id.slice(0, 8).toUpperCase());
-      // Decrement stock at selected branch
       decrementStock(selectedBranch.id, items.map(i => ({ id: i.id, quantity: i.quantity })));
       setTimeout(() => {
         setIsProcessing(false);
@@ -95,7 +91,6 @@ export default function CheckoutPage() {
     }
   };
 
-  // Step: Success
   if (step === 'success') {
     return (
       <div className="container mx-auto px-4 py-20 text-center text-foreground max-w-lg">
@@ -108,21 +103,21 @@ export default function CheckoutPage() {
           <div className="flex items-center gap-3">
             <Store className="w-5 h-5 text-[#F47A3E] shrink-0" />
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Pick-up Branch</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('pickupBranch')}</p>
               <p className="font-bold dark:text-white">{selectedBranch?.name}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-[#F47A3E] shrink-0" />
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Pick-up Time</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('pickupTime')}</p>
               <p className="font-bold dark:text-white">{selectedTime}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-[#F47A3E] shrink-0" />
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Order ID</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('orderId')}</p>
               <p className="font-bold dark:text-white">#{orderId}</p>
             </div>
           </div>
@@ -139,16 +134,15 @@ export default function CheckoutPage() {
     );
   }
 
-  // Step: Pending (MoMo processing)
   if (step === 'pending') {
     return (
       <div className="container mx-auto px-4 py-20 text-center text-foreground max-w-md">
         <div className="w-24 h-24 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
           <Phone className="w-12 h-12 text-[#F47A3E]" />
         </div>
-        <h2 className="text-2xl font-bold mb-2 dark:text-white">Check your phone</h2>
+        <h2 className="text-2xl font-bold mb-2 dark:text-white">{t('checkYourPhoneTitle')}</h2>
         <p className="text-gray-500 dark:text-gray-400 mb-2">
-          A MoMo prompt for <strong className="text-[#F47A3E]">{depositAmount.toLocaleString()} RWF</strong> deposit has been sent to
+          {t('momoPromptSent', { amount: depositAmount.toLocaleString() })}
         </p>
         <p className="text-xl font-bold text-[#F47A3E] mb-6">{momoPhone}</p>
         <div className="flex items-center justify-center gap-2 text-gray-400">
@@ -160,14 +154,13 @@ export default function CheckoutPage() {
   }
 
   const stepIndex = ['branch', 'timeslot', 'payment'].indexOf(step);
+  const progressLabels = [t('selectBranchStep'), t('pickupTime'), t('payment')];
 
   return (
-    <div className="bg-gray-50 dark: min-h-screen py-8 text-foreground">
+    <div className="bg-gray-50 min-h-screen py-8 text-foreground">
       <div className="container mx-auto px-4 max-w-4xl">
-
-        {/* Progress */}
         <div className="flex items-center gap-2 mb-8">
-          {['Select Branch', 'Pick-up Time', 'Payment'].map((label, i) => (
+          {progressLabels.map((label, i) => (
             <React.Fragment key={label}>
               <div className={`flex items-center gap-2 ${i <= stepIndex ? 'text-[#F47A3E]' : 'text-gray-400'}`}>
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 ${i < stepIndex ? 'bg-[#F47A3E] border-[#F47A3E] text-white' : i === stepIndex ? 'border-[#F47A3E] text-[#F47A3E]' : 'border-gray-300 text-gray-400'}`}>
@@ -182,14 +175,12 @@ export default function CheckoutPage() {
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
-
-            {/* STEP 1: Branch Selection */}
             {step === 'branch' && (
               <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm">
                 <h2 className="text-xl font-bold mb-1 dark:text-white flex items-center gap-2">
-                  <Store className="w-5 h-5 text-[#F47A3E]" /> Select Pick-up Branch
+                  <Store className="w-5 h-5 text-[#F47A3E]" /> {t('selectBranch')}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">Choose the Simba branch you'll pick up from</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">{t('choosePickupBranchHelp')}</p>
                 <div className="space-y-3">
                   {branches.map((branch) => (
                     <button
@@ -197,7 +188,7 @@ export default function CheckoutPage() {
                       onClick={() => setSelectedBranch(branch)}
                       className={`w-full text-left p-4 rounded-xl border-2 transition-all ${selectedBranch?.id === branch.id ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'}`}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedBranch?.id === branch.id ? 'border-[#F47A3E]' : 'border-gray-300'}`}>
                             {selectedBranch?.id === branch.id && <div className="w-2 h-2 rounded-full bg-[#F47A3E]" />}
@@ -210,18 +201,21 @@ export default function CheckoutPage() {
                           </div>
                         </div>
                         <button
-                          onClick={(e) => { e.stopPropagation();
+                          onClick={(e) => {
+                            e.stopPropagation();
                             if (navigator.geolocation) {
                               navigator.geolocation.getCurrentPosition(
                                 pos => window.open(`https://www.google.com/maps/dir/${pos.coords.latitude},${pos.coords.longitude}/${branch.latitude},${branch.longitude}`, '_blank'),
                                 () => window.open(branch.mapUrl, '_blank'),
                                 { timeout: 5000 }
                               );
-                            } else window.open(branch.mapUrl, '_blank');
+                            } else {
+                              window.open(branch.mapUrl, '_blank');
+                            }
                           }}
                           className="text-xs text-[#F47A3E] hover:underline font-bold"
                         >
-                          Directions
+                          {t('directions')}
                         </button>
                       </div>
                     </button>
@@ -232,22 +226,21 @@ export default function CheckoutPage() {
                   disabled={!selectedBranch}
                   className="mt-6 w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
-                  Continue <ChevronRight className="w-4 h-4" />
+                  {t('continue')} <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             )}
 
-            {/* STEP 2: Time Slot */}
             {step === 'timeslot' && (
               <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm">
                 <button onClick={() => setStep('branch')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#F47A3E] mb-4 transition-colors">
-                  <ArrowLeft className="w-4 h-4" /> Back
+                  <ArrowLeft className="w-4 h-4" /> {t('back')}
                 </button>
                 <h2 className="text-xl font-bold mb-1 dark:text-white flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-[#F47A3E]" /> Choose Pick-up Time
+                  <Clock className="w-5 h-5 text-[#F47A3E]" /> {t('pickupTime')}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
-                  At <strong className="text-[#F47A3E]">{selectedBranch?.name}</strong> — when will you arrive?
+                  {t('choosePickupTimeHelp')} <strong className="text-[#F47A3E]">{selectedBranch?.name}</strong>. {t('whenWillYouArrive')}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {PICKUP_TIMES.map((time) => (
@@ -265,28 +258,26 @@ export default function CheckoutPage() {
                   disabled={!selectedTime}
                   className="mt-6 w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
-                  Continue <ChevronRight className="w-4 h-4" />
+                  {t('continue')} <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             )}
 
-            {/* STEP 3: MoMo Deposit Payment */}
             {step === 'payment' && (
               <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-6 shadow-sm">
                 <button onClick={() => setStep('timeslot')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#F47A3E] mb-4 transition-colors">
-                  <ArrowLeft className="w-4 h-4" /> Back
+                  <ArrowLeft className="w-4 h-4" /> {t('back')}
                 </button>
                 <h2 className="text-xl font-bold mb-1 dark:text-white flex items-center gap-2">
-                  <Phone className="w-5 h-5 text-[#F47A3E]" /> MoMo Deposit
+                  <Phone className="w-5 h-5 text-[#F47A3E]" /> {t('momoDeposit')}
                 </h2>
                 <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-5">
                   <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
-                    ⚠️ A <strong>{depositAmount.toLocaleString()} RWF</strong> non-refundable deposit is required to confirm your pick-up order. This ensures your order is prepared on time.
-                    {depositAmount > 500 && <span className="block mt-1 text-red-600 dark:text-red-400 font-bold">⚠️ Higher deposit due to previous no-shows.</span>}
+                    {t('depositRequired')} {t('depositEnsuresPreparation')}
+                    {depositAmount > 500 && <span className="block mt-1 text-red-600 dark:text-red-400 font-bold">{t('higherDepositWarning')}</span>}
                   </p>
                 </div>
 
-                {/* Provider */}
                 <div className="flex gap-3 mb-5">
                   {(['mtn', 'airtel'] as const).map((p) => (
                     <button
@@ -294,7 +285,7 @@ export default function CheckoutPage() {
                       onClick={() => setMomoProvider(p)}
                       className={`flex-1 py-3 rounded-xl font-bold text-sm border-2 transition-all ${momoProvider === p ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30 text-[#F47A3E]' : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400'}`}
                     >
-                      {p === 'mtn' ? '🟡 MTN MoMo' : '🔴 Airtel Money'}
+                      {p === 'mtn' ? 'MTN MoMo' : 'Airtel Money'}
                     </button>
                   ))}
                 </div>
@@ -305,9 +296,7 @@ export default function CheckoutPage() {
                     type="tel"
                     value={momoPhone}
                     onChange={(e) => {
-                      // Prevent double prefix — strip leading zeros/prefix then reformat
                       let val = e.target.value.replace(/\s/g, '');
-                      // If user types 078 and field already has 078, don't double it
                       if (val.startsWith('078078') || val.startsWith('073073')) {
                         val = val.slice(3);
                       }
@@ -317,7 +306,7 @@ export default function CheckoutPage() {
                     maxLength={10}
                     className="w-full border-2 border-gray-300 dark:border-gray-600 rounded-xl p-3 font-mono text-lg bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
                   />
-                  <p className="text-xs text-gray-400 mt-1">Enter 10-digit number e.g. 0781234567</p>
+                  <p className="text-xs text-gray-400 mt-1">{t('enterTenDigitPhone')}</p>
                 </div>
 
                 <button
@@ -330,13 +319,12 @@ export default function CheckoutPage() {
                     e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
                   }}
                 >
-                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ${depositAmount.toLocaleString()} RWF Deposit & Confirm`}
+                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : t('payDepositConfirm', { amount: depositAmount.toLocaleString() })}
                 </button>
               </div>
             )}
           </div>
 
-          {/* Order Summary Sidebar */}
           <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-5 shadow-sm h-fit sticky top-24">
             <h3 className="font-bold text-lg mb-4 border-b dark:border-border pb-3 dark:text-white">{t('orderSummary')}</h3>
             <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
@@ -345,7 +333,7 @@ export default function CheckoutPage() {
                   <img src={item.image} alt={getLocalizedProductName(item)} className="w-10 h-10 object-contain rounded-lg bg-gray-50 dark:bg-gray-700 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium dark:text-white line-clamp-1">{getLocalizedProductName(item)}</p>
-                    <p className="text-xs text-gray-400">×{item.quantity}</p>
+                    <p className="text-xs text-gray-400">x{item.quantity}</p>
                   </div>
                   <p className="text-xs font-bold text-[#F47A3E] shrink-0">{(item.price * item.quantity).toLocaleString()} RWF</p>
                 </div>
@@ -353,10 +341,10 @@ export default function CheckoutPage() {
             </div>
             <div className="border-t dark:border-border pt-3 space-y-2 text-sm">
               <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                <span>Subtotal</span><span>{getCartTotal().toLocaleString()} RWF</span>
+                <span>{t('subtotal')}</span><span>{getCartTotal().toLocaleString()} RWF</span>
               </div>
               <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                <span>Deposit (non-refundable)</span><span className="text-amber-600">+{depositAmount.toLocaleString()} RWF</span>
+                <span>{t('depositLabel')}</span><span className="text-amber-600">+{depositAmount.toLocaleString()} RWF</span>
               </div>
               <div className="flex justify-between font-bold text-base dark:text-white border-t dark:border-border pt-2">
                 <span>{t('total')}</span>
@@ -375,4 +363,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
