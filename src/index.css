@@ -322,13 +322,43 @@ html.dark .pill:hover { border-color: #F47A3E; color: #F47A3E !important; }
 html.dark .pill.active { background: #F47A3E !important; color: #ffffff !important; }
 
 /* ═══════════════════════════════════════
-   SCROLLBAR
+   SCROLLBAR — thin orange, all browsers
 ═══════════════════════════════════════ */
-html { scrollbar-width: thin; scrollbar-color: #F47A3E transparent; }
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; min-height: 40px; }
-::-webkit-scrollbar-thumb:hover { background: #D46A2E; }
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #F47A3E transparent;
+}
+/* Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 4px !important;
+  height: 4px !important;
+}
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+  background: #F47A3E !important;
+  border-radius: 4px !important;
+  min-height: 30px !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D46A2E !important;
+}
+/* Force on body and all scrollable containers */
+body::-webkit-scrollbar,
+div::-webkit-scrollbar {
+  width: 4px !important;
+}
+body::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb {
+  background: #F47A3E !important;
+  border-radius: 4px !important;
+}
+/* Hide scrollbar utility classes */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar { display: none !important; }
+.no-scrollbar,
+.scrollbar-hide { -ms-overflow-style: none !important; scrollbar-width: none !important; }
 
 /* ═══════════════════════════════════════
    UTILITIES
