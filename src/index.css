@@ -324,9 +324,11 @@ html.dark .pill.active { background: #F47A3E !important; color: #ffffff !importa
 /* ═══════════════════════════════════════
    SCROLLBAR
 ═══════════════════════════════════════ */
+html { scrollbar-width: thin; scrollbar-color: #F47A3E transparent; }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #F47A3E; border-radius: 3px; min-height: 40px; }
+::-webkit-scrollbar-thumb:hover { background: #D46A2E; }
 
 /* ═══════════════════════════════════════
    UTILITIES
