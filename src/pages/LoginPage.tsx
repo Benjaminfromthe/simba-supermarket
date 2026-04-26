@@ -57,14 +57,19 @@ export default function LoginPage() {
 
       {/* Demo credentials for judges */}
       <div className="mb-5 rounded-xl p-3 text-xs" style={{ background: 'rgba(244,122,62,0.15)', border: '1px solid rgba(244,122,62,0.3)' }}>
-        <p className="text-[#F47A3E] font-black mb-1.5 uppercase tracking-wide text-[10px]">🎯 Demo Accounts</p>
-        <div className="space-y-1 text-white/70">
-          <button
-            type="button"
-            onClick={() => { setEmail('benjaminnshimiye633@gmail.com'); setPassword('demo1234'); }}
-            className="w-full text-left hover:text-white transition-colors"
-          >
-            👑 Admin: benjaminnshimiye633@gmail.com / demo1234
+        <p className="text-[#F47A3E] font-black mb-2 uppercase tracking-wide text-[10px]">🎯 Demo Accounts — Click to fill</p>
+        <div className="space-y-1.5">
+          <button type="button" onClick={() => { setEmail('benjaminnshimiye633@gmail.com'); setPassword('demo1234'); }}
+            className="w-full text-left text-white/70 hover:text-white transition-colors flex items-center gap-1.5 py-0.5">
+            <span>👑</span><span className="font-bold text-white/90">Admin</span> benjaminnshimiye633@gmail.com / demo1234
+          </button>
+          <button type="button" onClick={() => { setEmail('manager@simba.rw'); setPassword('manager123'); }}
+            className="w-full text-left text-white/70 hover:text-white transition-colors flex items-center gap-1.5 py-0.5">
+            <span>🏪</span><span className="font-bold text-white/90">Manager</span> manager@simba.rw / manager123
+          </button>
+          <button type="button" onClick={() => { setEmail('staff@simba.rw'); setPassword('staff123'); }}
+            className="w-full text-left text-white/70 hover:text-white transition-colors flex items-center gap-1.5 py-0.5">
+            <span>👷</span><span className="font-bold text-white/90">Staff</span> staff@simba.rw / staff123
           </button>
         </div>
       </div>

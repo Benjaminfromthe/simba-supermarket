@@ -94,17 +94,25 @@ export interface GroqResult {
   products: Product[];
 }
 
-export async function groqConversationalSearch(query: string): Promise<GroqResult> {
+const LANG_NAMES: Record<string, string> = {
+  en: 'English', fr: 'French', rw: 'Kinyarwanda',
+};
+
+export async function groqConversationalSearch(query: string, lang = 'en'): Promise<GroqResult> {
   const fallback = localSearch(query, 8);
+  // Always return fallback if intent found — never show 0
+  const intentFallback = fallback.length > 0 ? fallback : localSearch(query.split(' ').slice(-1)[0], 8);
   const isSimple = query.length < 15 && !query.includes(' ');
   if (isSimple && fallback.length > 0) return { message: '', products: fallback };
 
   if (!GROQ_API_KEY) {
     return {
       message: fallback.length > 0 ? `Found ${fallback.length} products for you:` : "I couldn't find matching products.",
-      products: fallback,
+      products: intentFallback,
     };
   }
+
+  const langName = LANG_NAMES[lang] || 'English';
 
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -116,11 +124,12 @@ export async function groqConversationalSearch(query: string): Promise<GroqResul
           {
             role: 'system',
             content: `You are a smart shopping assistant for Simba Supermarket in Kigali, Rwanda. Prices are in RWF.
+IMPORTANT: Respond in ${langName}. Your "message" field must be in ${langName}.
 Catalog format per line: id|name|price|category
 Rules:
 - Understand natural language and price constraints ("milk under 1000" = price <= 1000)
-- Respond ONLY with valid JSON: {"message":"friendly 1-sentence response","productIds":[id1,id2,...]}
-- Max 6 IDs. Only use IDs from the catalog. If nothing matches: {"message":"apology","productIds":[]}
+- Respond ONLY with valid JSON: {"message":"friendly 1-sentence response in ${langName}","productIds":[id1,id2,...]}
+- Max 6 IDs. Only use IDs from the catalog. If nothing matches: {"message":"apology in ${langName}","productIds":[]}
 CATALOG (${ALL_PRODUCTS.length} products):
 ${CATALOG}`,
           },
@@ -138,13 +147,14 @@ ${CATALOG}`,
       const aiProducts = (parsed.productIds || [])
         .map((id: any) => ALL_PRODUCTS.find(p => p.id === id || p.id === String(id)))
         .filter(Boolean) as Product[];
-      const final = aiProducts.length > 0 ? aiProducts : fallback;
+      // Always fall back to local results if AI returns nothing
+      const final = aiProducts.length > 0 ? aiProducts : intentFallback;
       return { message: parsed.message || '', products: final };
     }
   } catch (err) {
     console.error('Groq error:', err);
   }
-  return { message: '', products: fallback };
+  return { message: '', products: intentFallback };
 }
 
 // ── Groq ID-only search (used by ShopPage full results) ────────────────────

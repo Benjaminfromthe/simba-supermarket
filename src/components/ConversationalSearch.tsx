@@ -4,71 +4,16 @@ import { Sparkles, Send, X, Loader2, ShoppingCart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore, Product } from '../store/useCartStore';
 import productsData from '../data/simba_products.json';
-
-const productsList: Product[] = (Array.isArray(productsData) ? productsData : (productsData as any).products) || [];
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
+import { groqConversationalSearch } from '../lib/groq';
 
 interface Message {
   role: 'user' | 'assistant';
   text: string;
-  products?: Product[];
-}
-
-async function askGroq(userMessage: string): Promise<{ text: string; products: Product[] }> {
-  const catalog = productsList.slice(0, 200).map(p => `${p.id}|${p.name}|${p.category}|${p.price}RWF`).join('\n');
-
-  const systemPrompt = `You are a helpful shopping assistant for Simba Supermarket in Kigali, Rwanda.
-Given the user's request, find the most relevant products from the catalog below and respond naturally.
-Return your response as JSON: { "message": "friendly response", "productIds": [id1, id2, ...] }
-Only return product IDs that exist in the catalog. Max 6 products.
-
-CATALOG (id|name|category|price):
-${catalog}`;
-
-  try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage },
-        ],
-        temperature: 0.3,
-        max_tokens: 500,
-      }),
-    });
-
-    const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || '{}';
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      const foundProducts = (parsed.productIds || [])
-        .map((id: number) => productsList.find(p => p.id === id))
-        .filter(Boolean) as Product[];
-      return { text: parsed.message || "Here's what I found:", products: foundProducts };
-    }
-  } catch (err) {
-    console.error('Groq error:', err);
-  }
-
-  const q = userMessage.toLowerCase();
-  const fallback = productsList.filter(p =>
-    p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
-  ).slice(0, 6);
-  return {
-    text: fallback.length > 0 ? `I found ${fallback.length} products matching your request:` : "I couldn't find matching products. Try browsing our shop!",
-    products: fallback,
-  };
+  products?: import('../store/useCartStore').Product[];
 }
 
 export default function ConversationalSearch() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', text: t('aiAssistantIntro') },
@@ -88,8 +33,8 @@ export default function ConversationalSearch() {
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setLoading(true);
-    const result = await askGroq(userText);
-    setMessages(prev => [...prev, { role: 'assistant', text: result.text, products: result.products }]);
+    const result = await groqConversationalSearch(userText, i18n.language);
+    setMessages(prev => [...prev, { role: 'assistant', text: result.message || t('aiAssistantIntro'), products: result.products }]);
     setLoading(false);
   };
 

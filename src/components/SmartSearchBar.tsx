@@ -33,7 +33,7 @@ export default function SmartSearchBar() {
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-      const res = await groqConversationalSearch(val);
+      const res = await groqConversationalSearch(val, i18n.language);
       setResult(res);
       setLoading(false);
     }, 500);
