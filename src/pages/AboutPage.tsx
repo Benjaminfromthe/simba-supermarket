@@ -14,7 +14,7 @@ export default function AboutPage() {
       <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary/95 mix-blend-multiply z-10" />
         <img 
-          src="https://images.unsplash.com/photo-1578916171728-46683e7452d1?auto=format&fit=crop&q=80&w=2000" 
+          src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=2000" 
           alt="Simba Supermarket Store" 
           className="absolute inset-0 w-full h-full object-cover" 
         />
