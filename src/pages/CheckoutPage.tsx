@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Loader2, MapPin, Clock, Phone, ChevronRight, Store, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, Loader2, MapPin, Clock, Phone, ChevronRight, Store, ArrowLeft, Star } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { getLocalizedProductName } from '../lib/localize';
 import { decrementStock } from '../lib/inventory';
@@ -35,9 +35,11 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [depositAmount, setDepositAmount] = useState(500);
+  // Branch ratings: { branchId -> { avg, count } }
+  const [branchRatings, setBranchRatings] = useState<Record<string, { avg: number; count: number }>>({});
 
   useEffect(() => {
-    if (!currentUser) navigate('/login');
+    if (!currentUser) navigate('/login', { state: { from: '/checkout' } });
   }, [currentUser, navigate]);
 
   useEffect(() => {
@@ -45,6 +47,30 @@ export default function CheckoutPage() {
       getDepositAmount(currentUser.uid).then(setDepositAmount);
     }
   }, [currentUser]);
+
+  // Fetch average ratings for all branches once
+  useEffect(() => {
+    async function fetchRatings() {
+      try {
+        const snap = await getDocs(collection(db, 'branchReviews'));
+        const map: Record<string, number[]> = {};
+        snap.docs.forEach(d => {
+          const { branchId, rating } = d.data();
+          if (!map[branchId]) map[branchId] = [];
+          map[branchId].push(rating);
+        });
+        const result: Record<string, { avg: number; count: number }> = {};
+        for (const [id, ratings] of Object.entries(map)) {
+          result[id] = {
+            avg: ratings.reduce((a, b) => a + b, 0) / ratings.length,
+            count: ratings.length,
+          };
+        }
+        setBranchRatings(result);
+      } catch { /* silent — ratings are optional */ }
+    }
+    fetchRatings();
+  }, []);
 
   if (items.length === 0 && step !== 'success') {
     return (
@@ -204,6 +230,17 @@ export default function CheckoutPage() {
                             <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
                               <MapPin className="w-3 h-3" /> {branch.locationNote}
                             </p>
+                            {branchRatings[branch.id] && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <Star className="w-3 h-3 fill-[#F47A3E] text-[#F47A3E]" />
+                                <span className="text-xs font-bold text-[#F47A3E]">
+                                  {branchRatings[branch.id].avg.toFixed(1)}
+                                </span>
+                                <span className="text-xs text-gray-400">
+                                  ({branchRatings[branch.id].count})
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <button

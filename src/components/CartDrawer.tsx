@@ -24,7 +24,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     if (currentUser) {
       navigate('/checkout');
     } else {
-      navigate('/login');
+      navigate('/login', { state: { from: '/checkout' } });
     }
   };
 

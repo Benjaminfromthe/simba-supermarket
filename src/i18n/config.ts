@@ -327,6 +327,7 @@ const resources = {
       suggestionOil: "Cooking oil",
       suggestionBaby: "Baby products",
       suggestionBreakfast: "Something for breakfast",
+      shopByCategory: "Shop by Category",
     }
   },
   fr: {
@@ -654,6 +655,7 @@ const resources = {
       suggestionOil: "Huile de cuisine",
       suggestionBaby: "Produits bébé",
       suggestionBreakfast: "Quelque chose pour le petit-déjeuner",
+      shopByCategory: "Acheter par Catégorie",
     }
   },
   rw: {
@@ -984,6 +986,7 @@ const resources = {
       suggestionOil: "Amavuta yo guteka",
       suggestionBaby: "Ibicuruzwa by'uruhinja",
       suggestionBreakfast: "Ikintu cyo mu gitondo",
+      shopByCategory: "Gura ukurikije Icyiciro",
     }
   }
 };

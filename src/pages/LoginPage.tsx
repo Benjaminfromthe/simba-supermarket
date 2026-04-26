@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
+
+  // Go back to where the user came from, or default to home
+  const from = (location.state as any)?.from || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +23,7 @@ export default function LoginPage() {
       setError('');
       setLoading(true);
       await signIn(email, password);
-      navigate('/checkout'); 
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.message || t('failedToSignIn', 'Failed to sign in'));
     } finally {
@@ -32,7 +36,7 @@ export default function LoginPage() {
       setError('');
       setLoading(true);
       await signInWithGoogle();
-      navigate('/checkout');
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.message || t('failedToSignInWithGoogle', 'Failed to sign in with Google'));
     } finally {
