@@ -70,9 +70,10 @@ async function askGroqAI(query: string): Promise<AIResult> {
   }
 
   try {
-    // Build compact catalog — max 100 products, only essential fields
-    const catalogSample = ALL_PRODUCTS.slice(0, 100);
-    const catalog = catalogSample.map(p => `${p.id}|${p.name}|${p.price}RWF`).join('\n');
+    // Build compact catalog — max 100 products, only name+price+category, no IDs or images
+    const catalog = ALL_PRODUCTS.slice(0, 100)
+      .map(p => `Product: ${p.name}, Price: ${p.price} RWF, Category: ${p.category}`)
+      .join('\n');
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -97,7 +98,7 @@ Rules:
 - Max 6 product IDs. Only use IDs from the catalog.
 - If nothing matches, return {"message": "friendly apology", "productIds": []}
 
-PRODUCT CATALOG (id|name|category|price):
+PRODUCT CATALOG (Product: name, Price: RWF, Category: category):
 ${catalog}`,
           },
           { role: 'user', content: query },
