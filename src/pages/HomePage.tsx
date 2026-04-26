@@ -94,25 +94,26 @@ export default function HomePage() {
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent" />
-              <div className="relative z-10 p-6 md:p-10 max-w-xl">
-                {/* Identity line — answers "What is this?" in 2 seconds */}
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="bg-[#F47A3E] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">
-                    🇷🇼 Rwanda's #1 Supermarket
+              <div className="relative z-10 p-4 md:p-8 max-w-xl">
+                {/* Identity line — translated */}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-[#F47A3E] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap">
+                    🇷🇼 {t('rwandaNo1', "Rwanda's #1 Supermarket")}
                   </span>
                 </div>
-                <h1 className="text-2xl md:text-4xl font-black text-white leading-tight mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+                <h1 className="text-xl md:text-4xl font-black text-white leading-tight mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
                   {t('qualityFirst')}. <span className="text-[#FF8A00]">{t('deliveredFast')}.</span>
                 </h1>
-                <p className="text-gray-300 text-xs md:text-sm mb-4 max-w-sm hidden md:block">{t('heroDescription')}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
+                <p className="text-gray-300 text-xs md:text-sm mb-3 max-w-sm hidden md:block">{t('heroDescription')}</p>
+                {/* Value prop badges — flex-wrap so they never overflow */}
+                <div className="flex flex-wrap gap-1.5 mb-3">
                   {[
-                    { icon: '⚡', label: t('fastPickup', '45-min Pick-up') },
-                    { icon: '📱', label: t('momoPayment', 'MoMo Payment') },
-                    { icon: '🛒', label: `789+ ${t('products', 'Products')}` },
-                    { icon: '📍', label: '9 Branches' },
+                    { icon: '⚡', label: t('fastPickup') },
+                    { icon: '📱', label: t('momoPayment') },
+                    { icon: '🛒', label: `789+ ${t('productsCount2', 'Produits')}` },
+                    { icon: '📍', label: `9 ${t('branchesCount')}` },
                   ].map(v => (
-                    <span key={v.label} className="flex items-center gap-1 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs font-semibold">
+                    <span key={v.label} className="flex items-center gap-1 bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-1 text-white text-[11px] font-semibold whitespace-nowrap">
                       {v.icon} {v.label}
                     </span>
                   ))}
@@ -126,7 +127,7 @@ export default function HomePage() {
                     const top = el.getBoundingClientRect().top + window.scrollY - headerH - 16;
                     window.scrollTo({ top, behavior: 'smooth' });
                   }}
-                  className="bg-[#F47A3E] hover:bg-[#D46A2E] text-white px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-105 active:scale-95"
+                  className="bg-[#F47A3E] hover:bg-[#D46A2E] text-white px-5 py-2 rounded-full font-bold text-sm uppercase tracking-wide transition-all hover:scale-105 active:scale-95"
                 >
                   {t('startShopping')} →
                 </button>
