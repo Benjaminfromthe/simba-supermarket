@@ -5,6 +5,7 @@ import { db } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageTransition from '../components/PageTransition';
 
 interface OrderItem {
   id: string | number;
@@ -82,14 +83,13 @@ export default function OrdersPage() {
   };
 
   return (
+    <PageTransition
+      title={t('orderHistory')}
+      subtitle={`${orders.length} order${orders.length !== 1 ? 's' : ''}`}
+      icon={<Package className="w-5 h-5" />}
+    >
     <div className="min-h-screen py-10 text-foreground">
       <div className="container mx-auto px-4 max-w-4xl">
-
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Package className="w-7 h-7 text-[#F47A3E]" />
-          <h1 className="text-2xl font-bold dark:text-white">{t('orderHistory')}</h1>
-        </div>
 
         {/* READY FOR PICK-UP BANNER */}
         {readyOrders.length > 0 && (
@@ -188,5 +188,6 @@ export default function OrdersPage() {
         )}
       </div>
     </div>
+    </PageTransition>
   );
 }

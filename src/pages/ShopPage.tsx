@@ -10,6 +10,8 @@ import { getLocalizedCategoryName } from '../lib/localize';
 
 // Components
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
+import PageTransition from '../components/PageTransition';
+import { ShoppingBag } from 'lucide-react';
 
 // --- Constants & Config ---
 const productsList = (Array.isArray(productsData) ? productsData : ((productsData as any).products || [])) as Product[];
@@ -156,23 +158,21 @@ export default function ShopPage() {
   };
 
   return (
+    <PageTransition
+      title={t('shop')}
+      subtitle={aiLoading ? '...' : `${filteredProducts.length} ${t('productsFoundText', 'products found')}`}
+      icon={<ShoppingBag className="w-5 h-5" />}
+    >
     <div className="max-w-7xl mx-auto px-4 py-8 min-h-screen">
       
-      {/* Header Section */}
+      {/* Sort row */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white uppercase italic">
-            {t('shop')}
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 font-medium">
-            {aiLoading ? (
-              <span className="flex items-center gap-2 text-orange-500">
-                <Loader2 className="w-4 h-4 animate-spin" /> Thinking...
-              </span>
-            ) : (
-              `${filteredProducts.length} items found`
-            )}
-          </p>
+          {aiLoading && (
+            <p className="text-sm text-orange-500 flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" /> Thinking...
+            </p>
+          )}
         </div>
 
         {!queryParam && (
@@ -253,5 +253,6 @@ export default function ShopPage() {
         </div>
       )}
     </div>
+    </PageTransition>
   );
 }

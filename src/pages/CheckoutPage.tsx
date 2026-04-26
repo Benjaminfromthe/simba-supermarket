@@ -10,6 +10,7 @@ import { getLocalizedProductName } from '../lib/localize';
 import { decrementStock } from '../lib/inventory';
 import { getDepositAmount } from '../lib/noshow';
 import branches from '../data/branches.json';
+import PageTransition from '../components/PageTransition';
 
 type Step = 'branch' | 'timeslot' | 'payment' | 'pending' | 'success';
 
@@ -157,6 +158,11 @@ export default function CheckoutPage() {
   const progressLabels = [t('selectBranchStep'), t('pickupTime'), t('payment')];
 
   return (
+    <PageTransition
+      title={t('checkout')}
+      subtitle={`${items.length} item${items.length !== 1 ? 's' : ''} · ${getCartTotal().toLocaleString()} RWF`}
+      icon={<Store className="w-5 h-5" />}
+    >
     <div className="bg-gray-50 min-h-screen py-8 text-foreground">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="flex items-center gap-2 mb-8">
@@ -361,5 +367,6 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }

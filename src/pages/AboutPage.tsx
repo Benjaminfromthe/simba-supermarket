@@ -2,11 +2,13 @@ import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Users, Heart, Award, ShieldCheck, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageTransition from '../components/PageTransition';
 
 export default function AboutPage() {
   const { t } = useTranslation();
 
   return (
+    <PageTransition>
     <div className="bg-white dark: min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
@@ -109,6 +111,7 @@ export default function AboutPage() {
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
       </section>
     </div>
+    </PageTransition>
   );
 }
 

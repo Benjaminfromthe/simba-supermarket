@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Send, CheckCircle2 } from 'lucide-react';
+import PageTransition from '../components/PageTransition';
 
 export default function ContactPage() {
   const { t } = useTranslation();
@@ -51,6 +52,11 @@ export default function ContactPage() {
   ];
 
   return (
+    <PageTransition
+      title={t('getInTouch')}
+      subtitle={t('contactPreamble').slice(0, 60) + '...'}
+      icon={<Mail className="w-5 h-5" />}
+    >
     <div className="min-h-screen py-12">
       <div className="container mx-auto px-4 max-w-5xl">
 
@@ -148,5 +154,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }

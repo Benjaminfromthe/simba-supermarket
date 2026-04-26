@@ -8,6 +8,7 @@ import { useCartStore, Product } from '../store/useCartStore';
 import { getLocalizedProductName, getLocalizedProductCategory } from '../lib/localize';
 import { useBranchStock } from '../hooks/useBranchStock';
 import branches from '../data/branches.json';
+import PageTransition from '../components/PageTransition';
 
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 
@@ -49,6 +50,11 @@ export default function ProductPage() {
   const localizedCategory = getLocalizedProductCategory(product);
 
   return (
+    <PageTransition
+      title={localizedName}
+      subtitle={localizedCategory}
+      icon={<ShoppingCart className="w-5 h-5" />}
+    >
     <div className=" min-h-screen py-8 text-foreground">
       <div className="container mx-auto px-4">
         
@@ -186,6 +192,7 @@ export default function ProductPage() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }
 
