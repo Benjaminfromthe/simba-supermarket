@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import CartDrawer from './CartDrawer';
 import Footer from './Footer';
 import CartProgressBar from './CartProgressBar';
+import ConversationalSearch from './ConversationalSearch';
 
 export default function Layout() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Layout() {
       </main>
       <Footer />
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <ConversationalSearch />
     </div>
   );
 }

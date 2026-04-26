@@ -168,7 +168,11 @@ export default function ConversationalSearch() {
               </button>
             </div>
             <div className="flex gap-2 mt-2 flex-wrap">
-              {['Fresh milk?', 'Breakfast items', 'Cooking oil'].map(s => (
+              {[
+                t('suggestionMilk', 'Fresh milk?'),
+                t('suggestionBreakfast', 'Breakfast items'),
+                t('suggestionOil', 'Cooking oil'),
+              ].map(s => (
                 <button key={s} onClick={() => setInput(s)} className="text-xs bg-orange-50 dark:bg-orange-950/30 text-[#F47A3E] px-2 py-1 rounded-full hover:bg-orange-100 transition">
                   {s}
                 </button>

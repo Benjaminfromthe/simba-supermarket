@@ -17,6 +17,30 @@ const CATALOG = ALL_PRODUCTS
 
 const STOP_WORDS = new Set(['i','need','want','looking','for','buy','get','show','please','the','some','a','an','do','you','have','any']);
 
+// Meal/occasion intent → category + keyword mapping
+const INTENT_MAP: Record<string, { categories: string[]; keywords: string[] }> = {
+  breakfast: { categories: ['Food Products'], keywords: ['bread','milk','egg','cereal','butter','jam','tea','coffee','juice','yogurt','oat','honey'] },
+  lunch:     { categories: ['Food Products'], keywords: ['rice','pasta','sauce','soup','oil','salt','flour','noodle','tuna','sardine'] },
+  dinner:    { categories: ['Food Products'], keywords: ['rice','pasta','sauce','oil','salt','flour','spice','tomato','onion','garlic'] },
+  snack:     { categories: ['Food Products'], keywords: ['biscuit','chip','crisp','chocolate','candy','sweet','cookie','cake','nut'] },
+  drink:     { categories: ['Food Products','Alcoholic Drinks'], keywords: ['juice','water','soda','beer','wine','milk','tea','coffee','energy'] },
+  baby:      { categories: ['Baby Products'], keywords: ['milk','formula','diaper','wipe','powder','lotion'] },
+  clean:     { categories: ['Cleaning & Sanitary'], keywords: ['soap','detergent','bleach','mop','broom','toilet','dishwash','laundry'] },
+  cook:      { categories: ['Food Products','Kitchenware & Electronics'], keywords: ['oil','salt','flour','spice','pot','pan','knife'] },
+};
+
+function resolveIntent(query: string): { categories: string[]; keywords: string[] } | null {
+  const q = query.toLowerCase();
+  for (const [intent, config] of Object.entries(INTENT_MAP)) {
+    if (q.includes(intent)) return config;
+  }
+  // Kinyarwanda/French meal words
+  if (q.includes('matin') || q.includes('gitondo')) return INTENT_MAP.breakfast;
+  if (q.includes('dejeuner') || q.includes('saa sita')) return INTENT_MAP.lunch;
+  if (q.includes('diner') || q.includes('ijoro')) return INTENT_MAP.dinner;
+  return null;
+}
+
 export function localSearch(query: string, limit = 24): Product[] {
   const q = query.toLowerCase();
   const underMatch = q.match(/(?:under|below|less than|cheaper than|max|at most)\s*(\d+)/);
@@ -30,6 +54,9 @@ export function localSearch(query: string, limit = 24): Product[] {
     .replace(/\s+/g, ' ')
     .trim();
 
+  // Check for meal/occasion intent first
+  const intent = resolveIntent(cleanQ);
+
   const keywords = cleanQ.split(' ').filter(w => w.length > 1 && !STOP_WORDS.has(w));
 
   const scored = ALL_PRODUCTS.map(p => {
@@ -38,6 +65,13 @@ export function localSearch(query: string, limit = 24): Product[] {
     if (maxPrice && p.price > maxPrice) return { product: p, score: -1 };
     if (minPrice && p.price < minPrice) return { product: p, score: -1 };
     let score = 0;
+
+    // Intent-based scoring — "breakfast" maps to bread, milk, eggs etc.
+    if (intent) {
+      if (intent.categories.some(c => p.category === c)) score += 8;
+      if (intent.keywords.some(kw => name.includes(kw))) score += 15;
+    }
+
     keywords.forEach(kw => {
       if (name.includes(kw)) score += 10;
       if (cat.includes(kw))  score += 5;
