@@ -1,75 +1,51 @@
-cat /home/claude/simba-google-ai/src/pages/ShopPage.tsx
-Output
-
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import productsData from '../data/simba_products.json';
-import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
-import { SlidersHorizontal, X, Sparkles, Loader2 } from 'lucide-react';
-import { Product } from '../store/useCartStore';
-import { getLocalizedProductName, getLocalizedProductCategory, getLocalizedCategoryName } from '../lib/localize';
+import { SlidersHorizontal, X, Sparkles, Loader2, Search } from 'lucide-react';
 
-const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
-const CATEGORIES = ["All", ...Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean)] as string[];
+// Data & Types
+import productsData from '../data/simba_products.json';
+import { Product } from '../store/useCartStore';
+import { getLocalizedCategoryName } from '../lib/localize';
+
+// Components
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
+
+// --- Constants & Config ---
+const productsList = (Array.isArray(productsData) ? productsData : ((productsData as any).products || [])) as Product[];
+const CATEGORIES = ["All", ...Array.from(new Set(productsList.map(p => p.category))).filter(Boolean)];
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
 
-// Smart keyword extractor — strips filler words and extracts meaningful terms
+// --- Search Logic ---
+
+/**
+ * Strips filler words to improve search accuracy
+ */
 function extractKeywords(query: string): string[] {
-  const stopWords = new Set([
-    'i','need','want','looking','for','do','you','have','any','some','a','an','the',
-    'please','can','could','show','me','find','get','buy','something','items','products',
-    'good','best','nice','cheap','affordable','fresh','new','what','is','are','give',
-  ]);
+  const stopWords = new Set(['i', 'need', 'want', 'looking', 'for', 'buy', 'get', 'show', 'please', 'the', 'some']);
   return query.toLowerCase()
     .replace(/[^a-z0-9\s]/g, '')
     .split(/\s+/)
     .filter(w => w.length > 1 && !stopWords.has(w));
 }
 
-// Category keyword map for intent detection
-const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  'Food Products': ['food','breakfast','cereal','bread','rice','flour','sugar','salt','sauce','jam','honey','tea','coffee','milk','dairy','juice','snack','biscuit','cookie','cake','pasta','noodle','soup','oil','vinegar','spice','condiment','spread'],
-  'Beverages': ['drink','water','soda','juice','beer','wine','whiskey','vodka','gin','rum','spirit','alcohol','beverage','cola','fanta','sprite','energy'],
-  'Alcoholic Drinks': ['beer','wine','whiskey','vodka','gin','rum','spirit','alcohol','champagne','brandy','liquor'],
-  'Cosmetics & Personal Care': ['soap','shampoo','lotion','cream','moisturizer','deodorant','perfume','makeup','lipstick','beauty','skin','hair','body','face','toothpaste','toothbrush','razor','cotton','sanitary','feminine'],
-  'Cleaning & Sanitary': ['clean','detergent','bleach','disinfectant','mop','broom','toilet','bathroom','washing','laundry','dishwash','scrub','sponge','trash','garbage','bag'],
-  'Baby Products': ['baby','infant','diaper','nappy','formula','milk','wipe','powder','toy','pacifier','bottle','feeding'],
-  'Kitchenware & Electronics': ['pot','pan','plate','cup','glass','bowl','knife','fork','spoon','blender','kettle','cookware','kitchen','appliance','electronic'],
-  'Kitchen Storage': ['container','box','bag','wrap','foil','jar','bottle','storage','ziplock','tupperware'],
-  'Sports & Wellness': ['sport','fitness','gym','supplement','vitamin','protein','health','medicine','first aid','bandage','exercise'],
-  'Pet Care': ['pet','dog','cat','fish','bird','animal','feed','collar','leash'],
-  'General': ['general','other','misc'],
-};
-
+/**
+ * Fallback search if AI fails or is offline
+ */
 function smartLocalSearch(query: string): Product[] {
   const keywords = extractKeywords(query);
-  if (keywords.length === 0) return productsList.slice(0, 20) as Product[];
+  if (keywords.length === 0) return productsList.slice(0, 24);
 
-  // Detect category from keywords
-  let detectedCategory: string | null = null;
-  for (const [cat, catKeywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    if (keywords.some(k => catKeywords.some(ck => ck.includes(k) || k.includes(ck)))) {
-      detectedCategory = cat;
-      break;
-    }
-  }
-
-  const scored = (productsList as Product[]).map(p => {
+  const scored = productsList.map(p => {
     const name = p.name.toLowerCase();
     const cat = (p.category || '').toLowerCase();
     let score = 0;
 
-    // Category match bonus
-    if (detectedCategory && p.category === detectedCategory) score += 10;
-
-    // Keyword matches
-    for (const kw of keywords) {
-      if (name.includes(kw)) score += 5;
-      if (cat.includes(kw)) score += 3;
-      // Partial match
-      if (name.split(' ').some((w: string) => w.startsWith(kw) || kw.startsWith(w))) score += 2;
-    }
+    keywords.forEach(kw => {
+      if (name.includes(kw)) score += 10;
+      if (cat.includes(kw)) score += 5;
+      if (name.split(' ').some(w => w.startsWith(kw))) score += 2;
+    });
 
     return { product: p, score };
   });
@@ -81,236 +57,201 @@ function smartLocalSearch(query: string): Product[] {
     .map(s => s.product);
 }
 
+/**
+ * Semantic search using Groq (Llama 3)
+ */
 async function groqSearch(query: string): Promise<Product[]> {
   if (!GROQ_API_KEY) return smartLocalSearch(query);
 
   try {
-    const catalog = (productsList as Product[]).slice(0, 200)
-      .map(p => `${p.id}|${p.name}|${p.category}|${p.price}RWF`)
-      .join('\n');
+    const catalogSnippet = productsList.slice(0, 150)
+      .map(p => `${p.id}:${p.name}(${p.category})`)
+      .join('|');
 
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${GROQ_API_KEY}` 
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [
-          {
-            role: 'system',
-            content: `You are a shopping assistant for Simba Supermarket in Kigali, Rwanda.
-Find products from the catalog that match the user's request. Understand natural language like "breakfast items", "something to drink", "baby care", "cooking ingredients", etc.
-Return ONLY valid JSON: { "productIds": [id1, id2, ...] }
-Max 24 product IDs. Only use IDs that exist in the catalog.
-
-CATALOG (id|name|category|price):
-${catalog}`,
+          { 
+            role: 'system', 
+            content: `You are a Simba Supermarket assistant. Return ONLY JSON: { "ids": [number, number] }. Use these IDs: ${catalogSnippet}` 
           },
           { role: 'user', content: query },
         ],
         temperature: 0.1,
-        max_tokens: 400,
       }),
     });
 
     const data = await res.json();
     const content = data.choices?.[0]?.message?.content || '{}';
     const jsonMatch = content.match(/\{[\s\S]*\}/);
+    
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
-      const ids: any[] = parsed.productIds || [];
-      const found = ids
-        .map((id: any) => (productsList as Product[]).find(p => String(p.id) === String(id)))
-        .filter(Boolean) as Product[];
+      const found = (parsed.ids || [])
+        .map((id: any) => productsList.find(p => String(p.id) === String(id)))
+        .filter(Boolean);
       if (found.length > 0) return found;
     }
   } catch (err) {
-    console.error('Groq search error:', err);
+    console.error('Groq Error:', err);
   }
-
   return smartLocalSearch(query);
 }
 
+// --- Main Component ---
 export default function ShopPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  
   const categoryParam = searchParams.get('category') || 'All';
   const queryParam = searchParams.get('q') || '';
-
+  
   const [activeCategory, setActiveCategory] = useState(categoryParam);
   const [sortBy, setSortBy] = useState('featured');
   const [aiProducts, setAiProducts] = useState<Product[] | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiMessage, setAiMessage] = useState('');
   const lastQuery = useRef('');
 
-  // When query param changes, run AI/smart search
+  // Handle Search Execution
   useEffect(() => {
     if (!queryParam || queryParam === lastQuery.current) return;
     lastQuery.current = queryParam;
 
     setAiLoading(true);
-    setAiProducts(null);
-    setAiMessage('');
-
     groqSearch(queryParam).then(results => {
       setAiProducts(results);
-      setAiMessage(
-        results.length > 0
-          ? `✨ ${results.length} ${t('productsFoundText', 'products found')} — "${queryParam}"`
-          : t('noProductsFound', 'No products found')
-      );
       setAiLoading(false);
     });
-  }, [queryParam, t]);
+  }, [queryParam]);
 
-  // Regular filter for category browsing (no query)
-  const regularProducts = useMemo(() => {
-    let filtered = [...productsList] as Product[];
-    if (activeCategory && activeCategory !== 'All') {
-      filtered = filtered.filter(p => p.category === activeCategory);
+  // Sync Category with URL
+  useEffect(() => {
+    setActiveCategory(categoryParam);
+  }, [categoryParam]);
+
+  const filteredProducts = useMemo(() => {
+    let list = queryParam ? (aiProducts || []) : [...productsList];
+    
+    if (!queryParam && activeCategory !== 'All') {
+      list = list.filter(p => p.category === activeCategory);
     }
-    if (sortBy === 'price-low') filtered.sort((a, b) => a.price - b.price);
-    else if (sortBy === 'price-high') filtered.sort((a, b) => b.price - a.price);
-    else if (sortBy === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
-    return filtered;
-  }, [activeCategory, sortBy]);
 
-  const displayProducts = queryParam ? (aiProducts || []) : regularProducts;
-  const isAIMode = !!queryParam;
+    if (sortBy === 'price-low') list.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price-high') list.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+    
+    return list;
+  }, [activeCategory, sortBy, aiProducts, queryParam]);
 
-  const handleCategoryChange = (cat: string) => {
-    setActiveCategory(cat);
-    const newParams = new URLSearchParams();
-    if (cat !== 'All') newParams.set('category', cat);
-    setSearchParams(newParams);
-    setAiProducts(null);
-  };
-
-  const clearSearch = () => {
+  const clearFilters = () => {
     setSearchParams({});
     setAiProducts(null);
-    setAiMessage('');
     lastQuery.current = '';
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 text-foreground">
-
-      {/* Page header */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="max-w-7xl mx-auto px-4 py-8 min-h-screen">
+      
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 dark:text-white">{t('shop')}</h1>
-          {aiLoading ? (
-            <p className="text-sm text-[#F47A3E] flex items-center gap-1">
-              <Loader2 className="w-3 h-3 animate-spin" /> {t('searchingWithAI', 'Searching with AI...')}
-            </p>
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isAIMode && aiMessage ? aiMessage : `${displayProducts.length} ${t('productsFoundText', 'products found')}`}
-            </p>
-          )}
+          <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white uppercase italic">
+            {t('shop')}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 font-medium">
+            {aiLoading ? (
+              <span className="flex items-center gap-2 text-orange-500">
+                <Loader2 className="w-4 h-4 animate-spin" /> Thinking...
+              </span>
+            ) : (
+              `${filteredProducts.length} items found`
+            )}
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          {!isAIMode && (
-            <>
-              <SlidersHorizontal className="w-4 h-4 text-gray-500 dark:text-gray-300" />
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value)}
-                className="text-sm font-bold border border-gray-200 dark:border-[#334155] rounded-xl px-3 py-2 bg-white dark:bg-[#1E293B] text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
-              >
-                <option value="featured">{t('featured')}</option>
-                <option value="price-low">{t('priceLowHigh')}</option>
-                <option value="price-high">{t('priceHighLow')}</option>
-                <option value="name">{t('nameAZ', 'Name: A-Z')}</option>
-              </select>
-            </>
-          )}
-        </div>
+
+        {!queryParam && (
+          <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-1 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+            <div className="pl-3 text-gray-400">
+              <SlidersHorizontal className="w-4 h-4" />
+            </div>
+            <select 
+              value={sortBy} 
+              onChange={e => setSortBy(e.target.value)}
+              className="bg-transparent text-sm font-bold pr-8 py-2 focus:outline-none dark:text-white cursor-pointer"
+            >
+              <option value="featured">{t('featured')}</option>
+              <option value="price-low">{t('priceLowHigh')}</option>
+              <option value="price-high">{t('priceHighLow')}</option>
+              <option value="name">Name: A-Z</option>
+            </select>
+          </div>
+        )}
       </div>
 
-      {/* AI search banner */}
-      {isAIMode && (
-        <div className="mb-4 flex items-center gap-3 bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-xl px-4 py-3">
-          <Sparkles className="w-4 h-4 text-[#F47A3E] shrink-0" />
-          <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
-            <span className="font-bold text-[#F47A3E]">{t('aiSearch')}: </span>
-            "{queryParam}"
-          </p>
-          <button
-            onClick={clearSearch}
-            className="flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-red-500 transition-colors"
-          >
-            <X className="w-3 h-3" /> {t('clearFilters')}
+      {/* AI Search Notification */}
+      {queryParam && !aiLoading && (
+        <div className="mb-8 flex items-center justify-between bg-gradient-to-r from-orange-50 to-white dark:from-slate-900 dark:to-slate-950 border border-orange-100 dark:border-slate-800 rounded-2xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-orange-500 p-2 rounded-lg text-white shadow-lg shadow-orange-200 dark:shadow-none">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs text-orange-600 dark:text-orange-400 font-bold uppercase tracking-widest">Smart Search Results</p>
+              <p className="text-gray-900 dark:text-white font-medium italic">"{queryParam}"</p>
+            </div>
+          </div>
+          <button onClick={clearFilters} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+            <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>
       )}
 
-      {/* Category pills — hide during AI search */}
-      {!isAIMode && (
-        <div className="flex gap-2 flex-wrap mb-6">
+      {/* Category Navigation */}
+      {!queryParam && (
+        <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar mb-6">
           {CATEGORIES.map(cat => (
             <button
               key={cat}
-              onClick={() => handleCategoryChange(cat)}
-              className={`pill ${activeCategory === cat ? 'active' : ''}`}
+              onClick={() => setSearchParams(cat === 'All' ? {} : { category: cat })}
+              className={`whitespace-nowrap px-6 py-2.5 rounded-2xl text-sm font-bold transition-all duration-200 ${
+                activeCategory === cat 
+                  ? 'bg-gray-900 text-white dark:bg-white dark:text-black shadow-lg scale-105' 
+                  : 'bg-white text-gray-600 border border-gray-100 hover:border-gray-300 dark:bg-slate-900 dark:text-gray-400 dark:border-slate-800'
+              }`}
             >
               {cat === 'All' ? t('allCategories') : getLocalizedCategoryName(cat)}
             </button>
           ))}
-          {activeCategory !== 'All' && (
-            <button
-              onClick={() => handleCategoryChange('All')}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-red-500 border border-red-200 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
-            >
-              <X className="w-3 h-3" /> {t('clearFilters')}
-            </button>
-          )}
         </div>
       )}
 
-      {/* Product grid */}
+      {/* Grid Display */}
       {aiLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[...Array(8)].map((_, i) => <ProductCardSkeleton key={i} />)}
         </div>
-      ) : displayProducts.length === 0 ? (
-        <div className="bg-white dark:bg-card border dark:border-border rounded-2xl p-16 text-center shadow-sm">
-          <p className="text-4xl mb-4">🔍</p>
-          <p className="text-xl font-bold mb-2 dark:text-white">{t('noProductsFound')}</p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('tryAdjustingFilters')}</p>
-          <button
-            onClick={clearSearch}
-            className="bg-[#F47A3E] text-white px-6 py-2 rounded-xl font-bold hover:bg-[#D46A2E] transition"
-          >
+      ) : filteredProducts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-slate-900/50 rounded-[2rem] border-2 border-dashed border-gray-200 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-full shadow-xl mb-6">
+            <Search className="w-12 h-12 text-gray-300" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('noProductsFound')}</h3>
+          <p className="text-gray-500 mb-6 text-center max-w-xs">{t('tryAdjustingFilters')}</p>
+          <button onClick={clearFilters} className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-2xl transition-all shadow-lg shadow-orange-200 dark:shadow-none">
             {t('clearFilters')}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-          {displayProducts.map(product => (
-            <ProductCard key={product.id} product={product as any} />
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredProducts.map(p => <ProductCard key={p.id} product={p as any} />)}
         </div>
       )}
     </div>
   );
 }
-Done
-File 2: src/components/Layout.tsx — just add 2 lines:
-
-
-Show Layout content
-Show Layout content
-Good. Now open VS Code in your project folder and do the following:
-
-Step 1 — Open src/pages/ShopPage.tsx, press Ctrl+A to select all, delete, then paste the entire content shown above.
-
-Step 2 — Open src/components/Layout.tsx, it should already have ConversationalSearch — if not, add these 2 lines:
-
-Top: import ConversationalSearch from './ConversationalSearch';
-Before </div>: <ConversationalSearch />
