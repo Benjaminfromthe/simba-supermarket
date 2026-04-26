@@ -188,7 +188,7 @@ export default function ShopPage() {
               <option value="featured">{t('featured')}</option>
               <option value="price-low">{t('priceLowHigh')}</option>
               <option value="price-high">{t('priceHighLow')}</option>
-              <option value="name">Name: A-Z</option>
+              <option value="name">{t('nameAZ', 'Name: A-Z')}</option>
             </select>
           </div>
         )}

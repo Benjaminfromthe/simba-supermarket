@@ -378,7 +378,7 @@ export default function BranchDashboard() {
 
                       {order.flagged && (
                         <span className="text-xs text-red-500 font-bold flex items-center gap-1">
-                          <Flag className="w-3 h-3" /> Flagged
+                          <Flag className="w-3 h-3" /> {t('flagged')}
                         </span>
                       )}
                     </div>

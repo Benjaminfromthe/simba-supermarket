@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Gift, Sparkles } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
+import { useTranslation } from 'react-i18next';
 
 const PRIZES = [
   { label: '5% OFF', color: '#F47A3E', discount: 5 },
@@ -18,6 +19,7 @@ const PRIZES = [
 const SEGMENT_ANGLE = 360 / PRIZES.length;
 
 export default function SpinWheel() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -90,18 +92,18 @@ export default function SpinWheel() {
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center py-8">
                   <div className="text-5xl mb-3">🎉</div>
                   <h3 className="text-xl font-black text-gray-900 dark:text-white mb-1">
-                    {result?.label === 'Try Again' ? 'Better luck next time!' : `You won ${result?.label}!`}
+                    {result?.label === 'Try Again' ? t('spinBetterLuck') : `${t('spinYouWon')} ${result?.label}!`}
                   </h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Applied to your next order</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">{t('spinApplied')}</p>
                 </motion.div>
               ) : (
                 <>
                   <div className="text-center mb-4">
                     <div className="flex items-center justify-center gap-2 mb-1">
                       <Gift className="w-5 h-5 text-[#F47A3E]" />
-                      <h3 className="text-lg font-black text-gray-900 dark:text-white">Welcome to Simba!</h3>
+                      <h3 className="text-lg font-black text-gray-900 dark:text-white">{t('spinWelcome')}</h3>
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">Spin the wheel for an exclusive discount</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-xs">{t('spinSubtitle')}</p>
                   </div>
 
                   {/* Wheel */}
@@ -157,7 +159,7 @@ export default function SpinWheel() {
                       disabled={spinning}
                       className="w-full bg-[#F47A3E] hover:bg-[#D46A2E] disabled:opacity-60 text-white font-black py-3 rounded-2xl transition-all text-sm shadow-lg hover:shadow-orange-200 dark:hover:shadow-orange-900"
                     >
-                      {spinning ? '🎰 Spinning...' : '🎯 SPIN TO WIN!'}
+                      {spinning ? t('spinSpinning') : t('spinButton')}
                     </button>
                   ) : (
                     <button
@@ -165,7 +167,7 @@ export default function SpinWheel() {
                       className="w-full font-black py-3 rounded-2xl transition-all text-sm shadow-lg text-white"
                       style={{ background: result.color }}
                     >
-                      {result.label === 'Try Again' ? 'Continue Shopping' : `Claim ${result.label}!`}
+                      {result.label === 'Try Again' ? t('spinContinue') : `${t('spinClaim')} ${result.label}!`}
                     </button>
                   )}
                 </>
