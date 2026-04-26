@@ -105,6 +105,8 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     { to: '/reviews', label: t('reviewsNav') },
     ...(currentUser ? [{ to: '/orders', label: t('myOrders') }] : []),
     ...(isBranchOperator ? [{ to: '/branch-dashboard', label: t('branchPortal') }] : []),
+    // Demo link — always visible so judges can access the dashboard
+    { to: '/branch-dashboard', label: '🏪 Branch Demo', demo: true },
   ];
 
   return (
@@ -124,9 +126,15 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
           <nav className="hidden lg:flex items-center gap-3 text-white text-xs font-semibold flex-shrink-0">
             {navLinks.map(link => (
               <Link
-                key={link.to}
+                key={link.to + link.label}
                 to={link.to}
-                className={`transition-colors whitespace-nowrap ${link.to === '/branch-dashboard' ? 'text-yellow-200 hover:text-yellow-100 font-bold' : 'hover:text-orange-100'}`}
+                className={`transition-colors whitespace-nowrap ${
+                  (link as any).demo
+                    ? 'bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full text-yellow-200 font-black'
+                    : link.to === '/branch-dashboard'
+                    ? 'text-yellow-200 hover:text-yellow-100 font-bold'
+                    : 'hover:text-orange-100'
+                }`}
               >
                 {link.label}
               </Link>
@@ -221,10 +229,14 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
             <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
               {navLinks.map(item => (
                 <Link
-                  key={item.to}
+                  key={item.to + item.label}
                   to={item.to}
                   onClick={() => setMobileOpen(false)}
-                  className="px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-800 transition-colors"
+                  className={`px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                    (item as any).demo
+                      ? 'bg-orange-50 dark:bg-orange-900/20 text-[#F47A3E] font-black'
+                      : 'text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-800'
+                  }`}
                 >
                   {item.label}
                 </Link>

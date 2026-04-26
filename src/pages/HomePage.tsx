@@ -26,6 +26,17 @@ const CATEGORY_IMAGES: Record<string, string> = {
   'Pet Care':                  'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_471001.jpg',
 };
 
+// Curated showcase IDs — recognizable everyday products across categories
+const FEATURED_IDS = [29001, 58001, 61005, 61010, 65001, 103001, 29002, 61012];
+const FEATURED_PRODUCTS = FEATURED_IDS
+  .map(id => productsList.find((p: any) => p.id === id))
+  .filter(Boolean) as Product[];
+const DEALS_PRODUCTS = FEATURED_PRODUCTS.length >= 4
+  ? FEATURED_PRODUCTS
+  : productsList.filter((p: any) =>
+      ['Food Products', 'Cleaning & Sanitary', 'Baby Products', 'Cosmetics & Personal Care'].includes(p.category)
+    ).slice(0, 8) as Product[];
+
 const getLocalizedCat = (catName: string) => getLocalizedCategoryName(catName);
 
 export default function HomePage() {
@@ -48,7 +59,7 @@ export default function HomePage() {
         p.category?.toLowerCase().includes(q)
       );
     }
-    return isFiltered ? filtered : productsList.slice(0, 8);
+    return isFiltered ? filtered : DEALS_PRODUCTS;
   }, [categoryParam, queryParam, isFiltered]);
 
   const clearFilters = () => setSearchParams({});
@@ -84,6 +95,12 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent" />
               <div className="relative z-10 p-6 md:p-10 max-w-xl">
+                {/* Identity line — answers "What is this?" in 2 seconds */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="bg-[#F47A3E] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">
+                    🇷🇼 Rwanda's #1 Supermarket
+                  </span>
+                </div>
                 <h1 className="text-2xl md:text-4xl font-black text-white leading-tight mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
                   {t('qualityFirst')}. <span className="text-[#FF8A00]">{t('deliveredFast')}.</span>
                 </h1>
@@ -104,7 +121,6 @@ export default function HomePage() {
                   onClick={() => {
                     const el = document.getElementById('deals');
                     if (!el) return;
-                    // Measure actual sticky header height dynamically
                     const header = document.querySelector('header');
                     const headerH = header ? header.getBoundingClientRect().height : 0;
                     const top = el.getBoundingClientRect().top + window.scrollY - headerH - 16;
