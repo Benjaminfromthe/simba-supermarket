@@ -329,6 +329,9 @@ const resources = {
       suggestionBreakfast: "Something for breakfast",
       shopByCategory: "Shop by Category",
       quickAdd: "Quick Add",
+      newOrderAlert: "new order arrived!",
+      checkPendingTab: "Check the Pending tab to assign and prepare.",
+      viewOrders: "View Orders",
     }
   },
   fr: {
@@ -658,6 +661,9 @@ const resources = {
       suggestionBreakfast: "Quelque chose pour le petit-déjeuner",
       shopByCategory: "Acheter par Catégorie",
       quickAdd: "Ajouter vite",
+      newOrderAlert: "nouvelle commande arrivée !",
+      checkPendingTab: "Vérifiez l'onglet En attente pour assigner et préparer.",
+      viewOrders: "Voir les commandes",
     }
   },
   rw: {
@@ -990,6 +996,9 @@ const resources = {
       suggestionBreakfast: "Ikintu cyo mu gitondo",
       shopByCategory: "Gura ukurikije Icyiciro",
       quickAdd: "Ongeraho vuba",
+      newOrderAlert: "itumwa rishya ryageze!",
+      checkPendingTab: "Reba ibyategereje kugira ngo ushire abantu no gutegura.",
+      viewOrders: "Reba Amatumwa",
     }
   }
 };

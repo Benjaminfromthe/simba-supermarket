@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { collection, query, where, onSnapshot, updateDoc, doc, orderBy } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Clock, CheckCircle2, Package, User, Store, Loader2, Flag, Boxes, AlertTriangle } from 'lucide-react';
+import { Clock, CheckCircle2, Package, User, Store, Loader2, Flag, Boxes, AlertTriangle, Bell, X } from 'lucide-react';
 import branches from '../data/branches.json';
 import productsData from '../data/simba_products.json';
 import { markOutOfStock, getLowStock } from '../lib/inventory';
@@ -45,6 +45,28 @@ export default function BranchDashboard() {
   const [loadingInventory, setLoadingInventory] = useState(true);
   const branchLocked = !!userProfile?.branchId;
 
+  // New-order alert state
+  const [newOrderAlert, setNewOrderAlert] = useState(false);
+  const [newOrderCount, setNewOrderCount] = useState(0);
+  const prevPendingCount = useRef<number | null>(null);
+
+  // Beep using Web Audio API — no external files needed
+  const playBeep = useCallback(() => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.6);
+    } catch { /* browser may block audio before user interaction — silent fail */ }
+  }, []);
+
   useEffect(() => {
     if (!currentUser) {
       navigate('/login');
@@ -62,17 +84,32 @@ export default function BranchDashboard() {
   }, [isAdmin, isStaff, userProfile]);
 
   useEffect(() => {
+    // Reset alert tracking when branch changes
+    prevPendingCount.current = null;
+    setNewOrderAlert(false);
+
     const q = query(
       collection(db, 'orders'),
       where('branchId', '==', selectedBranchId),
       orderBy('createdAt', 'desc')
     );
     const unsub = onSnapshot(q, (snap) => {
-      setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const fetched = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setOrders(fetched);
       setLoading(false);
+
+      // Count pending orders and alert if new ones arrived
+      const pendingNow = fetched.filter(o => o.status === 'pending').length;
+      if (prevPendingCount.current !== null && pendingNow > prevPendingCount.current) {
+        const diff = pendingNow - prevPendingCount.current;
+        setNewOrderCount(diff);
+        setNewOrderAlert(true);
+        playBeep();
+      }
+      prevPendingCount.current = pendingNow;
     });
     return unsub;
-  }, [selectedBranchId]);
+  }, [selectedBranchId, playBeep]);
 
   useEffect(() => {
     const loadLowStock = async () => {
@@ -117,8 +154,7 @@ export default function BranchDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="bg-[#F47A3E] text-white py-4 px-4">
-        <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">          <div className="flex items-center gap-3">
             <Store className="w-6 h-6" />
             <div>
               <h1 className="font-bold text-lg">{t('branchDashboard')}</h1>
@@ -157,6 +193,32 @@ export default function BranchDashboard() {
           </div>
         </div>
       </div>
+
+      {/* ── NEW ORDER ALERT BANNER ── */}
+      {newOrderAlert && (
+        <div className="bg-green-500 text-white px-4 py-3 flex items-center gap-3 shadow-lg animate-pulse">
+          <div className="container mx-auto flex items-center gap-3">
+            <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+              <Bell className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-black text-sm">
+                🛎️ {newOrderCount} {t('newOrderAlert', newOrderCount === 1 ? 'new order arrived!' : 'new orders arrived!')}
+              </p>
+              <p className="text-green-100 text-xs">{t('checkPendingTab', 'Check the Pending tab to assign and prepare.')}</p>
+            </div>
+            <button
+              onClick={() => { setNewOrderAlert(false); setActiveTab('pending'); }}
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shrink-0"
+            >
+              {t('viewOrders', 'View Orders')} →
+            </button>
+            <button onClick={() => setNewOrderAlert(false)} className="p-1 hover:bg-white/20 rounded-full transition shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
