@@ -323,6 +323,10 @@ const resources = {
       yourEmail: "your@email.com",
       reviewCount: "{{count}} review",
       reviewCount_plural: "{{count}} reviews",
+      suggestionMilk: "I want milk under 1000",
+      suggestionOil: "Cooking oil",
+      suggestionBaby: "Baby products",
+      suggestionBreakfast: "Something for breakfast",
     }
   },
   fr: {
@@ -646,6 +650,10 @@ const resources = {
       yourEmail: "votre@email.com",
       reviewCount: "{{count}} avis",
       reviewCount_plural: "{{count}} avis",
+      suggestionMilk: "Je veux du lait à moins de 1000",
+      suggestionOil: "Huile de cuisine",
+      suggestionBaby: "Produits bébé",
+      suggestionBreakfast: "Quelque chose pour le petit-déjeuner",
     }
   },
   rw: {
@@ -972,6 +980,10 @@ const resources = {
       yourEmail: "imeyili@yawe.com",
       reviewCount: "{{count}} isuzuma",
       reviewCount_plural: "{{count}} amatisuzuma",
+      suggestionMilk: "Ndashaka amata munsi ya 1000",
+      suggestionOil: "Amavuta yo guteka",
+      suggestionBaby: "Ibicuruzwa by'uruhinja",
+      suggestionBreakfast: "Ikintu cyo mu gitondo",
     }
   }
 };

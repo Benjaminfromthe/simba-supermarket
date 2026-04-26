@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -11,18 +11,19 @@ import { Product } from '../store/useCartStore';
 const productsList = Array.isArray(productsData) ? productsData : ((productsData as any).products || []);
 const CATEGORIES = Array.from(new Set(productsList.map((p: any) => p.category))).filter(Boolean).slice(0, 10) as string[];
 
-// Category images — served at 300px wide for fast loading
+// Category images — real product photos from Simba's own Cloudinary catalog
+// Transformed to 120x120 crop for fast loading on small circles
 const CATEGORY_IMAGES: Record<string, string> = {
-  'Kitchen Storage':          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&q=75&auto=format',
-  'Cosmetics & Personal Care':'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&q=75&auto=format',
-  'Sports & Wellness':        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&q=75&auto=format',
-  'Baby Products':            'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=300&q=75&auto=format',
-  'Kitchenware & Electronics':'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=300&q=75&auto=format',
-  'Cleaning & Sanitary':      'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=300&q=75&auto=format',
-  'Food Products':            'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&q=75&auto=format',
-  'Alcoholic Drinks':         'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=300&q=75&auto=format',
-  'General':                  'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=300&q=75&auto=format',
-  'Pet Care':                 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&q=75&auto=format',
+  'Cosmetics & Personal Care': 'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_13001.jpg',
+  'Sports & Wellness':         'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_15001.jpg',
+  'Baby Products':             'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_16001.jpg',
+  'Kitchenware & Electronics': 'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_19001.jpg',
+  'Food Products':             'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_22001.jpg',
+  'Alcoholic Drinks':          'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_27001.jpg',
+  'General':                   'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_71001.jpg',
+  'Cleaning & Sanitary':       'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_103001.jpg',
+  'Kitchen Storage':           'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_168001.jpg',
+  'Pet Care':                  'https://res.cloudinary.com/eskalate/image/upload/c_fill,w_120,h_120,q_75/simba_contest/product_471001.jpg',
 };
 
 const getLocalizedCat = (catName: string) => getLocalizedCategoryName(catName);
@@ -51,6 +52,13 @@ export default function HomePage() {
   }, [categoryParam, queryParam, isFiltered]);
 
   const clearFilters = () => setSearchParams({});
+
+  // Brief skeleton on first mount so the grid doesn't pop in abruptly
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 300);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <motion.div
@@ -157,7 +165,14 @@ export default function HomePage() {
           )}
         </div>
 
-        {isFiltered && filteredProducts.length === 0 ? (
+        {!ready ? (
+          // Skeleton grid while page mounts
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : isFiltered && filteredProducts.length === 0 ? (
           <div className="bg-white dark:bg-[#1E293B] border border-gray-100 dark:border-gray-700 rounded-2xl p-16 text-center shadow-sm">
             <Filter className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-4" />
             <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">{t('noProductsFound')}</h3>

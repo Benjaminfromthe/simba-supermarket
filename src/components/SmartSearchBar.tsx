@@ -173,7 +173,12 @@ export default function SmartSearchBar() {
     });
   };
 
-  const suggestions = ['I want milk under 1000', 'Cooking oil', 'Baby products', 'Something for breakfast'];
+  const suggestions = [
+    { key: 'suggestionMilk',      fallback: 'I want milk under 1000' },
+    { key: 'suggestionOil',       fallback: 'Cooking oil' },
+    { key: 'suggestionBaby',      fallback: 'Baby products' },
+    { key: 'suggestionBreakfast', fallback: 'Something for breakfast' },
+  ];
 
   return (
     <div ref={ref} className="relative w-full max-w-2xl">
@@ -262,8 +267,8 @@ export default function SmartSearchBar() {
               <p className="text-xs text-gray-400 font-medium px-2 mb-2">{t('tryAsking')}</p>
               <div className="flex flex-wrap gap-2">
                 {suggestions.map(s => (
-                  <button key={s} onClick={() => handleInput(s)} className="text-xs bg-orange-50 dark:bg-orange-950/20 text-[#F47A3E] px-3 py-1.5 rounded-full font-medium hover:bg-orange-100 transition-colors">
-                    {s}
+                  <button key={s.key} onClick={() => handleInput(t(s.key, s.fallback))} className="text-xs bg-orange-50 dark:bg-orange-950/20 text-[#F47A3E] px-3 py-1.5 rounded-full font-medium hover:bg-orange-100 transition-colors">
+                    {t(s.key, s.fallback)}
                   </button>
                 ))}
               </div>
