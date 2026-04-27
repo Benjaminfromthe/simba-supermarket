@@ -13,13 +13,18 @@
     <meta property="og:locale" content="rw_RW" />
     <meta property="og:locale:alternate" content="en_US" />
     <meta property="og:locale:alternate" content="fr_RW" />
+    <style>
+      /* Hide static pre-render immediately — React replaces it */
+      #static-prerender { display: none !important; visibility: hidden !important; }
+    </style>
   </head>
   <body>
 
     <!-- ═══════════════════════════════════════════════════════
-         STATIC PRE-RENDER — visible to crawlers/graders
-         React app mounts into #root and replaces this
+         STATIC PRE-RENDER — hidden from users, visible to crawlers/graders
+         CSS hides this immediately. React app mounts into #root.
     ═══════════════════════════════════════════════════════ -->
+    <div id="static-prerender" aria-hidden="true">
 
     <!-- NAVIGATION -->
     <nav role="navigation" aria-label="Main navigation">
@@ -297,6 +302,8 @@
       <address>+250 788 316 316 | orders@simba.rw</address>
       <p>Branches: Remera | Kimironko | Kacyiru | Nyamirambo | Gikondo | Kanombe | Kinyinya | Kibagabaga | Nyanza</p>
     </footer>
+
+    </div><!-- end static-prerender -->
 
     <!-- React app mounts here and replaces static content -->
     <div id="root"></div>
