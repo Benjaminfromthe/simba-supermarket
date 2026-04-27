@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         workbox: {
-          // Cache all JS/CSS/HTML chunks — app shell loads instantly on repeat visits
+          cleanupOutdatedCaches: true, // delete old chunk caches on update
           globPatterns: ['**/*.{js,css,html,ico,svg}'],
           // Cache product images from Cloudinary (up to 200, 30 days)
           runtimeCaching: [
