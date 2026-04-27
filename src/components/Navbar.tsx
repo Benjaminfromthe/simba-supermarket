@@ -105,9 +105,11 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     { to: '/contact', label: t('contactUs') },
     { to: '/reviews', label: t('reviewsNav') },
     ...(currentUser ? [{ to: '/orders', label: t('myOrders') }] : []),
-    ...(isBranchOperator ? [{ to: '/branch-dashboard', label: t('branchPortal') }] : []),
-    // Demo link — always visible so judges can access the dashboard
-    { to: '/branch-dashboard', label: '🏪 Market Rep Dashboard', demo: true },
+    // Show Market Rep Dashboard: for operators use their portal link, for others show demo link
+    ...(isBranchOperator
+      ? [{ to: '/branch-dashboard', label: t('branchPortal') }]
+      : [{ to: '/branch-dashboard', label: '🏪 Market Rep Dashboard', demo: true }]
+    ),
   ];
 
   return (

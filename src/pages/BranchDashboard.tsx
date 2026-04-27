@@ -43,7 +43,7 @@ export default function BranchDashboard() {
   const [selectedStaff, setSelectedStaff] = useState(userProfile?.staffName || STAFF_MEMBERS[0]);
   const [lowStock, setLowStock] = useState<InventoryAlert[]>([]);
   const [loadingInventory, setLoadingInventory] = useState(true);
-  const branchLocked = !!userProfile?.branchId;
+  const branchLocked = !!userProfile?.branchId && isStaff; // only lock staff, managers can switch
 
   // New-order alert state
   const [newOrderAlert, setNewOrderAlert] = useState(false);
@@ -93,7 +93,12 @@ export default function BranchDashboard() {
       where('branchId', '==', selectedBranchId),
       orderBy('createdAt', 'desc')
     );
+
+    // Safety timeout — stop spinner after 5s even if Firestore is slow
+    const timeout = setTimeout(() => setLoading(false), 5000);
+
     const unsub = onSnapshot(q, (snap) => {
+      clearTimeout(timeout);
       const fetched = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setOrders(fetched);
       setLoading(false);
@@ -107,8 +112,12 @@ export default function BranchDashboard() {
         playBeep();
       }
       prevPendingCount.current = pendingNow;
+    }, (err) => {
+      clearTimeout(timeout);
+      console.error('Orders listener error:', err);
+      setLoading(false);
     });
-    return unsub;
+    return () => { unsub(); clearTimeout(timeout); };
   }, [selectedBranchId, playBeep]);
 
   useEffect(() => {
@@ -274,8 +283,9 @@ export default function BranchDashboard() {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-20">
+              <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-card rounded-2xl border dark:border-border gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-[#F47A3E]" />
+                <p className="text-sm text-gray-400">{t('searching', 'Loading orders...')}</p>
               </div>
             ) : visibleOrders.length === 0 ? (
               <div className="text-center py-20 text-gray-400 bg-white dark:bg-card rounded-2xl border dark:border-border">
