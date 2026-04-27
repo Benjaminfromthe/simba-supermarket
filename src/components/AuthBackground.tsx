@@ -65,6 +65,15 @@ const PARTICLES = Array.from({ length: 24 }, (_, i) => ({
   opacity: 0.12 + Math.random() * 0.2,
 }));
 
+// Floater position/size/depth data — module level so Floater component can access
+const DEPTHS =   [0.04, 0.07, 0.05, 0.03, 0.08, 0.06, 0.05, 0.04, 0.07, 0.06, 0.05, 0.08];
+const POSITIONS = [
+  { x: 8, y: 12 }, { x: 88, y: 8 },  { x: 15, y: 72 }, { x: 82, y: 65 },
+  { x: 50, y: 6 }, { x: 92, y: 38 }, { x: 5,  y: 45 }, { x: 70, y: 88 },
+  { x: 28, y: 88 },{ x: 60, y: 18 }, { x: 38, y: 78 }, { x: 78, y: 22 },
+];
+const SIZES = [2.8, 2.2, 2.5, 3.0, 2.0, 2.4, 2.1, 2.6, 2.0, 1.8, 2.3, 2.0];
+
 // Floater sub-component — hooks must be at top level, never inside .map()
 function Floater({ emoji, index, mouseX, mouseY }: {
   emoji: string; index: number;
@@ -160,14 +169,6 @@ export default function AuthBackground({ children, isTypingPassword = false }: P
     window.addEventListener('mousemove', handleMove);
     return () => window.removeEventListener('mousemove', handleMove);
   }, [rawX, rawY]);
-
-  const DEPTHS = [0.04, 0.07, 0.05, 0.03, 0.08, 0.06, 0.05, 0.04, 0.07, 0.06, 0.05, 0.08];
-  const POSITIONS = [
-    { x: 8, y: 12 }, { x: 88, y: 8 }, { x: 15, y: 72 }, { x: 82, y: 65 },
-    { x: 50, y: 6 },  { x: 92, y: 38 }, { x: 5, y: 45 }, { x: 70, y: 88 },
-    { x: 28, y: 88 }, { x: 60, y: 18 }, { x: 38, y: 78 }, { x: 78, y: 22 },
-  ];
-  const SIZES = [2.8, 2.2, 2.5, 3.0, 2.0, 2.4, 2.1, 2.6, 2.0, 1.8, 2.3, 2.0];
 
   return (
     <div
