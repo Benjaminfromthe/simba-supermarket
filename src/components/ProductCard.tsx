@@ -109,15 +109,32 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
           <span className="text-xs text-gray-400 line-through">{oldPrice.toLocaleString()}</span>
         </div>
 
-        {/* Hide quantity selector in compact mode — just show Add to Cart */}
+        {/* Compact mode — quantity selector + Add to Cart */}
         {compact ? (
-          <button
-            onClick={handleAddToCart}
-            className={`w-full h-8 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${cartAnimating ? 'cart-pop bg-green-500 text-white' : 'bg-[#F47A3E] hover:bg-[#D46A2E] text-white'}`}
-          >
-            <ShoppingCart className="w-3 h-3" />
-            {t('addToCart')}
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden h-8 bg-gray-50 dark:bg-gray-800 shrink-0">
+              <button
+                onClick={e => { e.preventDefault(); setQuantity(Math.max(1, quantity - 1)); }}
+                className="w-8 h-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-bold text-base"
+              >
+                −
+              </button>
+              <span className="w-6 text-center text-xs font-bold text-gray-800 dark:text-white">{quantity}</span>
+              <button
+                onClick={e => { e.preventDefault(); setQuantity(quantity + 1); }}
+                className="w-8 h-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-bold text-base"
+              >
+                +
+              </button>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className={`flex-1 h-8 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${cartAnimating ? 'cart-pop bg-green-500 text-white' : 'bg-[#F47A3E] hover:bg-[#D46A2E] text-white'}`}
+            >
+              <ShoppingCart className="w-3 h-3" />
+              {t('addToCart')}
+            </button>
+          </div>
         ) : (
           <div className="flex items-center gap-2">
             <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden h-9 bg-gray-50 dark:bg-gray-800">
