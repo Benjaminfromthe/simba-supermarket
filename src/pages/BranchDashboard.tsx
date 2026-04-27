@@ -157,7 +157,7 @@ export default function BranchDashboard() {
         <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">          <div className="flex items-center gap-3">
             <Store className="w-6 h-6" />
             <div>
-              <h1 className="font-bold text-lg">{t('branchDashboard')}</h1>
+              <h1 className="font-bold text-lg">Market Rep Dashboard</h1>
               <p className="text-orange-100 text-xs">{t('orderManagement')}</p>
             </div>
           </div>
@@ -320,7 +320,7 @@ export default function BranchDashboard() {
                           </button>
                         </div>
                       ))}
-                      {order.items?.length > 4 && <span className="text-xs text-gray-400 self-center">+{order.items.length - 4} more</span>}
+                      {order.items?.length > 4 && <span className="text-xs text-gray-400 self-center">+{order.items.length - 4} {t('moreItems', 'more')}</span>}
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap">

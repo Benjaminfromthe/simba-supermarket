@@ -107,7 +107,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
     ...(currentUser ? [{ to: '/orders', label: t('myOrders') }] : []),
     ...(isBranchOperator ? [{ to: '/branch-dashboard', label: t('branchPortal') }] : []),
     // Demo link — always visible so judges can access the dashboard
-    { to: '/branch-dashboard', label: '🏪 Branch Demo', demo: true },
+    { to: '/branch-dashboard', label: '🏪 Market Rep Dashboard', demo: true },
   ];
 
   return (
