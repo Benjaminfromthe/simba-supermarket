@@ -170,11 +170,11 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
 
             <div className="w-px h-5 bg-white/30 hidden lg:block" />
 
-            {/* Currency Switcher */}
-            <div className="relative hidden lg:block" ref={currencyRef}>
+            {/* Currency Switcher — compact flag+code button */}
+            <div className="relative" ref={currencyRef}>
               <button onClick={() => setCurrencyOpen(!currencyOpen)} className="flex items-center gap-1 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
                 <span className="text-sm">{FLAGS[currency]}</span>
-                <span className="text-xs font-bold hidden sm:inline">{SYMBOLS[currency]}</span>
+                <span className="text-xs font-bold">{currency}</span>
                 <ChevronDown className={`w-3 h-3 transition-transform ${currencyOpen ? 'rotate-180' : ''}`} />
               </button>
               <AnimatePresence>
