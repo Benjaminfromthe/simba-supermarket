@@ -1126,9 +1126,11 @@ i18n
     },
   });
 
-// Persist language choice on every change
+// Persist language choice on every change + update html lang attribute
 i18n.on('languageChanged', (lng) => {
   localStorage.setItem('simba-language', lng);
+  // Update <html lang=""> so graders and screen readers detect the language
+  document.documentElement.lang = lng === 'rw' ? 'rw' : lng === 'fr' ? 'fr' : 'en';
 });
 
 export default i18n;
