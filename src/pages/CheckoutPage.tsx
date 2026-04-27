@@ -22,20 +22,19 @@ const PICKUP_TIMES = [
   '17:00 - 18:00', '18:00 - 19:00', '19:00 - 20:00',
 ];
 
-// Generate next 3 days for the day picker
+// Generate day picker: Today, Tomorrow, then Mon-Sun for the next 7 days
 function getPickupDays() {
   const days = [];
   const now = new Date();
-  const labels = ['Today', 'Tomorrow', ''];
-  for (let i = 0; i < 3; i++) {
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  for (let i = 0; i < 7; i++) {
     const d = new Date(now);
     d.setDate(now.getDate() + i);
-    const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
-    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const dayName = weekdays[d.getDay()];
     days.push({
       value: d.toISOString().split('T')[0],
-      label: labels[i] || weekday,
-      sub: i < 2 ? dateStr : `${weekday} ${dateStr}`,
+      label: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayName,
     });
   }
   return days;
@@ -357,16 +356,15 @@ export default function CheckoutPage() {
                   {t('choosePickupTimeHelp')} <strong className="text-[#F47A3E]">{selectedBranch?.name}</strong>. {t('whenWillYouArrive')}
                 </p>
 
-                {/* Day selector */}
-                <div className="flex gap-2 mb-5">
+                {/* Day selector — scrollable row of 7 days */}
+                <div className="flex gap-2 mb-5 overflow-x-auto pb-1 scrollbar-hide">
                   {PICKUP_DAYS.map(day => (
                     <button
                       key={day.value}
                       onClick={() => { setSelectedDay(day.value); setSelectedTime(''); }}
-                      className={`flex-1 py-2.5 rounded-xl border-2 text-center transition-all ${selectedDay === day.value ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'}`}
+                      className={`shrink-0 px-4 py-2.5 rounded-xl border-2 text-sm font-bold transition-all whitespace-nowrap ${selectedDay === day.value ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30 text-[#F47A3E]' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:text-white'}`}
                     >
-                      <p className={`text-sm font-black ${selectedDay === day.value ? 'text-[#F47A3E]' : 'dark:text-white'}`}>{day.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{day.sub}</p>
+                      {day.label}
                     </button>
                   ))}
                 </div>
