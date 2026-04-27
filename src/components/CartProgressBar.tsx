@@ -1,18 +1,22 @@
 import { useCartStore } from '../store/useCartStore';
 import { motion } from 'motion/react';
 import { Truck, Flame } from 'lucide-react';
+import { useCurrencyStore, formatPrice, RATES } from '../store/useCurrencyStore';
+import { useTranslation } from 'react-i18next';
 
-const FREE_SHIPPING_THRESHOLD = 20000; // 20,000 RWF
+const FREE_SHIPPING_THRESHOLD_RWF = 20000;
 
 export default function CartProgressBar() {
   const total = useCartStore(s => s.getCartTotal());
   const items = useCartStore(s => s.items);
+  const { currency } = useCurrencyStore();
+  const { t } = useTranslation();
 
   if (items.length === 0) return null;
 
-  const progress = Math.min((total / FREE_SHIPPING_THRESHOLD) * 100, 100);
-  const remaining = Math.max(FREE_SHIPPING_THRESHOLD - total, 0);
-  const achieved = total >= FREE_SHIPPING_THRESHOLD;
+  const progress = Math.min((total / FREE_SHIPPING_THRESHOLD_RWF) * 100, 100);
+  const remainingRwf = Math.max(FREE_SHIPPING_THRESHOLD_RWF - total, 0);
+  const achieved = total >= FREE_SHIPPING_THRESHOLD_RWF;
 
   return (
     <div className="bg-orange-50 dark:bg-orange-950/20 border-b border-orange-100 dark:border-orange-900/30 px-4 py-2">
@@ -23,8 +27,8 @@ export default function CartProgressBar() {
             <div className="flex items-center justify-between mb-1">
               <p className="text-xs font-semibold text-gray-700 dark:text-white">
                 {achieved
-                  ? '🎉 You unlocked Free Delivery!'
-                  : `Add ${remaining.toLocaleString()} RWF more for Free Delivery`}
+                  ? t('unlockedFreeDelivery')
+                  : t('addMoreForFreeDelivery', { amount: formatPrice(remainingRwf, currency) })}
               </p>
               <span className="text-xs font-bold text-[#F47A3E]">{Math.round(progress)}%</span>
             </div>

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
+import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
 interface OrderItem {
   id: string | number;
@@ -41,6 +42,7 @@ const STATUS_STYLE: Record<string, { color: string; bg: string; icon: React.Reac
 export default function OrdersPage() {
   const { currentUser } = useAuth();
   const { t } = useTranslation();
+  const { currency } = useCurrencyStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [readyOrders, setReadyOrders] = useState<Order[]>([]);
@@ -174,7 +176,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{t('total')}</p>
-                    <p className="text-lg font-black text-[#F47A3E]">{order.totalAmount?.toLocaleString()} RWF</p>
+                    <p className="text-lg font-black text-[#F47A3E]">{formatPrice(order.totalAmount, currency)}</p>
                   </div>
                 </div>
 
@@ -191,9 +193,9 @@ export default function OrdersPage() {
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold dark:text-white line-clamp-1">{item.name}</p>
-                        <p className="text-xs text-gray-400">×{item.quantity} — {item.price?.toLocaleString()} RWF each</p>
+                        <p className="text-xs text-gray-400">×{item.quantity} — {formatPrice(item.price, currency)} each</p>
                       </div>
-                      <p className="text-sm font-bold text-[#F47A3E] shrink-0">{(item.price * item.quantity)?.toLocaleString()} RWF</p>
+                      <p className="text-sm font-bold text-[#F47A3E] shrink-0">{formatPrice(item.price * item.quantity, currency)}</p>
                     </div>
                   ))}
                 </div>
