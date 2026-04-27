@@ -95,6 +95,7 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     setStep('pending');
     try {
+      // Create order in Firestore first
       const ref = await addDoc(collection(db, 'orders'), {
         userId: currentUser.uid,
         userEmail: currentUser.email,
@@ -110,13 +111,54 @@ export default function CheckoutPage() {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      setOrderId(ref.id.slice(0, 8).toUpperCase());
+      const orderId = ref.id.slice(0, 8).toUpperCase();
+      setOrderId(orderId);
       decrementStock(selectedBranch.id, items.map(i => ({ id: i.id, quantity: i.quantity })));
+
+      // Trigger real MoMo USSD push (falls back to mock if API keys not set)
+      try {
+        const momoRes = await fetch('/api/momo-pay', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: momoPhone,
+            amount: depositAmount,
+            orderId: ref.id,
+          }),
+        });
+        const momoData = await momoRes.json();
+
+        if (momoData.success && !momoData.mock) {
+          // Real USSD sent — poll for status
+          let attempts = 0;
+          const poll = setInterval(async () => {
+            attempts++;
+            try {
+              const statusRes = await fetch(`/api/momo-status?referenceId=${momoData.referenceId}`);
+              const statusData = await statusRes.json();
+              if (statusData.status === 'SUCCESSFUL' || attempts >= 12) {
+                clearInterval(poll);
+                setIsProcessing(false);
+                setStep('success');
+                clearCart();
+              } else if (statusData.status === 'FAILED') {
+                clearInterval(poll);
+                setIsProcessing(false);
+                setStep('payment');
+              }
+            } catch { /* keep polling */ }
+          }, 5000); // poll every 5s for up to 60s
+          return;
+        }
+      } catch { /* API not available — use mock timing */ }
+
+      // Mock flow (3s delay)
       setTimeout(() => {
         setIsProcessing(false);
         setStep('success');
         clearCart();
       }, 3000);
+
     } catch (err) {
       console.error(err);
       setIsProcessing(false);
