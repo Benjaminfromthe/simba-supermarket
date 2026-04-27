@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, LogOut } from 'lucide-react';
+import { ShoppingCart, Menu, X, Sun, Moon, Globe, ChevronDown, LogOut, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import SmartSearchBar from './SmartSearchBar';
 import simbaLogo from '../assets/simba-logo-v2.jpg';
 import PreloadLink from './PreloadLink';
+import { useCurrencyStore, FLAGS, SYMBOLS, type Currency } from '../store/useCurrencyStore';
 
 const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
 const CACHE_KEY = 'simba-name-cache-v3';
@@ -65,7 +66,10 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   const { currentUser, signOut, isAdmin, isBranchOperator } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
+  const currencyRef = useRef<HTMLDivElement>(null);
+  const { currency, setCurrency } = useCurrencyStore();
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
     (localStorage.getItem('simba-theme') as 'light' | 'dark') || 'light'
   );
@@ -87,6 +91,7 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+      if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) setCurrencyOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -161,6 +166,41 @@ export default function Navbar({ onOpenCart }: { onOpenCart: () => void }) {
                   </button>
                 </div>
               )}
+            </div>
+
+            <div className="w-px h-5 bg-white/30 hidden lg:block" />
+
+            {/* Currency Switcher */}
+            <div className="relative hidden lg:block" ref={currencyRef}>
+              <button onClick={() => setCurrencyOpen(!currencyOpen)} className="flex items-center gap-1 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors">
+                <span className="text-sm">{FLAGS[currency]}</span>
+                <span className="text-xs font-bold hidden sm:inline">{SYMBOLS[currency]}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${currencyOpen ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {currencyOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 rounded-xl shadow-2xl overflow-hidden w-40 z-[200]"
+                    style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}
+                  >
+                    {(['RWF', 'USD', 'EUR', 'CNY'] as Currency[]).map(c => (
+                      <button
+                        key={c}
+                        onClick={() => { setCurrency(c); setCurrencyOpen(false); }}
+                        className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors flex items-center gap-2 ${currency === c ? 'bg-[#F47A3E] text-white' : 'text-gray-900 hover:bg-orange-50'}`}
+                      >
+                        <span>{FLAGS[c]}</span>
+                        <span>{c}</span>
+                        <span className="ml-auto text-xs opacity-60">{SYMBOLS[c]}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className="w-px h-5 bg-white/30 hidden lg:block" />

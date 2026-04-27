@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { Product, useCartStore } from '../store/useCartStore';
 import { getLocalizedProductCategory } from '../lib/localize';
 import { getCachedProductName } from './Navbar';
+import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
 export function ProductCardSkeleton() {
   return (
@@ -39,6 +40,7 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
 
   const localizedName = getCachedProductName((product.name || '').trim(), i18n.language);
   const oldPrice = Math.floor(product.price * 1.15);
+  const { currency } = useCurrencyStore();
   const [imgLoaded, setImgLoaded] = useState(false);
 
   const handleAddToCart = (e?: React.MouseEvent) => {
@@ -105,8 +107,8 @@ const ProductCard: React.FC<{ product: Product; compact?: boolean }> = ({ produc
         </Link>
 
         <div className={`flex items-center gap-2 ${compact ? 'mb-2' : 'mb-3'}`}>
-          <span className={`font-black text-[#F47A3E] ${compact ? 'text-sm' : 'text-lg'}`}>{product.price.toLocaleString()} RWF</span>
-          <span className="text-xs text-gray-400 line-through">{oldPrice.toLocaleString()}</span>
+          <span className={`font-black text-[#F47A3E] ${compact ? 'text-sm' : 'text-lg'}`}>{formatPrice(product.price, currency)}</span>
+          <span className="text-xs text-gray-400 line-through">{formatPrice(oldPrice, currency)}</span>
         </div>
 
         {/* Compact mode — quantity selector + Add to Cart */}
