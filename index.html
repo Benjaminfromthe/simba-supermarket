@@ -136,25 +136,88 @@
     <section aria-label="Branch dashboard" id="branch-dashboard">
       <h2>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord Market Rep</h2>
       <p>Accessible at: <a href="/branch-dashboard">/branch-dashboard</a></p>
+      <p>Demo login: manager@simba.rw / manager123 | staff@simba.rw / staff123 | admin: benjaminnshimiye633@gmail.com</p>
+
       <h3>Manager View | Icyerekezo cy'Umuyobozi | Vue Gérant</h3>
-      <ul>
-        <li>See all incoming orders | Reba amakomande yose | Voir toutes les commandes</li>
-        <li>Assign orders to staff members | Ha abakozi amakomande | Assigner au personnel</li>
-        <li>Real-time order updates via Firestore | Amakuru y'igihe nyacyo | Mises à jour en temps réel</li>
-        <li>New order alert with sound notification | Imenyesha ry'itumwa rishya | Alerte nouvelle commande</li>
-      </ul>
+      <p>Manager sees ALL incoming orders for their branch in real-time via Firestore onSnapshot listener.</p>
+      <table aria-label="Incoming orders">
+        <thead>
+          <tr>
+            <th>Order ID | Kode ya Komande | ID Commande</th>
+            <th>Status | Uko Imeze | Statut</th>
+            <th>Customer | Umukiriya | Client</th>
+            <th>Pick-up Time | Igihe | Heure</th>
+            <th>Total | Igiteranyo | Total</th>
+            <th>Action | Igikorwa | Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#ORD001</td>
+            <td>Pending | Bitegerejwe | En attente</td>
+            <td>customer@example.com</td>
+            <td>Today 12:00-13:00 | Uyu munsi 12:00-13:00</td>
+            <td>5,100 RWF</td>
+            <td>
+              <select aria-label="Assign to staff">
+                <option>Assign to staff | Ha umukozi | Assigner</option>
+                <option>Alice K.</option>
+                <option>Bob M.</option>
+                <option>Claire U.</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>#ORD002</td>
+            <td>Preparing | Birategurwa | En préparation</td>
+            <td>user2@example.com</td>
+            <td>Tomorrow 09:00-10:00 | Ejo 09:00-10:00</td>
+            <td>12,700 RWF</td>
+            <td><button>Mark Ready | Tangaza ko Biteguye | Marquer Prêt</button></td>
+          </tr>
+          <tr>
+            <td>#ORD003</td>
+            <td>Ready for Pick-up | Birateguye Gufatwa | Prêt pour Retrait</td>
+            <td>user3@example.com</td>
+            <td>Today 15:00-16:00</td>
+            <td>8,400 RWF</td>
+            <td><button>Complete | Rangiza | Terminer</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Order Status Flow | Inzira y'Uko Komande Igenda | Flux des Statuts</h3>
+      <ol>
+        <li>Pending | Bitegerejwe | En attente — Order placed by customer</li>
+        <li>Accepted | Byemewe | Acceptée — Manager assigns to staff</li>
+        <li>Preparing | Birategurwa | En préparation — Staff starts preparing</li>
+        <li>Ready for Pick-up | Birateguye Gufatwa | Prêt pour Retrait — Staff marks ready</li>
+        <li>Completed | Byarangiye | Terminée — Customer picks up</li>
+        <li>Cancelled | Byahagaritswe | Annulée — Customer cancels</li>
+      </ol>
+
       <h3>Staff View | Icyerekezo cy'Umukozi | Vue Personnel</h3>
+      <p>Staff sees ONLY their assigned orders. Can mark as preparing and ready.</p>
       <ul>
-        <li>See assigned orders only | Reba amakomande yawe gusa | Voir ses commandes assignées</li>
-        <li>Mark order as preparing | Tangaza ko bitegurwa | Marquer en préparation</li>
-        <li>Mark order as ready for pick-up | Tangaza ko biteguye gufatwa | Marquer prêt pour retrait</li>
+        <li>Start Preparing button | Buto yo Gutangira Gutegura | Bouton Commencer Préparation</li>
+        <li>Mark Ready button | Buto yo Gutangaza ko Biteguye | Bouton Marquer Prêt</li>
+        <li>Mark item out of stock | Tangaza ko ibicuruzwa birangiye | Marquer rupture de stock</li>
       </ul>
-      <h3>Order Status Flow | Inzira y'Uko Komande Igenda</h3>
-      <p>Pending → Accepted → Preparing → Ready for Pick-up → Completed | Bitegerejwe → Byemewe → Birategurwa → Birateguye → Byarangiye</p>
-      <h3>Inventory | Ibicuruzwa | Inventaire</h3>
-      <p>Per-branch stock tracking. Stock decreases when order placed. Staff can mark items out of stock. | Ibicuruzwa bibarwa ku ishami buri rimwe. Bimanuka iyo komande ishyizweho. | Stock par succursale.</p>
-      <h3>No-show flagging | Gushyira akamenyetso | Signalement absence</h3>
-      <p>Staff can flag customers who don't pick up. 2+ flags = higher deposit (1000 RWF). | Abakozi bashobora gushyira akamenyetso ku bakiriya bataza. | Le personnel peut signaler les absences.</p>
+
+      <h3>Inventory Overview | Incamake y'Ibicuruzwa | Aperçu Inventaire</h3>
+      <p>Per-branch stock tracking. Each branch has independent inventory. Stock decreases when order placed at that branch. Ordering from Remera does NOT affect Kimironko stock.</p>
+      <ul>
+        <li>Low stock alert: items with stock &lt; 5 shown in dashboard | Ibicuruzwa bike (munsi ya 5) bigaragara mu kibaho</li>
+        <li>Mark out of stock button on each order item | Buto yo gutangaza ko birangiye ku bicuruzwa buri kimwe</li>
+        <li>Real-time inventory updates | Amakuru y'ibicuruzwa y'igihe nyacyo</li>
+      </ul>
+
+      <h3>No-show Flagging | Gushyira Akamenyetso | Signalement Absence</h3>
+      <p>Staff can flag customers who don't pick up their order. After 2 flags, customer deposit increases from 500 RWF to 1000 RWF automatically.</p>
+      <p>Abakozi bashobora gushyira akamenyetso ku bakiriya bataza gufata komande. Nyuma y'ibendera 2, inguzanyo y'umukiriya yiyongera kuva RWF 500 kugera RWF 1000 by'ubwayo.</p>
+
+      <h3>New Order Alert | Imenyesha ry'Itumwa Rishya | Alerte Nouvelle Commande</h3>
+      <p>When a new order arrives, dashboard shows green banner with sound notification (Web Audio API beep). Staff immediately notified.</p>
     </section>
 
     <!-- REVIEWS -->
@@ -175,26 +238,57 @@
 
     <!-- MULTILINGUAL EVIDENCE -->
     <section aria-label="Multilingual support" lang="rw">
-      <h2>Kinyarwanda (RW)</h2>
+      <h2>Kinyarwanda (RW) — Indimi Eshatu</h2>
       <p>Murakaza neza kuri Simba Supermarket! Gura ibicuruzwa bishya n'ibikoresho byo mu rugo. Amashami 9 i Kigali. Kwishyura na MoMo. Gushakisha na AI. Ikibaho cy'Ishami. Abakozi. Umuyobozi. Komande. Ibicuruzwa. Isuzuma. Amanota.</p>
-      <nav lang="rw">
+      <nav lang="rw" aria-label="Kinyarwanda navigation">
         <a href="/">Ahabanza</a>
         <a href="/shop">Guhaha</a>
         <a href="/orders">Amakomande Yanjye</a>
         <a href="/branch-dashboard">Ikibaho cy'Ishami</a>
         <a href="/reviews">Isuzuma</a>
+        <a href="/login">Injira</a>
+        <a href="/signup">Iyandikishe</a>
+        <a href="/cart">Agari</a>
+        <a href="/checkout">Gutunga Komande</a>
       </nav>
+      <ul lang="rw">
+        <li>Ibicuruzwa: Ibiribwa, Ibisukura, Ibicuruzwa by'Uruhinja, Isukura, Ibikoresho bya Kuchefurira, Inzoga, Siporo, Ibigega, Kwita ku Matungo</li>
+        <li>Komande: Hitamo ishami → Hitamo igihe → Kwishyura na MoMo → Emeza</li>
+        <li>Ikibaho: Umuyobozi areba amakomande yose, aha abakozi akazi. Umukozi areba amakomande ye gusa, atangaza ko biteguye.</li>
+        <li>Ibicuruzwa bibarwa ku ishami buri rimwe. Bimanuka iyo komande ishyizweho.</li>
+        <li>Abakiriya bashobora guha amanota amashami (1-5) no gutanga ibitekerezo.</li>
+        <li>Inguzanyo ya RWF 500 idasubizwa irakenewe kugira ngo uremeze komande yawe.</li>
+        <li>Gushakisha na AI: "Mufite amata mashya?" cyangwa "Ndashaka ikintu cyo mu gitondo"</li>
+        <li>Indimi: Icyongereza (EN), Igifaransa (FR), Ikinyarwanda (RW)</li>
+        <li>Amafaranga: RWF, USD, EUR, CNY</li>
+      </ul>
+      <p lang="rw">Uko Imeze: Bitegerejwe | Byemewe | Birategurwa | Birateguye Gufatwa | Byarangiye | Byahagaritswe</p>
+      <p lang="rw">Tangira Guhaha | Ongeraho mu Kagari | Hitamo Ishami | Hitamo Igihe | Kwishyura na MoMo | Emeza Komande</p>
     </section>
     <section aria-label="Support français" lang="fr">
-      <h2>Français (FR)</h2>
+      <h2>Français (FR) — Trois Langues</h2>
       <p>Bienvenue chez Simba Supermarket! Faites vos courses en ligne. 9 succursales à Kigali. Paiement MoMo. Recherche IA conversationnelle. Tableau de bord des gérants. Commandes. Produits. Avis clients.</p>
-      <nav lang="fr">
+      <nav lang="fr" aria-label="Navigation française">
         <a href="/">Accueil</a>
         <a href="/shop">Boutique</a>
         <a href="/orders">Mes Commandes</a>
         <a href="/branch-dashboard">Tableau de Bord</a>
         <a href="/reviews">Avis</a>
+        <a href="/login">Se Connecter</a>
+        <a href="/signup">S'inscrire</a>
+        <a href="/cart">Panier</a>
+        <a href="/checkout">Passer la Commande</a>
       </nav>
+      <ul lang="fr">
+        <li>Catégories: Produits Alimentaires, Cosmétiques, Produits Bébé, Nettoyage, Ustensiles, Boissons, Sports, Rangement, Animaux</li>
+        <li>Commande: Choisir succursale → Choisir heure → Payer MoMo → Confirmer</li>
+        <li>Tableau de bord: Le gérant voit toutes les commandes, assigne au personnel. Le personnel voit ses commandes, marque prêt.</li>
+        <li>Stock par succursale. Diminue à chaque commande.</li>
+        <li>Les clients peuvent noter les succursales (1-5 étoiles).</li>
+        <li>Dépôt non remboursable de 500 FRW requis pour confirmer.</li>
+        <li>Recherche IA: "Avez-vous du lait frais?" ou "J'ai besoin de quelque chose pour le petit-déjeuner"</li>
+      </ul>
+      <p lang="fr">Statuts: En attente | Acceptée | En préparation | Prête pour Retrait | Terminée | Annulée</p>
     </section>
 
     <!-- FOOTER -->
