@@ -157,7 +157,7 @@ export default function BranchDashboard() {
         <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">          <div className="flex items-center gap-3">
             <Store className="w-6 h-6" />
             <div>
-              <h1 className="font-bold text-lg">Market Rep Dashboard</h1>
+              <h1 className="font-bold text-lg">{t('branchPortal')}</h1>
               <p className="text-orange-100 text-xs">{t('orderManagement')}</p>
             </div>
           </div>
