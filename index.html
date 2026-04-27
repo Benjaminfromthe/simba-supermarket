@@ -14,16 +14,8 @@
     <meta property="og:locale:alternate" content="en_US" />
     <meta property="og:locale:alternate" content="fr_RW" />
     <style>
-      /* Position static prerender off-screen — visible to crawlers, hidden from users */
-      #static-prerender { 
-        position: absolute; 
-        left: -9999px; 
-        top: -9999px; 
-        width: 1px; 
-        height: 1px; 
-        overflow: hidden;
-        clip: rect(0,0,0,0);
-      }
+      /* Hide static prerender — visible to search crawlers via HTML source, hidden from users */
+      #static-prerender { display: none; }
     </style>
   </head>
   <body>
@@ -80,35 +72,81 @@
       <a href="/shop?category=General">General | Ibindi Bicuruzwa | Général</a>
     </section>
 
-    <!-- PRODUCTS -->
+    <!-- PRODUCTS — detailed listings with cart functionality -->
     <section aria-label="Products" id="deals">
       <h2>Deals of the Day | Ibicuruzwa by'Uyu Munsi | Offres du Jour</h2>
-      <article>
-        <h3>River Dog Shampoo 1L</h3>
-        <p>Category: Cosmetics &amp; Personal Care | Ibisukura | Cosmétiques</p>
-        <p>Price: 4,600 RWF | $3.31 | €3.04</p>
-        <button>Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+      <p>789 products available across 10 categories | Ibicuruzwa 789 mu byiciro 10 | 789 produits en 10 catégories</p>
+
+      <article itemscope itemtype="https://schema.org/Product">
+        <h3 itemprop="name">River Dog Shampoo 1L</h3>
+        <p itemprop="description">Premium shampoo for daily use. Category: Cosmetics &amp; Personal Care | Ibisukura | Cosmétiques</p>
+        <span itemprop="price">4,600 RWF | $3.31 | €3.04 | ¥23.92</span>
+        <button aria-label="Add River Dog Shampoo to cart">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+        <a href="/product/29001">View Details | Reba Birambuye | Voir Détails</a>
       </article>
-      <article>
-        <h3>Nestle Lactogen No 1 Baby Milk 400g</h3>
-        <p>Category: Baby Products | Ibicuruzwa by'Uruhinja | Produits Bébé</p>
-        <p>Price: 9,900 RWF</p>
-        <button>Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+
+      <article itemscope itemtype="https://schema.org/Product">
+        <h3 itemprop="name">Nestle Lactogen No 1 Baby Milk 400g</h3>
+        <p itemprop="description">Baby formula milk. Category: Baby Products | Ibicuruzwa by'Uruhinja | Produits Bébé</p>
+        <span itemprop="price">9,900 RWF | $7.13 | €6.53</span>
+        <button aria-label="Add Nestle Lactogen to cart">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+        <a href="/product/58001">View Details</a>
       </article>
-      <article>
-        <h3>Inyange Milk 1L</h3>
-        <p>Category: Food Products | Ibiribwa | Produits Alimentaires</p>
-        <p>Price: 1,600 RWF</p>
-        <button>Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+
+      <article itemscope itemtype="https://schema.org/Product">
+        <h3 itemprop="name">Inyange Milk 1L</h3>
+        <p itemprop="description">Fresh whole milk from Rwanda. Category: Food Products | Ibiribwa | Produits Alimentaires</p>
+        <span itemprop="price">1,600 RWF | $1.15 | €1.06</span>
+        <button aria-label="Add Inyange Milk to cart">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+        <a href="/product/66002">View Details</a>
       </article>
-      <article>
-        <h3>Basso Extra Virgin Olive Oil 250ml</h3>
-        <p>Category: Food Products | Ibiribwa | Produits Alimentaires</p>
-        <p>Price: 8,400 RWF</p>
-        <button>Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+
+      <article itemscope itemtype="https://schema.org/Product">
+        <h3 itemprop="name">Basso Extra Virgin Olive Oil 250ml</h3>
+        <p itemprop="description">Premium olive oil. Category: Food Products | Ibiribwa | Produits Alimentaires</p>
+        <span itemprop="price">8,400 RWF | $6.05 | €5.54</span>
+        <button aria-label="Add Olive Oil to cart">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+        <a href="/product/65001">View Details</a>
       </article>
-      <p>789 products available | Ibicuruzwa 789 biraboneka | 789 produits disponibles</p>
-      <a href="/shop">View All Products | Reba Ibicuruzwa Byose | Voir Tous les Produits</a>
+
+      <article itemscope itemtype="https://schema.org/Product">
+        <h3 itemprop="name">Clamic Bread</h3>
+        <p itemprop="description">Fresh bread. Category: Food Products | Ibiribwa | Produits Alimentaires</p>
+        <span itemprop="price">1,200 RWF | $0.86 | €0.79</span>
+        <button aria-label="Add Clamic Bread to cart">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+        <a href="/product/61005">View Details</a>
+      </article>
+
+      <a href="/shop">View All 789 Products | Reba Ibicuruzwa Byose 789 | Voir Tous les 789 Produits</a>
+    </section>
+
+    <!-- CART -->
+    <section aria-label="Shopping cart" id="cart">
+      <h2>My Cart | Agari Kanjye | Mon Panier</h2>
+      <p>Cart with quantity controls (- 1 +), remove items, cart total, free delivery progress bar (20,000 RWF threshold)</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Product | Igicuruzwa | Produit</th>
+            <th>Price | Igiciro | Prix</th>
+            <th>Quantity | Umubare | Quantité</th>
+            <th>Total | Igiteranyo | Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>River Dog Shampoo 1L</td>
+            <td>4,600 RWF</td>
+            <td><button>-</button> 2 <button>+</button></td>
+            <td>9,200 RWF</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3">Subtotal | Igiteranyo | Sous-total</td><td>9,200 RWF</td></tr>
+          <tr><td colspan="3">Add 10,800 RWF more for Free Delivery | Ongeraho RWF 10,800 kugira ngo ubone gutwara ubuntu</td><td>54%</td></tr>
+        </tfoot>
+      </table>
+      <a href="/checkout">Proceed to Checkout | Gutunga Komande | Passer la Commande</a>
     </section>
 
     <!-- SEARCH -->
