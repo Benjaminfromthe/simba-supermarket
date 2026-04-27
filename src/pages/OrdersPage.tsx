@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, query, where, orderBy, onSnapshot, Timestamp, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store, Star } from 'lucide-react';
+import { Loader2, Package, Clock, CheckCircle2, XCircle, Bell, MapPin, Store, Star, MessageCircle, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
@@ -47,6 +47,9 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [readyOrders, setReadyOrders] = useState<Order[]>([]);
   const [cancelling, setCancelling] = useState<string | null>(null);
+  const [messagingOrder, setMessagingOrder] = useState<string | null>(null);
+  const [messageText, setMessageText] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const handleCancel = async (orderId: string) => {
     setCancelling(orderId);
@@ -57,6 +60,21 @@ export default function OrdersPage() {
       });
     } catch (e) { console.error(e); }
     setCancelling(null);
+  };
+
+  const handleSendMessage = async (orderId: string) => {
+    if (!messageText.trim() || !currentUser) return;
+    setSendingMessage(true);
+    try {
+      await updateDoc(doc(db, 'orders', orderId), {
+        customerNote: messageText.trim(),
+        customerNoteAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      setMessageText('');
+      setMessagingOrder(null);
+    } catch (e) { console.error(e); }
+    setSendingMessage(false);
   };
 
   // Real-time listener — updates instantly when branch marks order ready
@@ -205,7 +223,7 @@ export default function OrdersPage() {
                   <p className="text-xs text-gray-400">
                     {order.createdAt?.toDate?.()?.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) || ''}
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     {/* Cancel — only on pending orders */}
                     {order.status === 'pending' && (
                       <button
@@ -219,6 +237,77 @@ export default function OrdersPage() {
                         {t('cancelOrder', 'Cancel Order')}
                       </button>
                     )}
+                    {/* Message branch — on active orders */}
+                    {['pending','accepted','preparing'].includes(order.status) && (
+                      <button
+                        onClick={() => setMessagingOrder(messagingOrder === order.id ? null : order.id)}
+                        className="flex items-center gap-1 text-xs font-bold text-blue-500 border border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-3 py-1.5 rounded-xl transition-colors"
+                      >
+                        <MessageCircle className="w-3 h-3" />
+                        {t('messagesBranch', 'Message Branch')}
+                      </button>
+                    )}
+                    {/* Review prompt — only on completed orders */}
+                    {order.status === 'completed' && (
+                      <Link
+                        to="/reviews"
+                        className="flex items-center gap-1 text-xs font-bold text-[#F47A3E] border border-orange-200 hover:bg-orange-50 dark:hover:bg-orange-900/20 px-3 py-1.5 rounded-xl transition-colors"
+                      >
+                        <Star className="w-3 h-3 fill-[#F47A3E]" />
+                        {t('rateExperience', 'Rate your experience')}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+
+                {/* Existing customer note */}
+                {(order as any).customerNote && (
+                  <div className="mt-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl px-3 py-2 flex items-start gap-2">
+                    <MessageCircle className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-blue-600 dark:text-blue-400">{t('yourNote', 'Your note to branch:')}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">{(order as any).customerNote}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Message input — shown when messaging */}
+                {messagingOrder === order.id && (
+                  <div className="mt-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                    <p className="text-xs font-bold text-gray-600 dark:text-gray-300 mb-2">
+                      💬 {t('sendNoteToStaff', 'Send a note to branch staff:')}
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={messageText}
+                        onChange={e => setMessageText(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleSendMessage(order.id)}
+                        placeholder={t('noteExamples', 'e.g. Please add 2 more breads, or cancel the shovel')}
+                        className="flex-1 text-xs px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#F47A3E]"
+                      />
+                      <button
+                        onClick={() => handleSendMessage(order.id)}
+                        disabled={!messageText.trim() || sendingMessage}
+                        className="bg-[#F47A3E] disabled:opacity-40 text-white px-3 py-2 rounded-xl transition-colors flex items-center gap-1"
+                      >
+                        {sendingMessage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                    <div className="flex gap-2 mt-2 flex-wrap">
+                      {[
+                        t('quickNote1', 'Please cancel the order'),
+                        t('quickNote2', 'Add 2 more of the same'),
+                        t('quickNote3', "I'll be 30 min late"),
+                      ].map(q => (
+                        <button key={q} onClick={() => setMessageText(q)}
+                          className="text-[10px] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full hover:border-[#F47A3E] hover:text-[#F47A3E] transition-colors">
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                     {/* Review prompt — only on completed orders */}
                     {order.status === 'completed' && (
                       <Link

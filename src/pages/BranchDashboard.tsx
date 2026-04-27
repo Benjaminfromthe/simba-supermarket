@@ -308,6 +308,12 @@ export default function BranchDashboard() {
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           {t('assignedTo')}: <span className="font-semibold">{order.assignedTo || t('notAssignedYet')}</span>
                         </p>
+                        {order.customerNote && (
+                          <div className="mt-1.5 flex items-start gap-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg px-2 py-1.5">
+                            <span className="text-blue-500 text-xs">💬</span>
+                            <p className="text-xs text-blue-700 dark:text-blue-300 font-medium">{order.customerNote}</p>
+                          </div>
+                        )}
                       </div>
                       <span className={`text-xs font-bold px-3 py-1 rounded-full ${STATUS_COLORS[order.status] || STATUS_COLORS.pending}`}>
                         {order.status?.toUpperCase()}
