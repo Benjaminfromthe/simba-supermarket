@@ -4,13 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Loader2, MapPin, Clock, Phone, ChevronRight, Store, ArrowLeft, Star } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { getLocalizedProductName } from '../lib/localize';
 import { decrementStock } from '../lib/inventory';
 import { getDepositAmount } from '../lib/noshow';
 import branches from '../data/branches.json';
 import PageTransition from '../components/PageTransition';
+import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
 type Step = 'branch' | 'timeslot' | 'payment' | 'pending' | 'success';
 
@@ -26,6 +27,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { items, getCartTotal, clearCart } = useCartStore();
   const { currentUser } = useAuth();
+  const { currency } = useCurrencyStore();
 
   const [step, setStep] = useState<Step>('branch');
   const [selectedBranch, setSelectedBranch] = useState<typeof branches[0] | null>(null);
@@ -217,7 +219,7 @@ export default function CheckoutPage() {
         </div>
         <h2 className="text-2xl font-bold mb-2 dark:text-white">{t('checkYourPhoneTitle')}</h2>
         <p className="text-gray-500 dark:text-gray-400 mb-2">
-          {t('momoPromptSent', { amount: depositAmount.toLocaleString() })}
+          {t('momoPromptSent', { amount: formatPrice(depositAmount, currency) })}
         </p>
         <p className="text-xl font-bold text-[#F47A3E] mb-6">{momoPhone}</p>
         <div className="flex items-center justify-center gap-2 text-gray-400">
@@ -234,7 +236,7 @@ export default function CheckoutPage() {
   return (
     <PageTransition
       title={t('checkout')}
-      subtitle={`${items.length} ${t('items', 'items')} · ${getCartTotal().toLocaleString()} RWF`}
+      subtitle={`${items.length} ${t('items', 'items')} · ${formatPrice(getCartTotal(), currency)}`}
       icon={<Store className="w-5 h-5" />}
     >
     <div className="bg-gray-50 min-h-screen py-8 text-foreground">
@@ -410,7 +412,7 @@ export default function CheckoutPage() {
                     e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
                   }}
                 >
-                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : t('payDepositConfirm', { amount: depositAmount.toLocaleString() })}
+                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `${t('payDepositConfirm', { amount: formatPrice(depositAmount, currency) })}`}
                 </button>
               </div>
             )}
@@ -426,20 +428,20 @@ export default function CheckoutPage() {
                     <p className="text-xs font-medium dark:text-white line-clamp-1">{getLocalizedProductName(item)}</p>
                     <p className="text-xs text-gray-400">x{item.quantity}</p>
                   </div>
-                  <p className="text-xs font-bold text-[#F47A3E] shrink-0">{(item.price * item.quantity).toLocaleString()} RWF</p>
+                  <p className="text-xs font-bold text-[#F47A3E] shrink-0">{formatPrice(item.price * item.quantity, currency)}</p>
                 </div>
               ))}
             </div>
             <div className="border-t dark:border-border pt-3 space-y-2 text-sm">
               <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                <span>{t('subtotal')}</span><span>{getCartTotal().toLocaleString()} RWF</span>
+                <span>{t('subtotal')}</span><span>{formatPrice(getCartTotal(), currency)}</span>
               </div>
               <div className="flex justify-between text-gray-500 dark:text-gray-400">
-                <span>{t('depositLabel')}</span><span className="text-amber-600">+{depositAmount.toLocaleString()} RWF</span>
+                <span>{t('depositLabel')}</span><span className="text-amber-600">+{formatPrice(depositAmount, currency)}</span>
               </div>
               <div className="flex justify-between font-bold text-base dark:text-white border-t dark:border-border pt-2">
                 <span>{t('total')}</span>
-                <span className="text-[#F47A3E]">{(getCartTotal() + depositAmount).toLocaleString()} RWF</span>
+                <span className="text-[#F47A3E]">{formatPrice(getCartTotal() + depositAmount, currency)}</span>
               </div>
             </div>
             {selectedBranch && (
