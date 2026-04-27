@@ -28,7 +28,7 @@ function getPickupDays() {
   const now = new Date();
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 9; i++) {
     const d = new Date(now);
     d.setDate(now.getDate() + i);
     const dayName = weekdays[d.getDay()];
@@ -356,13 +356,17 @@ export default function CheckoutPage() {
                   {t('choosePickupTimeHelp')} <strong className="text-[#F47A3E]">{selectedBranch?.name}</strong>. {t('whenWillYouArrive')}
                 </p>
 
-                {/* Day selector — scrollable row of 7 days */}
+                {/* Day selector — Today, Tomorrow + full week, scrollable, no dates */}
                 <div className="flex gap-2 mb-5 overflow-x-auto pb-1 scrollbar-hide">
                   {PICKUP_DAYS.map(day => (
                     <button
                       key={day.value}
                       onClick={() => { setSelectedDay(day.value); setSelectedTime(''); }}
-                      className={`shrink-0 px-4 py-2.5 rounded-xl border-2 text-sm font-bold transition-all whitespace-nowrap ${selectedDay === day.value ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30 text-[#F47A3E]' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:text-white'}`}
+                      className={`shrink-0 px-4 py-2.5 rounded-xl border-2 text-sm font-bold transition-all whitespace-nowrap ${
+                        selectedDay === day.value
+                          ? 'border-[#F47A3E] bg-[#F47A3E] text-white shadow-sm'
+                          : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:border-[#F47A3E] hover:text-[#F47A3E]'
+                      }`}
                     >
                       {day.label}
                     </button>
