@@ -91,7 +91,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
       body: JSON.stringify({
         amount: String(amount),
-        currency: 'RWF',
+        currency: process.env.MOMO_ENVIRONMENT === 'production' ? 'RWF' : 'EUR',
         externalId: orderId,
         payer: {
           partyIdType: 'MSISDN',
