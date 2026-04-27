@@ -5,6 +5,7 @@ import { useCartStore } from '../store/useCartStore';
 import { useNavigate } from 'react-router-dom';
 import { getLocalizedProductName } from '../lib/localize';
 import { useAuth } from '../contexts/AuthContext';
+import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, getCartTotal } = useCartStore();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { currency } = useCurrencyStore();
 
   if (!isOpen) return null;
 
@@ -65,7 +67,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-sm leading-tight text-foreground line-clamp-2">{getLocalizedProductName(item)}</h3>
-                    <p className="text-primary font-bold mt-1 text-sm">{t('priceRwf', { price: item.price.toLocaleString() })}</p>
+                    <p className="text-primary font-bold mt-1 text-sm">{formatPrice(item.price, currency)}</p>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center border dark:border-border rounded-lg bg-muted/50 overflow-hidden">
@@ -110,7 +112,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           <div className="p-4 border-t dark:border-border bg-muted/20 text-foreground">
             <div className="flex items-center justify-between mb-4 font-bold text-lg">
               <span>{t('total')}</span>
-              <span className="text-primary text-xl tracking-tight">{t('priceRwf', { price: getCartTotal().toLocaleString() })}</span>
+              <span className="text-primary text-xl tracking-tight">{formatPrice(getCartTotal(), currency)}</span>
             </div>
             <button 
               onClick={handleCheckout}
