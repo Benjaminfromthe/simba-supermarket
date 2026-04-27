@@ -22,6 +22,26 @@ const PICKUP_TIMES = [
   '17:00 - 18:00', '18:00 - 19:00', '19:00 - 20:00',
 ];
 
+// Generate next 3 days for the day picker
+function getPickupDays() {
+  const days = [];
+  const now = new Date();
+  const labels = ['Today', 'Tomorrow', ''];
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() + i);
+    const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    days.push({
+      value: d.toISOString().split('T')[0],
+      label: labels[i] || weekday,
+      sub: i < 2 ? dateStr : `${weekday} ${dateStr}`,
+    });
+  }
+  return days;
+}
+const PICKUP_DAYS = getPickupDays();
+
 export default function CheckoutPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,6 +51,7 @@ export default function CheckoutPage() {
 
   const [step, setStep] = useState<Step>('branch');
   const [selectedBranch, setSelectedBranch] = useState<typeof branches[0] | null>(null);
+  const [selectedDay, setSelectedDay] = useState(PICKUP_DAYS[0].value);
   const [selectedTime, setSelectedTime] = useState('');
   const [momoPhone, setMomoPhone] = useState('');
   const [momoProvider, setMomoProvider] = useState<'mtn' | 'airtel'>('mtn');
@@ -332,15 +353,31 @@ export default function CheckoutPage() {
                 <h2 className="text-xl font-bold mb-1 dark:text-white flex items-center gap-2">
                   <Clock className="w-5 h-5 text-[#F47A3E]" /> {t('pickupTime')}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                   {t('choosePickupTimeHelp')} <strong className="text-[#F47A3E]">{selectedBranch?.name}</strong>. {t('whenWillYouArrive')}
                 </p>
+
+                {/* Day selector */}
+                <div className="flex gap-2 mb-5">
+                  {PICKUP_DAYS.map(day => (
+                    <button
+                      key={day.value}
+                      onClick={() => { setSelectedDay(day.value); setSelectedTime(''); }}
+                      className={`flex-1 py-2.5 rounded-xl border-2 text-center transition-all ${selectedDay === day.value ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'}`}
+                    >
+                      <p className={`text-sm font-black ${selectedDay === day.value ? 'text-[#F47A3E]' : 'dark:text-white'}`}>{day.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{day.sub}</p>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Time grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {PICKUP_TIMES.map((time) => (
                     <button
                       key={time}
-                      onClick={() => setSelectedTime(time)}
-                      className={`p-3 rounded-xl border-2 text-sm font-bold transition-all ${selectedTime === time ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30 text-[#F47A3E]' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:text-white'}`}
+                      onClick={() => setSelectedTime(`${PICKUP_DAYS.find(d => d.value === selectedDay)?.label} ${time}`)}
+                      className={`p-3 rounded-xl border-2 text-sm font-bold transition-all ${selectedTime === `${PICKUP_DAYS.find(d => d.value === selectedDay)?.label} ${time}` ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30 text-[#F47A3E]' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:text-white'}`}
                     >
                       {time}
                     </button>
