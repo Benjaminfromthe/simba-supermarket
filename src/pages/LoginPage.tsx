@@ -59,9 +59,9 @@ export default function LoginPage() {
       <div className="mb-5 rounded-xl p-3 text-xs" style={{ background: 'rgba(244,122,62,0.15)', border: '1px solid rgba(244,122,62,0.3)' }}>
         <p className="text-[#F47A3E] font-black mb-2 uppercase tracking-wide text-[10px]">🎯 Demo Accounts — Click to fill</p>
         <div className="space-y-1.5">
-          <button type="button" onClick={() => { setEmail('benjaminnshimiye633@gmail.com'); setPassword('demo1234'); }}
+          <button type="button" onClick={() => { setEmail('benjaminnshimiye633@gmail.com'); setPassword('nbtm2004'); }}
             className="w-full text-left text-white/70 hover:text-white transition-colors flex items-center gap-1.5 py-0.5">
-            <span>👑</span><span className="font-bold text-white/90">Admin</span> benjaminnshimiye633@gmail.com / demo1234
+            <span>👑</span><span className="font-bold text-white/90">Admin</span> benjaminnshimiye633@gmail.com / nbtm2004
           </button>
           <button type="button" onClick={() => { setEmail('manager@simba.rw'); setPassword('manager123'); }}
             className="w-full text-left text-white/70 hover:text-white transition-colors flex items-center gap-1.5 py-0.5">
