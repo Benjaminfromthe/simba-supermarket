@@ -308,18 +308,6 @@ export default function OrdersPage() {
                     </div>
                   </div>
                 )}
-                    {/* Review prompt — only on completed orders */}
-                    {order.status === 'completed' && (
-                      <Link
-                        to="/reviews"
-                        className="flex items-center gap-1 text-xs font-bold text-[#F47A3E] border border-orange-200 hover:bg-orange-50 dark:hover:bg-orange-900/20 px-3 py-1.5 rounded-xl transition-colors"
-                      >
-                        <Star className="w-3 h-3 fill-[#F47A3E]" />
-                        {t('rateExperience', 'Rate your experience')}
-                      </Link>
-                    )}
-                  </div>
-                </div>
               </div>
             ))}
           </div>
