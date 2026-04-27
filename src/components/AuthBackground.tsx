@@ -65,9 +65,33 @@ const PARTICLES = Array.from({ length: 24 }, (_, i) => ({
   opacity: 0.12 + Math.random() * 0.2,
 }));
 
+// Floater sub-component — hooks must be at top level, never inside .map()
+function Floater({ emoji, index, mouseX, mouseY }: {
+  emoji: string; index: number;
+  mouseX: import('framer-motion').MotionValue<number>;
+  mouseY: import('framer-motion').MotionValue<number>;
+}) {
+  const offsetX = useTransform(mouseX, v => v * 80 * DEPTHS[index]);
+  const offsetY = useTransform(mouseY, v => v * 80 * DEPTHS[index]);
+  return (
+    <motion.div className="absolute select-none"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1, rotate: [0, 8, -8, 0] }}
+      transition={{ duration: 0.6, delay: index * 0.05, rotate: { duration: 5 + index * 0.7, repeat: Infinity, ease: 'easeInOut' } }}
+      style={{
+        left: `${POSITIONS[index].x}%`, top: `${POSITIONS[index].y}%`,
+        fontSize: `${SIZES[index]}rem`, x: offsetX, y: offsetY,
+        filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.5))',
+      }}
+    >
+      {emoji}
+    </motion.div>
+  );
+}
+
 interface Props {
   children: ReactNode;
-  isTypingPassword?: boolean; // passed from LoginPage/SignupPage
+  isTypingPassword?: boolean;
 }
 
 export default function AuthBackground({ children, isTypingPassword = false }: Props) {
@@ -187,24 +211,9 @@ export default function AuthBackground({ children, isTypingPassword = false }: P
 
       {/* ── PARALLAX FOOD FLOATERS (weather-aware) ── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {cfg.floaters.map((emoji, i) => {
-          const offsetX = useTransform(mouseX, v => v * 80 * DEPTHS[i]);
-          const offsetY = useTransform(mouseY, v => v * 80 * DEPTHS[i]);
-          return (
-            <motion.div key={`${scene}-${i}`} className="absolute select-none"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1, rotate: [0, 8, -8, 0] }}
-              transition={{ duration: 0.6, delay: i * 0.05, rotate: { duration: 5 + i * 0.7, repeat: Infinity, ease: 'easeInOut' } }}
-              style={{
-                left: `${POSITIONS[i].x}%`, top: `${POSITIONS[i].y}%`,
-                fontSize: `${SIZES[i]}rem`, x: offsetX, y: offsetY,
-                filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.5))',
-              }}
-            >
-              {emoji}
-            </motion.div>
-          );
-        })}
+        {cfg.floaters.map((emoji, i) => (
+          <Floater key={`${scene}-${i}`} emoji={emoji} index={i} mouseX={mouseX} mouseY={mouseY} />
+        ))}
       </div>
 
       {/* ── HOLOGRAPHIC RING ── */}
