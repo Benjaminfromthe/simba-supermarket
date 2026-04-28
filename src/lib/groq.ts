@@ -15,6 +15,13 @@ const CATALOG = ALL_PRODUCTS
   .map(p => `${p.id}|${p.name}|${p.price}|${p.category}`)
   .join('\n');
 
+// Mini catalog for conversational search — only top candidates (saves tokens)
+function getMiniCatalog(query: string, limit = 60): string {
+  const candidates = localSearch(query, limit);
+  const list = candidates.length > 0 ? candidates : ALL_PRODUCTS.slice(0, limit);
+  return list.map(p => `${p.id}|${p.name}|${p.price}|${p.category}`).join('\n');
+}
+
 // ── Local keyword fallback (no API needed) ──────────────────────────────────
 
 const STOP_WORDS = new Set(['i','need','want','looking','for','buy','get','show','please','the','some','a','an','do','you','have','any']);
@@ -144,6 +151,8 @@ export async function groqConversationalSearch(query: string, lang = 'en'): Prom
   try {
     if (productQuery) {
       // Product mode — JSON response with productIds
+      // Use mini catalog (pre-filtered by local search) to stay within token limits
+      const miniCatalog = getMiniCatalog(query, 60);
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
@@ -159,12 +168,12 @@ Respond ONLY with valid JSON: {"message": "friendly response in ${langName}", "p
 - Price constraints: "under 1000" means price <= 1000 RWF
 
 PRODUCT CATALOG (id|name|price|category):
-${CATALOG}`,
+${miniCatalog}`,
             },
             { role: 'user', content: query },
           ],
           temperature: 0.2,
-          max_tokens: 400,
+          max_tokens: 300,
         }),
       });
       const data = await res.json();
@@ -218,6 +227,8 @@ Answer naturally and warmly. Be helpful, friendly, and conversational — like a
       if (content && content.trim()) {
         return { message: content.trim(), products: [] };
       }
+      // API returned error or empty — log it
+      if (data.error) console.error('Groq API error:', data.error.message);
       return { message: "I'm here to help! Ask me about our products, branches, or anything else.", products: [] };
     }
 
@@ -236,6 +247,7 @@ Answer naturally and warmly. Be helpful, friendly, and conversational — like a
 export async function groqIdSearch(query: string, limit = 24): Promise<Product[]> {
   if (!GROQ_API_KEY) return localSearch(query, limit);
   try {
+    const miniCatalog = getMiniCatalog(query, 80);
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
@@ -244,12 +256,12 @@ export async function groqIdSearch(query: string, limit = 24): Promise<Product[]
         messages: [
           {
             role: 'system',
-            content: `You are a Simba Supermarket assistant in Kigali, Rwanda. Return ONLY JSON: {"ids":[number,...]}. Max ${limit} IDs. Catalog format id|name|price|category — use ONLY these IDs:\n${CATALOG}`,
+            content: `You are a Simba Supermarket assistant in Kigali, Rwanda. Return ONLY JSON: {"ids":[number,...]}. Max ${limit} IDs. Catalog format id|name|price|category — use ONLY these IDs:\n${miniCatalog}`,
           },
           { role: 'user', content: query },
         ],
         temperature: 0.1,
-        max_tokens: 400,
+        max_tokens: 300,
       }),
     });
     const data = await res.json();
