@@ -135,129 +135,91 @@
 </div>
 
 <h2>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord</h2>
-<p>URL: <a href="https://simba-google-ai.vercel.app/branch-dashboard">https://simba-google-ai.vercel.app/branch-dashboard</a></p>
-<p><strong>Login credentials:</strong> manager@simba.rw / manager123 &nbsp;|&nbsp; staff@simba.rw / staff123</p>
-<p>Real-time Firestore onSnapshot listener. Audio beep alert on new order. Manager role and Staff role. Per-branch inventory. No-show flagging system.</p>
+<p><strong>Live Dashboard URL:</strong> <a href="https://simba-google-ai.vercel.app/branch-dashboard">https://simba-google-ai.vercel.app/branch-dashboard</a></p>
+<p><strong>Dashboard Demo:</strong> <a href="https://simba-google-ai.vercel.app/dashboard-demo">https://simba-google-ai.vercel.app/dashboard-demo</a></p>
+<p><strong>Login:</strong> manager@simba.rw / manager123 &nbsp;|&nbsp; staff@simba.rw / staff123</p>
+<p>Real-time Firestore onSnapshot. Audio beep on new order. Manager accepts + assigns. Staff prepares + marks ready.</p>
 
-<h3>INCOMING ORDERS — Manager Sees and Accepts New Orders</h3>
-<p style="background:#fef3c7;padding:8px;border-radius:6px;font-weight:bold">🛎️ NEW ORDER ALERT: 2 new orders arrived at Simba Remera! | Amakomande 2 mashya yageze! | 2 nouvelles commandes!</p>
+<div style="background:#fef3c7;padding:10px;border-radius:8px;margin:8px 0;font-weight:bold">
+  🛎️ NEW ORDER ALERT: 2 new orders arrived! | Amakomande 2 mashya! | 2 nouvelles commandes!
+</div>
+
+<h3>Order Counts | Imibare y'Amakomande | Compteurs</h3>
+<table>
+  <thead><tr><th>Pending | Bitegerejwe</th><th>Preparing | Birategurwa</th><th>Ready | Birateguye</th><th>Completed | Byarangiye</th></tr></thead>
+  <tbody><tr><td style="font-size:24px;font-weight:bold;color:#d97706">3</td><td style="font-size:24px;font-weight:bold;color:#7c3aed">2</td><td style="font-size:24px;font-weight:bold;color:#059669">1</td><td style="font-size:24px;font-weight:bold;color:#6b7280">5</td></tr></tbody>
+</table>
+
+<h3>INCOMING ORDERS — Manager Accepts and Assigns to Staff</h3>
 <table>
   <thead>
-    <tr>
-      <th>Order ID</th>
-      <th>Status</th>
-      <th>Customer</th>
-      <th>Branch</th>
-      <th>Pick-up Time</th>
-      <th>Items</th>
-      <th>Total (RWF)</th>
-      <th>MANAGER ACTION</th>
-    </tr>
+    <tr><th>Order ID</th><th>Status</th><th>Customer</th><th>Branch</th><th>Pick-up</th><th>Items</th><th>Total RWF</th><th>MANAGER ACTION</th></tr>
   </thead>
   <tbody>
     <tr style="background:#fef9c3">
       <td><strong>#HA5LH8XT</strong></td>
       <td><span class="sp">⏳ Pending | Bitegerejwe | En attente</span></td>
-      <td>buyer1@gmail.com</td>
-      <td>Simba Remera</td>
-      <td>Today 12:00-13:00</td>
-      <td>Inyange Milk x2, Bread x1</td>
-      <td><strong>4,800 RWF</strong></td>
-      <td>
-        <button class="bb">✅ Accept Order | Emeza Komande | Accepter</button>
-        <select style="margin-top:4px"><option>Assign to staff...</option><option>Alice K.</option><option>Bob M.</option><option>Claire U.</option></select>
-        <button class="bg" style="margin-top:4px">Assign → Alice K.</button>
-      </td>
+      <td>buyer1@gmail.com</td><td>Simba Remera</td><td>Today 12:00-13:00</td>
+      <td>Inyange Milk ×2, Bread ×1</td><td><strong>4,800 RWF</strong></td>
+      <td><button class="bb">✅ Accept + Assign | Emeza na Ha | Accepter</button><br>
+      <select><option>Assign to staff...</option><option selected>Alice K.</option><option>Bob M.</option><option>Claire U.</option></select></td>
     </tr>
     <tr style="background:#fef9c3">
       <td><strong>#JJ1GRZRX</strong></td>
       <td><span class="sp">⏳ Pending | Bitegerejwe | En attente</span></td>
-      <td>buyer2@gmail.com</td>
-      <td>Simba Remera</td>
-      <td>Today 14:00-15:00</td>
-      <td>Shampoo x1, Oil x1</td>
-      <td><strong>9,200 RWF</strong></td>
-      <td>
-        <button class="bb">✅ Accept Order | Emeza Komande | Accepter</button>
-        <select style="margin-top:4px"><option>Assign to staff...</option><option>Alice K.</option><option>Bob M.</option></select>
-        <button class="bg" style="margin-top:4px">Assign → Bob M.</button>
-      </td>
+      <td>buyer2@gmail.com</td><td>Simba Remera</td><td>Today 14:00-15:00</td>
+      <td>Shampoo ×1, Oil ×1</td><td><strong>9,200 RWF</strong></td>
+      <td><button class="bb">✅ Accept + Assign | Emeza na Ha | Accepter</button><br>
+      <select><option>Assign to staff...</option><option>Alice K.</option><option selected>Bob M.</option></select></td>
     </tr>
     <tr>
       <td><strong>#VB1GRZRX</strong></td>
-      <td><span class="sa">✅ Accepted | Byemewe | Acceptée — Assigned: Alice K.</span></td>
-      <td>buyer3@gmail.com</td>
-      <td>Simba Kimironko</td>
-      <td>Tomorrow 09:00-10:00</td>
-      <td>Baby Milk x1</td>
-      <td><strong>9,900 RWF</strong></td>
-      <td><button>▶ Start Preparing | Tangira Gutegura | Commencer Préparation</button></td>
+      <td><span class="sa">✅ Accepted | Byemewe | Acceptée — Alice K.</span></td>
+      <td>buyer3@gmail.com</td><td>Simba Kimironko</td><td>Tomorrow 09:00</td>
+      <td>Baby Milk ×1</td><td><strong>9,900 RWF</strong></td>
+      <td><button>▶ Start Preparing | Tangira | Commencer</button></td>
     </tr>
     <tr>
       <td><strong>#KM2HXPQR</strong></td>
-      <td><span class="spr">🔄 Preparing | Birategurwa | En préparation — Staff: Bob M.</span></td>
-      <td>buyer4@gmail.com</td>
-      <td>Simba Kacyiru</td>
-      <td>Today 16:00-17:00</td>
-      <td>Olive Oil x1</td>
-      <td><strong>8,400 RWF</strong></td>
-      <td><button class="bg">📦 Mark Ready for Pick-up | Tangaza ko Biteguye | Marquer Prêt</button></td>
+      <td><span class="spr">🔄 Preparing | Birategurwa | En préparation — Bob M.</span></td>
+      <td>buyer4@gmail.com</td><td>Simba Kacyiru</td><td>Today 16:00</td>
+      <td>Olive Oil ×1</td><td><strong>8,400 RWF</strong></td>
+      <td><button class="bg">📦 Mark Ready | Tangaza | Marquer Prêt</button></td>
     </tr>
     <tr>
       <td><strong>#NX3WQMST</strong></td>
-      <td><span class="sr">📦 Ready for Pick-up | Birateguye | Prêt pour Retrait</span></td>
-      <td>buyer5@gmail.com</td>
-      <td>Simba Remera</td>
-      <td>Today 11:00-12:00</td>
-      <td>Shampoo x2</td>
-      <td><strong>9,200 RWF</strong></td>
-      <td><button class="bgr">✔ Complete Order | Rangiza Komande | Terminer</button></td>
+      <td><span class="sr">📦 Ready for Pick-up | Birateguye | Prêt</span></td>
+      <td>buyer5@gmail.com</td><td>Simba Remera</td><td>Today 11:00</td>
+      <td>Shampoo ×2</td><td><strong>9,200 RWF</strong></td>
+      <td><button class="bgr">✔ Complete | Rangiza | Terminer</button></td>
     </tr>
     <tr>
       <td><strong>#PQ9MNBVZ</strong></td>
       <td><span class="sc">✔ Completed | Byarangiye | Terminée</span></td>
-      <td>buyer6@gmail.com</td>
-      <td>Simba Gikondo</td>
-      <td>Yesterday 10:00-11:00</td>
-      <td>Rice x3, Sugar x1</td>
-      <td><strong>15,600 RWF</strong></td>
-      <td>Order completed ✓</td>
+      <td>buyer6@gmail.com</td><td>Simba Gikondo</td><td>Yesterday</td>
+      <td>Rice ×3, Sugar ×1</td><td><strong>15,600 RWF</strong></td>
+      <td>✓ Done</td>
     </tr>
   </tbody>
 </table>
 
-<h3>ORDER STATUS WORKFLOW — Full Lifecycle</h3>
-<div class="box">
-  <p><strong>English:</strong> Pending → <button class="bb">Accept + Assign to Staff</button> → Accepted → <button>Start Preparing</button> → Preparing → <button class="bg">Mark Ready</button> → Ready for Pick-up → <button class="bgr">Complete</button> → Completed</p>
-  <p lang="rw"><strong>Kinyarwanda:</strong> Bitegerejwe → Byemewe (Umuyobozi yemeza, ahamagara umukozi) → Birategurwa (Umukozi atangira) → Birateguye Gufatwa (Umukozi atangaza) → Byarangiye (Umuyobozi arangiza)</p>
-  <p lang="fr"><strong>Français:</strong> En attente → Acceptée (Gérant accepte, assigne au personnel) → En préparation (Personnel commence) → Prête (Personnel marque prête) → Terminée (Gérant termine)</p>
-</div>
+<h3>Full Status Workflow | Inzira Yose | Flux Complet</h3>
+<p><span class="sp">Pending</span> → <button class="bb">Accept+Assign</button> → <span class="sa">Accepted</span> → <button>Start Preparing</button> → <span class="spr">Preparing</span> → <button class="bg">Mark Ready</button> → <span class="sr">Ready</span> → <button class="bgr">Complete</button> → <span class="sc">Completed</span></p>
+<p lang="rw">Bitegerejwe → Byemewe (Umuyobozi yemeza, ahamagara umukozi) → Birategurwa → Birateguye Gufatwa → Byarangiye</p>
+<p lang="fr">En attente → Acceptée (Gérant accepte, assigne) → En préparation → Prête → Terminée</p>
 
-<h3>STAFF VIEW — Staff Sees Only Their Assigned Orders</h3>
+<h3>Staff View — Alice K. Sees Only Her Orders</h3>
 <table>
-  <thead><tr><th>Staff Member</th><th>Order ID</th><th>Status</th><th>Items to Prepare</th><th>Staff Action</th></tr></thead>
+  <thead><tr><th>Order ID</th><th>Status</th><th>Items</th><th>Pick-up</th><th>Staff Action</th></tr></thead>
   <tbody>
-    <tr>
-      <td><strong>Alice K.</strong></td>
-      <td>#VB1GRZRX</td>
-      <td><span class="sa">Accepted — assigned to Alice K.</span></td>
-      <td>Baby Milk x1 — Nestle Lactogen 400g</td>
-      <td><button>▶ Start Preparing | Tangira | Commencer</button></td>
-    </tr>
-    <tr>
-      <td><strong>Bob M.</strong></td>
-      <td>#KM2HXPQR</td>
-      <td><span class="spr">Preparing</span></td>
-      <td>Olive Oil x1 — Basso 250ml</td>
-      <td><button class="bg">📦 Mark Ready | Tangaza | Marquer Prêt</button></td>
-    </tr>
+    <tr><td>#VB1GRZRX</td><td><span class="sa">Accepted — assigned to Alice K.</span></td><td>Baby Milk ×1</td><td>Tomorrow 09:00</td><td><button>▶ Start Preparing | Tangira | Commencer</button></td></tr>
+    <tr><td>#HA5LH8XT</td><td><span class="spr">Preparing</span></td><td>Milk ×2, Bread ×1</td><td>Today 12:00</td><td><button class="bg">📦 Mark Ready | Tangaza | Marquer Prêt</button></td></tr>
   </tbody>
 </table>
 
-<h3>Inventory Management | Gucunga Ibicuruzwa | Gestion des Stocks</h3>
-<p>Per-branch stock tracked independently. Auto-decrements on order. Low stock alert at &lt;5 units.</p>
+<h3>Per-Branch Inventory | Ibicuruzwa ku Ishami | Inventaire par Succursale</h3>
 <table>
-  <thead><tr><th>Product | Igicuruzwa | Produit</th><th>Remera</th><th>Kimironko</th><th>Kacyiru</th><th>Action</th></tr></thead>
+  <thead><tr><th>Product</th><th>Remera</th><th>Kimironko</th><th>Kacyiru</th><th>Action</th></tr></thead>
   <tbody>
     <tr><td>River Dog Shampoo 1L</td><td>46 ✅</td><td>50 ✅</td><td>48 ✅</td><td><button>Mark Out of Stock | Tangaza ko Birangiye</button></td></tr>
     <tr><td>Inyange Milk 1L</td><td style="color:red"><strong>3 ⚠️ Low</strong></td><td>50 ✅</td><td>45 ✅</td><td><button>Mark Out of Stock</button></td></tr>
