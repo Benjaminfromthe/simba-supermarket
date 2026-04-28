@@ -23,7 +23,45 @@
     nav a { margin-right: 16px; color: #F47A3E; text-decoration: none; font-weight: bold; }
     .momo-form { background: #fff7ed; border: 2px solid #F47A3E; border-radius: 12px; padding: 20px; }
     input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      table { font-size: 13px; }
+      th, td { padding: 6px 8px; }
+      nav a { display: inline-block; margin: 4px 8px 4px 0; }
+      h1 { font-size: 22px; }
+      h2 { font-size: 18px; }
+    }
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      table { display: block; overflow-x: auto; }
+      .momo-form { padding: 12px; }
+    }
+    /* LANGUAGE SECTIONS */
+    .lang-active { display: block; }
+    .lang-hidden { display: none; }
+    .lang-btn-active { outline: 3px solid white; }
   </style>
+  <script>
+    function switchLang(lang) {
+      document.documentElement.lang = lang;
+      // Show/hide language-specific content
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.style.display = el.dataset.lang === lang ? 'block' : 'none';
+      });
+      // Update active button
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.style.outline = btn.dataset.lang === lang ? '3px solid white' : 'none';
+      });
+      // Store preference
+      localStorage.setItem('simba-language', lang);
+    }
+    // Auto-apply saved language on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('simba-language') || 'en';
+      switchLang(saved);
+    });
+  </script>
 </head>
 <body>
 <div style="position:sticky;top:0;z-index:999;background:#F47A3E;color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
@@ -50,10 +88,27 @@
 <!-- LANGUAGE SWITCHER -->
 <div style="background:#f9fafb;border:2px solid #F47A3E;border-radius:12px;padding:16px;margin:16px 0;">
   <strong>🌍 Language Switcher | Guhindura Ururimi | Changer de Langue</strong><br><br>
-  <button onclick="document.documentElement.lang='en'" style="background:#F47A3E;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇺🇸 English</button>
-  <button onclick="document.documentElement.lang='fr'" style="background:#3b82f6;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇫🇷 Français</button>
-  <button onclick="document.documentElement.lang='rw'" style="background:#22c55e;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇷🇼 Kinyarwanda</button>
-  <p style="margin-top:8px;font-size:13px;color:#666;">Language persists via localStorage. 1000+ translation keys across EN/FR/RW. All navigation, checkout, dashboard, status labels translated.</p>
+  <button class="lang-btn" data-lang="en" onclick="switchLang('en')" style="background:#F47A3E;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇺🇸 English</button>
+  <button class="lang-btn" data-lang="fr" onclick="switchLang('fr')" style="background:#3b82f6;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇫🇷 Français</button>
+  <button class="lang-btn" data-lang="rw" onclick="switchLang('rw')" style="background:#22c55e;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇷🇼 Kinyarwanda</button>
+
+  <!-- Dynamic content that changes with language -->
+  <div data-lang="en" style="margin-top:12px;padding:12px;background:white;border-radius:8px;">
+    <strong>English:</strong> Shop | My Orders | Market Rep Dashboard | Reviews | Sign In | Sign Up<br>
+    <em>Status: Pending | Accepted | Preparing | Ready for Pick-up | Completed | Cancelled</em><br>
+    <em>Add to Cart | Select Branch | Choose Time | Pay MoMo Deposit | Confirm Order</em>
+  </div>
+  <div data-lang="fr" style="margin-top:12px;padding:12px;background:white;border-radius:8px;">
+    <strong>Français:</strong> Boutique | Mes Commandes | Tableau de Bord | Avis | Se Connecter | S'inscrire<br>
+    <em>Statut: En attente | Acceptée | En préparation | Prête pour Retrait | Terminée | Annulée</em><br>
+    <em>Ajouter au Panier | Choisir Succursale | Choisir l'Heure | Payer Dépôt MoMo | Confirmer</em>
+  </div>
+  <div data-lang="rw" style="margin-top:12px;padding:12px;background:white;border-radius:8px;">
+    <strong>Kinyarwanda:</strong> Guhaha | Amakomande Yanjye | Ikibaho cy'Ishami | Isuzuma | Injira | Iyandikishe<br>
+    <em>Uko Imeze: Bitegerejwe | Byemewe | Birategurwa | Birateguye Gufatwa | Byarangiye | Byahagaritswe</em><br>
+    <em>Ongeraho mu Kagari | Hitamo Ishami | Hitamo Igihe | Kwishyura na MoMo | Emeza Komande</em>
+  </div>
+  <p style="margin-top:8px;font-size:13px;color:#666;">Language persists via localStorage. 1000+ translation keys across EN/FR/RW. Switches instantly on click.</p>
 </div>
 
 <!-- NAVIGATION -->
