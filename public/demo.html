@@ -145,40 +145,53 @@
 
 <h2>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord</h2>
 <p>URL: <a href="/branch-dashboard">/branch-dashboard</a> | Login: manager@simba.rw / manager123 | staff@simba.rw / staff123</p>
-<p>Real-time Firestore onSnapshot. New order alert with sound. Manager accepts and assigns orders to staff. Staff marks orders ready.</p>
+<p>Real-time Firestore onSnapshot. New order alert with sound beep. Manager accepts and assigns orders to staff. Staff marks orders ready. Currency switcher works on dashboard too.</p>
+
+<h3>Rich Order Notifications | Menyesha Amakomande Mashya | Notifications de Nouvelles Commandes</h3>
+<div class="box" style="background:#f0fdf4;border-color:#22c55e">
+  <p style="color:#065f46;font-weight:bold">🛎️ 1 new order arrived! | Komande nshya imaze kugera!</p>
+  <p style="color:#166534;font-size:12px">Manager view: Branch: Simba Supermarket Kimironko</p>
+  <table>
+    <thead><tr><th>Order ID</th><th>Items</th><th>Pick-up Time</th><th>Total</th><th>Branch</th></tr></thead>
+    <tbody>
+      <tr><td><strong>#S3BJKM9R</strong></td><td>1 item</td><td>12:00-13:00</td><td>$7.49 / 10,400 RWF</td><td>Simba Kimironko</td></tr>
+    </tbody>
+  </table>
+  <p style="color:#166534;font-size:12px">Staff view: Assigned to: Alice K. | Shows assigned staff member per order</p>
+</div>
 
 <h3>Incoming Orders - Manager Accepts and Assigns | Umuyobozi Yemeza na Ha | Gerant Accepte et Assigne</h3>
 <table>
-  <thead><tr><th>Order ID</th><th>Status | Uko Imeze | Statut</th><th>Customer</th><th>Branch</th><th>Time</th><th>Total (RWF)</th><th>Manager Action | Igikorwa | Action</th></tr></thead>
+  <thead><tr><th>Order ID</th><th>Status | Uko Imeze | Statut</th><th>Customer</th><th>Branch</th><th>Time</th><th>Total</th><th>Manager Action | Igikorwa | Action</th></tr></thead>
   <tbody>
     <tr>
       <td><strong>#HA5LH8XT</strong></td>
       <td><span class="sp">Pending | Bitegerejwe | En attente</span></td>
-      <td>customer1@gmail.com</td><td>Simba Remera</td><td>Today 12:00-13:00</td><td>11,300 RWF</td>
+      <td>customer1@gmail.com</td><td>Simba Remera</td><td>Today 12:00-13:00</td><td>$8.14 / 11,300 RWF</td>
       <td><button class="bb">Accept and Assign | Emeza na Ha | Accepter</button> <select><option>Assign to staff | Ha umukozi</option><option>Alice K.</option><option>Bob M.</option><option>Claire U.</option></select></td>
     </tr>
     <tr>
       <td><strong>#JJ1GRZRX</strong></td>
       <td><span class="sp">Pending | Bitegerejwe | En attente</span></td>
-      <td>user2@gmail.com</td><td>Simba Remera</td><td>Today 14:00-15:00</td><td>10,400 RWF</td>
+      <td>user2@gmail.com</td><td>Simba Remera</td><td>Today 14:00-15:00</td><td>$7.49 / 10,400 RWF</td>
       <td><button class="bb">Accept and Assign | Emeza na Ha | Accepter</button> <select><option>Assign to staff</option><option>Alice K.</option><option>Bob M.</option></select></td>
     </tr>
     <tr>
       <td><strong>#VB1GRZRX</strong></td>
       <td><span class="sa">Accepted | Byemewe | Acceptee</span></td>
-      <td>user3@gmail.com</td><td>Simba Kimironko</td><td>Tomorrow 09:00-10:00</td><td>9,900 RWF</td>
+      <td>user3@gmail.com</td><td>Simba Kimironko</td><td>Tomorrow 09:00-10:00</td><td>$7.13 / 9,900 RWF</td>
       <td>Assigned: Alice K. <button>Start Preparing | Tangira Gutegura | Commencer</button></td>
     </tr>
     <tr>
       <td><strong>#KM2HXPQR</strong></td>
       <td><span class="spr">Preparing | Birategurwa | En preparation</span></td>
-      <td>user4@gmail.com</td><td>Simba Kacyiru</td><td>Today 16:00-17:00</td><td>8,400 RWF</td>
+      <td>user4@gmail.com</td><td>Simba Kacyiru</td><td>Today 16:00-17:00</td><td>$6.05 / 8,400 RWF</td>
       <td><button class="bg">Mark Ready | Tangaza ko Biteguye | Marquer Pret</button></td>
     </tr>
     <tr>
       <td><strong>#NX3WQMST</strong></td>
       <td><span class="sr">Ready for Pick-up | Birateguye | Pret</span></td>
-      <td>user5@gmail.com</td><td>Simba Remera</td><td>Today 11:00-12:00</td><td>12,700 RWF</td>
+      <td>user5@gmail.com</td><td>Simba Remera</td><td>Today 11:00-12:00</td><td>$9.14 / 12,700 RWF</td>
       <td><button class="bgr">Complete | Rangiza | Terminer</button></td>
     </tr>
   </tbody>
@@ -216,9 +229,46 @@
 <p><a href="/login"><button>Login | Injira | Se Connecter</button></a> <a href="/signup"><button>Sign Up | Iyandikishe | S'inscrire</button></a> <a href="/forgot-password"><button>Forgot Password | Wibagiwe Ijambo Banga | Mot de passe oublie</button></a></p>
 <p>Email/password login | Google OAuth | Forgot password email reset | Firebase Auth | Persist across refreshes</p>
 
-<h2>AI Search | Gushakisha na AI | Recherche IA</h2>
-<form role="search"><input type="search" placeholder="Search products... | Shakisha ibicuruzwa... | Rechercher des produits..."> <button>AI Search | Gushakisha na AI | Recherche IA</button></form>
-<p>Conversational AI search powered by Groq llama-3.3-70b-versatile. All 789 products in context. Natural language: "Do you have fresh milk?" | "Mufite amata mashya?" | "Avez-vous du lait frais?"</p>
+<h2>AI Search + Conversational AI | Gushakisha na AI | Recherche IA Conversationnelle</h2>
+<form role="search"><input type="search" placeholder="Search products or ask anything... | Shakisha cyangwa Baza ikibazo cyose... | Rechercher ou poser n'importe quelle question..."> <button>AI Search | Gushakisha na AI | Recherche IA</button></form>
+<p>Dual-mode AI powered by Groq llama-3.1-8b-instant:</p>
+<ul>
+  <li><strong>Product mode:</strong> "Show me milk under 1000 RWF" | "Mfite amata munsi ya 1000" | "Lait moins de 1000 FRW" → returns matching products with prices</li>
+  <li><strong>Conversational mode:</strong> "How are you?" | "Who is Kagame?" | "What time do you close?" | "How many branches?" → real AI answers any question</li>
+  <li><strong>Smart search bar:</strong> auto-detects query type, shows AI answer in dropdown without navigating away</li>
+  <li><strong>AI Chat widget</strong> (bottom right): full chat interface, answers anything, remembers context</li>
+</ul>
+<div class="box">
+  <strong>Sample AI Chat (Kinyarwanda):</strong>
+  <p lang="rw">Murakaza neza! Ndi umufasha wa AI wa Simba. Mbaza ikibazo cyose!</p>
+  <p><em>User: "Mufite amata mashya?"</em> → AI: "Yego! Dufite Inyange Amata 1L (1,600 RWF), Mukamira Amata Yose 500ml (800 RWF)..."</p>
+  <p><em>User: "Ni saa ngahe mufungura?"</em> → AI: "Simba ifungura saa moya kugeza saa ine z'ijoro buri munsi."</p>
+</div>
+
+<h2>Currency Switcher | Guhindura Ifaranga | Changeur de Devise</h2>
+<p><button>🇷🇼 RWF</button> <button class="bb">🇺🇸 USD</button> <button class="bg">🇪🇺 EUR</button> <button>🇨🇳 CNY</button></p>
+<p>All prices convert instantly across the entire site — product cards, product detail, cart, checkout, orders page, admin dashboard, branch dashboard.</p>
+<table>
+  <thead><tr><th>Product</th><th>RWF</th><th>USD</th><th>EUR</th><th>CNY</th></tr></thead>
+  <tbody>
+    <tr><td>Inyange Milk 1L</td><td>1,600 RWF</td><td>$1.15</td><td>€1.06</td><td>¥8</td></tr>
+    <tr><td>Nestle Baby Milk 400g</td><td>9,900 RWF</td><td>$7.13</td><td>€6.53</td><td>¥51</td></tr>
+    <tr><td>River Dog Shampoo 1L</td><td>4,600 RWF</td><td>$3.31</td><td>€3.04</td><td>¥24</td></tr>
+  </tbody>
+</table>
+
+<h2>Product Name Translations | Gutunga Amazina y'Ibicuruzwa | Traduction des Noms</h2>
+<p>All 789 product names translated to Kinyarwanda and French using Groq AI, cached statically for instant display.</p>
+<table>
+  <thead><tr><th>English</th><th>Kinyarwanda</th><th>Francais</th></tr></thead>
+  <tbody>
+    <tr><td>Inyange Low Fat Milk 500ML</td><td lang="rw">Inyange amata ya mafuta make 500ML</td><td lang="fr">Inyange Lait a faible teneur en graisse 500ML</td></tr>
+    <tr><td>Inyange whole milk 500ml</td><td lang="rw">Inyange amata yose 500ml</td><td lang="fr">Inyange Lait entier 500ml</td></tr>
+    <tr><td>Nestle Lactogen No 1 Baby Milk 400g</td><td lang="rw">Nestle Lactogen No 1 Amata ya uruhinja 400g</td><td lang="fr">Nestle Lactogen No 1 Lait de Bebe 400g</td></tr>
+    <tr><td>Clamic Bread</td><td lang="rw">Umugati wa Clamic</td><td lang="fr">Pain Clamic</td></tr>
+    <tr><td>Crystal Cooking Oil Sun Flower 5L</td><td lang="rw">Crystal amavuta yo guteka izuba 5L</td><td lang="fr">Crystal Huile de Tournesol 5L</td></tr>
+  </tbody>
+</table>
 
 <footer style="margin-top:20px;padding-top:12px;border-top:2px solid #F47A3E;">
   <p>2026 Simba Supermarket Ltd. | Rwanda's #1 Supermarket | Isoko nziza mu Rwanda | Le meilleur supermarche du Rwanda</p>
