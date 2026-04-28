@@ -1,10 +1,12 @@
 {
+  "redirects": [
+    { "source": "/demo", "destination": "https://simba-google-ai.vercel.app", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/branch", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/index.html" },
     { "source": "/admin", "destination": "/index.html" },
     { "source": "/manager", "destination": "/index.html" },
-    { "source": "/demo", "destination": "/demo.html" },
     { "source": "/dashboard-demo", "destination": "/dashboard-demo.html" },
     { "source": "/((?!demo\\.html$).*)", "destination": "/index.html" }
   ],
