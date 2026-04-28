@@ -12,7 +12,7 @@ import { useCurrencyStore, FLAGS, SYMBOLS, type Currency } from '../store/useCur
 
 const _gk = ['gsk_hCQzae1R9jba', 'FriUo83hWGdy', 'b3FYF68U61PMy', 'bQ3v2iPjxBA2K4q'].join('');
 const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || _gk;
-const CACHE_KEY = 'simba-name-cache-v3';
+const CACHE_KEY = 'simba-name-cache-v5'; // bumped to clear bad Swahili translations
 
 function getNameCache(): Record<string, string> {
   try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } catch { return {}; }
@@ -34,7 +34,86 @@ async function runTranslation(lang: string) {
     const cache = getNameCache();
     const names: string[] = products.map((p: any) => p.name).filter((n: string) => n && !cache[`${lang}:${n}`]);
     if (!names.length) return;
-    const langName = lang === 'rw' ? 'Kinyarwanda' : 'French';
+    const langName = lang === 'rw' ? 'Kinyarwanda (NOT Swahili — these are different languages)' : 'French';
+    const langHint = lang === 'rw'
+      ? `IMPORTANT: You must use TRUE Kinyarwanda words, NOT Swahili. Key Kinyarwanda vocabulary:
+- milk = amata (NOT maziwa)
+- water = amazi
+- bread = umugati
+- rice = umuceri
+- oil = amavuta
+- sugar = isukari
+- flour = ufu
+- meat = inyama
+- chicken = inkoko
+- fish = ifi
+- egg = irigi
+- butter = amavuta y'inzoga
+- cheese = fromage (keep French loanword)
+- juice = umutobe
+- beer = inzoga
+- wine = divayi
+- soap = isabune
+- shampoo = shampu (keep loanword)
+- baby = uruhinja / umwana
+- cooking = guteka
+- fresh = nshya
+- whole = yose / kamili
+- low fat = ya mafuta make
+- powder = ubunga
+- cream = kremu
+- salt = umunyu
+- pepper = urusenda
+- sauce = isosi
+- paste = ipaste
+- tomato = inyanya
+- onion = igitunguru
+- garlic = inyo
+- spice = urubilizi
+- biscuit = bisikwi
+- chocolate = shokoladi
+- coffee = ikawa
+- tea = icyayi
+- cereal = ibinyampeke
+- detergent = savon (keep loanword)
+- bleach = javel (keep loanword)
+- diaper = pampers (keep brand)
+- lotion = losyo
+- powder = ubunga
+- small = ntoya
+- large = nini
+- extra = yongeye
+- pure = isukuye
+- refined = isukuye
+- virgin = ntakagereranye
+- sunflower = izuba
+- coconut = nazi
+- avocado = avoka
+- corn = ibigori
+- wheat = ingano
+- basmati = basmati (keep)
+- couscous = couscous (keep)
+- pasta = pasta (keep)
+- noodle = noodle (keep)
+- ketchup = ketchup (keep)
+- mayonnaise = mayonnaise (keep)
+- mustard = moutarde (keep French loanword)
+- shampoo = shampu
+- toothpaste = pasiti y'amenyo
+- body = umubiri
+- hair = umusatsi
+- face = mu maso
+- hand = intoki
+- foot = ikirenge
+- dog = imbwa
+- cat = injangwe
+- sport = siporo
+- wellness = ubuzima
+- remote control = igikoresho cya kure
+- building blocks = ibikoresho byo kubaka
+- drawing board = ikirahuri
+- jump rope = umugozi wo gusimbuka`
+      : '';
 
     // Process all names in batches of 40
     const BATCH = 40;
@@ -47,7 +126,7 @@ async function runTranslation(lang: string) {
           body: JSON.stringify({
             model: 'llama-3.3-70b-versatile',
             messages: [
-              { role: 'system', content: `Translate these supermarket product names into ${langName}. Keep brand names unchanged (Simba, Lentz, Inyange, Mukamira, Azam, Jambo, Crystal, Zesta, Herman, Nestle, Campari, Flora, Zima, ABK6, Basso, Kevian, Kenzy, Mila, DOLO, Sutai, River Dog, American Garden, Blue Band, Belle France, Boni, Greens, Kenton, Minimex, Toha, Sabroso, RS, Rinsun, Sinar, Smart, Clovers, Everyday, Golden Valley, Super Chef). Keep model codes and sizes unchanged. Only translate descriptive words. Return ONLY valid JSON: {"original name": "translated name"}` },
+              { role: 'system', content: `Translate these supermarket product names into ${langName}. Keep brand names unchanged (Simba, Lentz, Inyange, Mukamira, Azam, Jambo, Crystal, Zesta, Herman, Nestle, Campari, Flora, Zima, ABK6, Basso, Kevian, Kenzy, Mila, DOLO, Sutai, River Dog, American Garden, Blue Band, Belle France, Boni, Greens, Kenton, Minimex, Toha, Sabroso, RS, Rinsun, Sinar, Smart, Clovers, Everyday, Golden Valley, Super Chef). Keep model codes and sizes unchanged. Only translate descriptive words. Return ONLY valid JSON: {"original name": "translated name"}\n\n${langHint}` },
               { role: 'user', content: JSON.stringify(batch) },
             ],
             temperature: 0.1, max_tokens: 2000,
