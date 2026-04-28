@@ -144,23 +144,27 @@ export default function BranchDashboard() {
     await updateDoc(doc(db, 'orders', orderId), { ...data, updatedAt: new Date() });
   };
 
+  const staffFilteredOrders = useMemo(() => {
+    if (dashboardRole === 'manager') return orders;
+    return orders.filter(order =>
+      order.assignedTo === selectedStaff ||
+      (order.status === 'pending' && !order.assignedTo)
+    );
+  }, [dashboardRole, orders, selectedStaff]);
+
   const counts = {
-    pending: orders.filter(o => o.status === 'pending').length,
-    preparing: orders.filter(o => o.status === 'preparing' || o.status === 'accepted').length,
-    ready: orders.filter(o => o.status === 'ready').length,
+    pending: staffFilteredOrders.filter(o => o.status === 'pending').length,
+    preparing: staffFilteredOrders.filter(o => o.status === 'preparing' || o.status === 'accepted').length,
+    ready: staffFilteredOrders.filter(o => o.status === 'ready').length,
   };
 
   const visibleOrders = useMemo(() => {
-    const roleFiltered = dashboardRole === 'manager'
-      ? orders
-      : orders.filter(order => order.assignedTo === selectedStaff || (order.status === 'pending' && !order.assignedTo));
-
-    return roleFiltered.filter(order => {
+    return staffFilteredOrders.filter(order => {
       if (activeTab === 'all') return true;
       if (activeTab === 'preparing') return order.status === 'preparing' || order.status === 'accepted';
       return order.status === activeTab;
     });
-  }, [activeTab, dashboardRole, orders, selectedStaff]);
+  }, [activeTab, staffFilteredOrders]);
 
   const markItemUnavailable = async (productId: string | number) => {
     await markOutOfStock(selectedBranchId, productId);
@@ -303,7 +307,6 @@ export default function BranchDashboard() {
                     <select
                       value={selectedStaff}
                       onChange={e => setSelectedStaff(e.target.value)}
-                      disabled={!isAdmin}
                       className="border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm font-semibold bg-white dark:bg-gray-900"
                     >
                       {STAFF_MEMBERS.map(member => <option key={member} value={member}>{member}</option>)}
