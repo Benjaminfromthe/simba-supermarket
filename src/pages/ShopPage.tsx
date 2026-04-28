@@ -32,10 +32,19 @@ export default function ShopPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const lastQuery = useRef('');
 
-  // Handle Search Execution
+  // Handle Search Execution — skip product search for conversational queries
   useEffect(() => {
     if (!queryParam || queryParam === lastQuery.current) return;
     lastQuery.current = queryParam;
+
+    // Don't search products for conversational questions
+    const conversationalWords = ['how','who','what','when','where','why','are you','is simba','tell me','do you','can you','hello','hi','hey','thanks','thank'];
+    const isConversational = conversationalWords.some(w => queryParam.toLowerCase().includes(w));
+    if (isConversational) {
+      setAiProducts([]);
+      setAiLoading(false);
+      return;
+    }
 
     setAiLoading(true);
     groqIdSearch(queryParam, 24).then(results => {

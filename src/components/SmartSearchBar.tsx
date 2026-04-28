@@ -26,29 +26,41 @@ export default function SmartSearchBar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  const runSearch = (val: string) => {
+    setLoading(true);
+    setOpen(true);
+    groqConversationalSearch(val, i18n.language).then(res => {
+      setResult(res);
+      setLoading(false);
+    });
+  };
+
   const handleInput = (val: string) => {
     setQuery(val);
     if (!val.trim()) { setResult(null); setOpen(false); return; }
     setOpen(true);
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true);
-      const res = await groqConversationalSearch(val, i18n.language);
-      setResult(res);
-      setLoading(false);
-    }, 500);
+    // Auto-trigger after 600ms of no typing
+    debounceRef.current = setTimeout(() => runSearch(val), 600);
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    // If we already have a conversational answer (no products), don't navigate — just keep showing it
+    clearTimeout(debounceRef.current);
+    // Conversational answer already showing — keep it open
     if (result && result.products.length === 0 && result.message) {
       setOpen(true);
       return;
     }
-    navigate(`/shop?q=${encodeURIComponent(query)}`);
-    setOpen(false);
+    // Products found — navigate to shop for full results
+    if (result && result.products.length > 0) {
+      navigate(`/shop?q=${encodeURIComponent(query)}`);
+      setOpen(false);
+      return;
+    }
+    // No result yet — run search now
+    runSearch(query);
   };
 
   const handleAdd = (product: Product) => {
@@ -93,8 +105,17 @@ export default function SmartSearchBar() {
 
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
-          {result?.message && result.products.length === 0 ? (
-            // Full conversational AI answer
+
+          {/* Loading state */}
+          {loading && (
+            <div className="px-4 py-6 flex items-center justify-center gap-3 text-gray-400">
+              <Loader2 className="w-5 h-5 animate-spin text-[#F47A3E]" />
+              <span className="text-sm font-medium">{t('searchingWithAI')}</span>
+            </div>
+          )}
+
+          {/* Conversational AI answer */}
+          {!loading && result && result.products.length === 0 && result.message && (
             <div className="px-4 py-4">
               <div className="flex items-start gap-2 mb-3">
                 <div className="w-7 h-7 rounded-full bg-[#F47A3E] flex items-center justify-center shrink-0">
@@ -109,18 +130,9 @@ export default function SmartSearchBar() {
                 {t('browseAllProducts')} →
               </button>
             </div>
-          ) : result?.message ? (
-            <div className="px-4 py-3 bg-orange-50 dark:bg-orange-950/20 border-b border-orange-100 dark:border-orange-900/30 flex items-start gap-2">
-              <Sparkles className="w-4 h-4 text-[#F47A3E] shrink-0 mt-0.5" />
-              <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">{result.message}</p>
-            </div>
-          ) : null}
-          {loading && (
-            <div className="px-4 py-6 flex items-center justify-center gap-3 text-gray-400">
-              <Loader2 className="w-5 h-5 animate-spin text-[#F47A3E]" />
-              <span className="text-sm font-medium">{t('searchingWithAI')}</span>
-            </div>
           )}
+
+          {/* No products found */}
           {!loading && result && result.products.length === 0 && !result.message && (
             <div className="px-4 py-8 text-center">
               <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-3">{t('noProductsFound')}</p>
@@ -129,31 +141,41 @@ export default function SmartSearchBar() {
               </button>
             </div>
           )}
+
+          {/* Product results */}
           {!loading && result && result.products.length > 0 && (
-              <>
-                <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-gray-800">
-                  {result.products.map(p => (
-                    <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                      <img src={p.image} alt={p.name} className="w-12 h-12 object-contain rounded-xl bg-gray-50 dark:bg-gray-700 shrink-0 p-1"
-                        onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }} />
-                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => { navigate(`/product/${p.id}`); setOpen(false); }}>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{p.name}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{p.category}</p>
-                        <p className="text-sm font-bold text-[#F47A3E] mt-0.5">{p.price.toLocaleString()} RWF</p>
-                      </div>
-                      <button onClick={() => handleAdd(p)} className="shrink-0 bg-[#F47A3E] hover:bg-[#D46A2E] text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors flex items-center gap-1">
-                        <ShoppingCart className="w-3 h-3" />
-                        <span className="hidden sm:inline">{t('add')}</span>
-                      </button>
-                    </div>
-                  ))}
+            <>
+              {result.message && (
+                <div className="px-4 py-3 bg-orange-50 dark:bg-orange-950/20 border-b border-orange-100 dark:border-orange-900/30 flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-[#F47A3E] shrink-0 mt-0.5" />
+                  <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">{result.message}</p>
                 </div>
-                <button onClick={() => { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }}
-                  className="w-full py-3 text-center text-sm text-[#F47A3E] font-bold hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors border-t border-gray-50 dark:border-gray-800">
-                  {t('seeAllResults', { query })} →
-                </button>
-              </>
-            )}
+              )}
+              <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-gray-800">
+                {result.products.map(p => (
+                  <div key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <img src={p.image} alt={p.name} className="w-12 h-12 object-contain rounded-xl bg-gray-50 dark:bg-gray-700 shrink-0 p-1"
+                      onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }} />
+                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => { navigate(`/product/${p.id}`); setOpen(false); }}>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{p.name}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">{p.category}</p>
+                      <p className="text-sm font-bold text-[#F47A3E] mt-0.5">{p.price.toLocaleString()} RWF</p>
+                    </div>
+                    <button onClick={() => handleAdd(p)} className="shrink-0 bg-[#F47A3E] hover:bg-[#D46A2E] text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors flex items-center gap-1">
+                      <ShoppingCart className="w-3 h-3" />
+                      <span className="hidden sm:inline">{t('add')}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }}
+                className="w-full py-3 text-center text-sm text-[#F47A3E] font-bold hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors border-t border-gray-50 dark:border-gray-800">
+                {t('seeAllResults', { query })} →
+              </button>
+            </>
+          )}
+
+          {/* Suggestions when no query result yet */}
           {!loading && !result && (
             <div className="p-3">
               <p className="text-xs text-gray-400 font-medium px-2 mb-2">{t('tryAsking')}</p>
@@ -167,6 +189,7 @@ export default function SmartSearchBar() {
               </div>
             </div>
           )}
+
         </div>
       )}
     </div>
