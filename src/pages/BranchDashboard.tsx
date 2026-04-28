@@ -50,7 +50,9 @@ export default function BranchDashboard() {
   // New-order alert state
   const [newOrderAlert, setNewOrderAlert] = useState(false);
   const [newOrderCount, setNewOrderCount] = useState(0);
+  const [newOrders, setNewOrders] = useState<any[]>([]);
   const prevPendingCount = useRef<number | null>(null);
+  const prevOrderIds = useRef<Set<string>>(new Set());
 
   // Beep using Web Audio API — no external files needed
   const playBeep = useCallback(() => {
@@ -88,7 +90,9 @@ export default function BranchDashboard() {
   useEffect(() => {
     // Reset alert tracking when branch changes
     prevPendingCount.current = null;
+    prevOrderIds.current = new Set();
     setNewOrderAlert(false);
+    setNewOrders([]);
 
     const q = query(
       collection(db, 'orders'),
@@ -112,8 +116,12 @@ export default function BranchDashboard() {
         setNewOrderCount(diff);
         setNewOrderAlert(true);
         playBeep();
+        // Capture the actual new orders for rich notification
+        const incoming = fetched.filter(o => o.status === 'pending' && !prevOrderIds.current.has(o.id));
+        setNewOrders(incoming);
       }
       prevPendingCount.current = pendingNow;
+      prevOrderIds.current = new Set(fetched.map((o: any) => o.id));
     }, (err) => {
       clearTimeout(timeout);
       console.error('Orders listener error:', err);
@@ -207,26 +215,72 @@ export default function BranchDashboard() {
 
       {/* ── NEW ORDER ALERT BANNER ── */}
       {newOrderAlert && (
-        <div className="bg-green-500 text-white px-4 py-3 flex items-center gap-3 shadow-lg animate-pulse">
-          <div className="container mx-auto flex items-center gap-3">
-            <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center shrink-0">
-              <Bell className="w-5 h-5" />
+        <div className="bg-green-500 text-white px-4 py-3 shadow-lg">
+          <div className="container mx-auto space-y-2">
+            {/* Header row */}
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center shrink-0 animate-bounce">
+                <Bell className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className="font-black text-sm">
+                  🛎️ {newOrderCount} {newOrderCount === 1 ? 'new order arrived!' : 'new orders arrived!'}
+                </p>
+                <p className="text-green-100 text-xs">
+                  {dashboardRole === 'manager'
+                    ? `Branch: ${branches.find(b => b.id === selectedBranchId)?.name || selectedBranchId}`
+                    : `Assigned to: ${selectedStaff}`}
+                </p>
+              </div>
+              <button
+                onClick={() => { setNewOrderAlert(false); setActiveTab('pending'); }}
+                className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shrink-0"
+              >
+                View Orders →
+              </button>
+              <button onClick={() => setNewOrderAlert(false)} className="p-1 hover:bg-white/20 rounded-full transition shrink-0">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <div className="flex-1">
-              <p className="font-black text-sm">
-                🛎️ {newOrderCount} {t('newOrderAlert', newOrderCount === 1 ? 'new order arrived!' : 'new orders arrived!')}
-              </p>
-              <p className="text-green-100 text-xs">{t('checkPendingTab', 'Check the Pending tab to assign and prepare.')}</p>
-            </div>
-            <button
-              onClick={() => { setNewOrderAlert(false); setActiveTab('pending'); }}
-              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shrink-0"
-            >
-              {t('viewOrders', 'View Orders')} →
-            </button>
-            <button onClick={() => setNewOrderAlert(false)} className="p-1 hover:bg-white/20 rounded-full transition shrink-0">
-              <X className="w-4 h-4" />
-            </button>
+
+            {/* Order cards */}
+            {newOrders.slice(0, 3).map(order => (
+              <div key={order.id} className="bg-white/15 rounded-xl px-4 py-2.5 flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <Package className="w-4 h-4 shrink-0" />
+                  <span className="font-black text-sm">#{order.id.slice(0,8).toUpperCase()}</span>
+                  <span className="text-green-100 text-xs">
+                    {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
+                  </span>
+                  {order.pickupTime && (
+                    <span className="text-green-100 text-xs flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {order.pickupTime}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="font-bold text-sm">{formatPrice(order.totalAmount ?? 0, currency)}</span>
+                  {dashboardRole === 'manager' && (
+                    <span className="text-green-100 text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                      {branches.find(b => b.id === order.branchId)?.name || order.branchId}
+                    </span>
+                  )}
+                  {dashboardRole === 'staff' && order.assignedTo && (
+                    <span className="text-green-100 text-xs bg-white/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <User className="w-3 h-3" /> {order.assignedTo}
+                    </span>
+                  )}
+                  {dashboardRole === 'staff' && !order.assignedTo && (
+                    <span className="text-yellow-200 text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                      Unassigned
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+            {newOrders.length > 3 && (
+              <p className="text-green-100 text-xs text-center">+{newOrders.length - 3} more orders</p>
+            )}
           </div>
         </div>
       )}
