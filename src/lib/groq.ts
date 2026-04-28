@@ -177,6 +177,11 @@ ${miniCatalog}`,
         }),
       });
       const data = await res.json();
+      if (data.error) {
+        // Rate limited or error — fall back to local search
+        const fallback = localSearch(query, 6);
+        return { message: fallback.length > 0 ? 'Here are some matching products:' : "Try browsing our shop!", products: fallback };
+      }
       const content = data.choices?.[0]?.message?.content || '';
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
@@ -189,14 +194,14 @@ ${miniCatalog}`,
           return { message: msg, products: aiProducts };
         } catch {
           const fallback = localSearch(query, 6);
-          return { message: fallback.length > 0 ? 'Here are some matching products:' : "Try browsing our shop!", products: fallback };
+          return { message: 'Here are some matching products:', products: fallback };
         }
       }
       const fallback = localSearch(query, 6);
-      return { message: fallback.length > 0 ? 'Here are some matching products:' : "Try browsing our shop!", products: fallback };
+      return { message: 'Here are some matching products:', products: fallback };
 
     } else {
-      // Conversational mode — plain text, no JSON required
+      // Conversational mode — plain text, no JSON, no catalog needed (saves tokens)
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
@@ -205,31 +210,24 @@ ${miniCatalog}`,
           messages: [
             {
               role: 'system',
-              content: `You are a friendly, conversational AI assistant for Simba Supermarket in Kigali, Rwanda. Always respond in ${langName}.
-
-You know about Simba:
-- 9 branches: Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga, Nyanza
-- Open 7am–10pm every day
-- MoMo mobile payment, 45-minute pick-up slots
-- 789+ products across all categories
-- Serves customers across Rwanda
-
-Answer naturally and warmly. Be helpful, friendly, and conversational — like a real store assistant having a chat. Keep responses concise (2-3 sentences max).`,
+              content: `You are a friendly AI assistant for Simba Supermarket, Kigali Rwanda. Respond in ${langName}. Simba has 9 branches (Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga, Nyanza), open 7am-10pm, MoMo payment, 789+ products. Answer any question naturally and warmly in 1-3 sentences.`,
             },
             { role: 'user', content: query },
           ],
           temperature: 0.7,
-          max_tokens: 200,
+          max_tokens: 150,
         }),
       });
       const data = await res.json();
+      if (data.error) {
+        // Rate limited — give a helpful static response based on query content
+        return { message: getStaticFallback(query, lang), products: [] };
+      }
       const content = data.choices?.[0]?.message?.content || '';
       if (content && content.trim()) {
         return { message: content.trim(), products: [] };
       }
-      // API returned error or empty — log it
-      if (data.error) console.error('Groq API error:', data.error.message);
-      return { message: "I'm here to help! Ask me about our products, branches, or anything else.", products: [] };
+      return { message: getStaticFallback(query, lang), products: [] };
     }
 
   } catch (err) {
@@ -238,8 +236,34 @@ Answer naturally and warmly. Be helpful, friendly, and conversational — like a
       const fallback = localSearch(query, 6);
       return { message: fallback.length > 0 ? 'Here are some matching products:' : "Sorry, I had trouble connecting. Try again!", products: fallback };
     }
-    return { message: "Sorry, I had trouble connecting. Try again!", products: [] };
+    return { message: getStaticFallback(query, lang), products: [] };
   }
+}
+
+// Smart static fallback for when API is rate-limited
+function getStaticFallback(query: string, lang: string): string {
+  const q = query.toLowerCase();
+  if (q.includes('branch') || q.includes('location') || q.includes('where') || q.includes('store')) {
+    return lang === 'rw'
+      ? 'Simba ifite amashami 9: Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga na Nyanza. Bafungura saa moya kugeza saa ine z\'ijoro.'
+      : lang === 'fr'
+      ? 'Simba a 9 agences: Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga et Nyanza. Ouvert de 7h à 22h.'
+      : 'Simba has 9 branches: Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga and Nyanza. Open 7am–10pm daily.';
+  }
+  if (q.includes('hour') || q.includes('open') || q.includes('time') || q.includes('close')) {
+    return lang === 'fr' ? 'Simba est ouvert de 7h à 22h, tous les jours.' : 'Simba is open every day from 7am to 10pm.';
+  }
+  if (q.includes('pay') || q.includes('momo') || q.includes('payment')) {
+    return lang === 'fr' ? 'Simba accepte le paiement MoMo Mobile Money.' : 'Simba accepts MoMo mobile payment at checkout.';
+  }
+  if (q.includes('how are you') || q.includes('how r u')) {
+    return "I'm doing great, thanks for asking! 😊 How can I help you today?";
+  }
+  return lang === 'rw'
+    ? "Ndashimye kubaza! Mbaza ibirebana n'ibicuruzwa, amashami, cyangwa ikindi cyose."
+    : lang === 'fr'
+    ? "Je suis là pour vous aider! Posez-moi des questions sur nos produits, agences ou autre chose."
+    : "I'm here to help! Ask me about our products, branches, opening hours, or anything else.";
 }
 
 // ── Groq ID-only search (used by ShopPage full results) ────────────────────
