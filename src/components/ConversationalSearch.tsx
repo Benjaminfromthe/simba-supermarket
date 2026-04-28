@@ -34,9 +34,11 @@ export default function ConversationalSearch() {
     setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setLoading(true);
     const result = await groqConversationalSearch(userText, i18n.language);
-    const displayMessage = result.message && result.message.trim() && result.message !== '{}' 
-      ? result.message 
-      : (result.products.length > 0 ? '' : "I'm not sure about that. Try asking about our products or branches!");
+    const displayMessage = result.message && result.message.trim() && result.message !== '{}'
+      ? result.message
+      : result.products.length > 0
+        ? 'Here are some products I found for you:'
+        : "I'm not sure about that. Try asking about our products, branches, or opening hours!";
     setMessages(prev => [...prev, { role: 'assistant', text: displayMessage, products: result.products }]);
     setLoading(false);
   };
