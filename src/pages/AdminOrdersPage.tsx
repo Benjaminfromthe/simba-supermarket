@@ -5,6 +5,7 @@ import { db } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Package, Clock, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
 interface OrderItem {
   id: string | number;
@@ -27,6 +28,7 @@ interface Order {
 export default function AdminOrdersPage() {
   const { currentUser, isAdmin } = useAuth();
   const { t } = useTranslation();
+  const { currency } = useCurrencyStore();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -133,7 +135,7 @@ export default function AdminOrdersPage() {
                     </td>
                     <td className="p-4 text-sm font-bold text-muted-foreground">{order.branchId}</td>
                     <td className="p-4 text-right font-bold text-primary">
-                      {t('priceRwf', { price: order.totalAmount.toLocaleString() })}
+                      {formatPrice(order.totalAmount, currency)}
                     </td>
                     <td className="p-4">{getStatusDisplay(order.status)}</td>
                     <td className="p-4 text-right">

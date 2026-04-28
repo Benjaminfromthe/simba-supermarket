@@ -9,6 +9,7 @@ import branches from '../data/branches.json';
 import productsData from '../data/simba_products.json';
 import { markOutOfStock, getLowStock } from '../lib/inventory';
 import { flagNoShow } from '../lib/noshow';
+import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
 const STAFF_MEMBERS = ['Alice K.', 'Bob M.', 'Claire U.', 'David N.', 'Eve R.'];
 
@@ -33,6 +34,7 @@ const productNameById = new Map(productList.map(product => [String(product.id), 
 
 export default function BranchDashboard() {
   const { t } = useTranslation();
+  const { currency } = useCurrencyStore();
   const { currentUser, userProfile, isAdmin, isManager, isStaff, isBranchOperator } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
@@ -340,7 +342,7 @@ export default function BranchDashboard() {
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-sm font-bold text-[#F47A3E]">{order.totalAmount?.toLocaleString()} RWF</span>
+                      <span className="text-sm font-bold text-[#F47A3E]">{formatPrice(order.totalAmount ?? 0, currency)}</span>
 
                       {dashboardRole === 'manager' && (order.status === 'pending' || order.status === 'accepted') && (
                         <select
