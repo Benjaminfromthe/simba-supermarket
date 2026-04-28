@@ -99,6 +99,19 @@ const LANG_NAMES: Record<string, string> = {
 };
 
 export async function groqConversationalSearch(query: string, lang = 'en'): Promise<GroqResult> {
+  const q = query.toLowerCase().trim();
+
+  // Handle greetings — respond naturally without showing products
+  const greetings = ['hi', 'hello', 'hey', 'bonjour', 'salut', 'muraho', 'mwaramutse', 'good morning', 'good afternoon', 'good evening', 'how are you', 'what can you do', 'help', 'thanks', 'thank you', 'merci', 'urakoze'];
+  if (greetings.some(g => q === g || q === g + '!' || q === g + '?')) {
+    const greetingResponses: Record<string, string> = {
+      en: "Hi there! I'm Simba's AI assistant 🛒 Ask me anything like \"Do you have fresh milk?\" or \"I need something for breakfast\" and I'll find the best products for you!",
+      fr: "Bonjour! Je suis l'assistant IA de Simba 🛒 Demandez-moi par exemple \"Avez-vous du lait frais?\" ou \"J'ai besoin de quelque chose pour le petit-déjeuner\"!",
+      rw: "Muraho! Ndi umufasha wa AI wa Simba 🛒 Mbaza nk'ati \"Mufite amata mashya?\" cyangwa \"Ndashaka ikintu cyo mu gitondo\"!",
+    };
+    return { message: greetingResponses[lang] || greetingResponses.en, products: [] };
+  }
+
   const fallback = localSearch(query, 8);
   // Always return fallback if intent found — never show 0
   const intentFallback = fallback.length > 0 ? fallback : localSearch(query.split(' ').slice(-1)[0], 8);
