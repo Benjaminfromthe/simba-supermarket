@@ -41,7 +41,14 @@ export default function SmartSearchBar() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (query.trim()) { navigate(`/shop?q=${encodeURIComponent(query)}`); setOpen(false); }
+    if (!query.trim()) return;
+    // If we already have a conversational answer (no products), don't navigate — just keep showing it
+    if (result && result.products.length === 0 && result.message) {
+      setOpen(true);
+      return;
+    }
+    navigate(`/shop?q=${encodeURIComponent(query)}`);
+    setOpen(false);
   };
 
   const handleAdd = (product: Product) => {
@@ -86,34 +93,43 @@ export default function SmartSearchBar() {
 
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
-          {result?.message && (
+          {result?.message && result.products.length === 0 ? (
+            // Full conversational AI answer
+            <div className="px-4 py-4">
+              <div className="flex items-start gap-2 mb-3">
+                <div className="w-7 h-7 rounded-full bg-[#F47A3E] flex items-center justify-center shrink-0">
+                  <Sparkles className="w-3.5 h-3.5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-bold text-[#F47A3E] mb-1">{t('simbaAIAssistant', 'Simba AI')}</p>
+                  <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">{result.message}</p>
+                </div>
+              </div>
+              <button onClick={() => { navigate('/shop'); setOpen(false); }} className="text-xs text-[#F47A3E] font-bold hover:underline">
+                {t('browseAllProducts')} →
+              </button>
+            </div>
+          ) : result?.message ? (
             <div className="px-4 py-3 bg-orange-50 dark:bg-orange-950/20 border-b border-orange-100 dark:border-orange-900/30 flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-[#F47A3E] shrink-0 mt-0.5" />
               <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">{result.message}</p>
             </div>
-          )}
+          ) : null}
           {loading && (
             <div className="px-4 py-6 flex items-center justify-center gap-3 text-gray-400">
               <Loader2 className="w-5 h-5 animate-spin text-[#F47A3E]" />
               <span className="text-sm font-medium">{t('searchingWithAI')}</span>
             </div>
           )}
-          {!loading && result && (
-            result.products.length === 0 && !result.message ? (
-              <div className="px-4 py-8 text-center">
-                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-3">{t('noProductsFound')}</p>
-                <button onClick={() => { navigate('/shop'); setOpen(false); }} className="text-[#F47A3E] text-sm font-bold hover:underline">
-                  {t('browseAllProducts')} →
-                </button>
-              </div>
-            ) : result.products.length === 0 ? (
-              // Conversational answer — message already shown in the orange banner above, just add a browse link
-              <div className="px-4 py-4 text-center border-t border-gray-50 dark:border-gray-800">
-                <button onClick={() => { navigate('/shop'); setOpen(false); }} className="text-[#F47A3E] text-sm font-bold hover:underline">
-                  {t('browseAllProducts')} →
-                </button>
-              </div>
-            ) : (
+          {!loading && result && result.products.length === 0 && !result.message && (
+            <div className="px-4 py-8 text-center">
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-3">{t('noProductsFound')}</p>
+              <button onClick={() => { navigate('/shop'); setOpen(false); }} className="text-[#F47A3E] text-sm font-bold hover:underline">
+                {t('browseAllProducts')} →
+              </button>
+            </div>
+          )}
+          {!loading && result && result.products.length > 0 && (
               <>
                 <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-gray-800">
                   {result.products.map(p => (
@@ -137,8 +153,7 @@ export default function SmartSearchBar() {
                   {t('seeAllResults', { query })} →
                 </button>
               </>
-            )
-          )}
+            )}
           {!loading && !result && (
             <div className="p-3">
               <p className="text-xs text-gray-400 font-medium px-2 mb-2">{t('tryAsking')}</p>
