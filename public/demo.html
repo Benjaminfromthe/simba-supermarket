@@ -23,19 +23,21 @@
     nav a { margin-right: 16px; color: #F47A3E; text-decoration: none; font-weight: bold; }
     .momo-form { background: #fff7ed; border: 2px solid #F47A3E; border-radius: 12px; padding: 20px; }
     input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-    /* RESPONSIVE DESIGN */
+    /* RESPONSIVE DESIGN — Mobile First */
     @media (max-width: 768px) {
-      body { padding: 12px; }
-      table { font-size: 13px; }
+      body { padding: 12px; font-size: 14px; }
+      table { font-size: 12px; display: block; overflow-x: auto; }
       th, td { padding: 6px 8px; }
-      nav a { display: inline-block; margin: 4px 8px 4px 0; }
-      h1 { font-size: 22px; }
-      h2 { font-size: 18px; }
+      nav a { display: inline-block; margin: 4px 6px 4px 0; font-size: 13px; }
+      h1 { font-size: 20px; }
+      h2 { font-size: 17px; }
+      button { padding: 6px 12px; font-size: 12px; }
+      .momo-form { padding: 12px; }
     }
     @media (max-width: 480px) {
       body { padding: 8px; }
-      table { display: block; overflow-x: auto; }
-      .momo-form { padding: 12px; }
+      h1 { font-size: 18px; }
+      .lang-rw, .lang-fr { padding: 8px; }
     }
   </style>
 </head>
@@ -115,17 +117,34 @@
 
 <!-- PRODUCTS -->
 <h2>Products | Ibicuruzwa | Produits</h2>
+<p>789 products across 10 categories. Each product has: name, image, price in RWF, category, brand, stock status, Add to Cart button, quantity selector.</p>
 <table>
-  <thead><tr><th>Product | Igicuruzwa | Produit</th><th>Category | Icyiciro | Catégorie</th><th>Price | Igiciro | Prix</th><th>Action</th></tr></thead>
+  <thead><tr><th>Product | Igicuruzwa | Produit</th><th>Category | Icyiciro | Catégorie</th><th>Price in RWF | Igiciro mu RWF | Prix en RWF</th><th>USD</th><th>Stock</th><th>Action</th></tr></thead>
   <tbody>
-    <tr><td>River Dog Shampoo 1L</td><td>Cosmetics | Ibisukura | Cosmétiques</td><td>4,600 RWF / $3.31 / €3.04</td><td><button>Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td>Inyange Milk 1L</td><td>Food | Ibiribwa | Alimentaire</td><td>1,600 RWF / $1.15 / €1.06</td><td><button>Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td>Nestle Lactogen Baby Milk 400g</td><td>Baby | Uruhinja | Bébé</td><td>9,900 RWF / $7.13 / €6.53</td><td><button>Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td>Basso Olive Oil 250ml</td><td>Food | Ibiribwa | Alimentaire</td><td>8,400 RWF / $6.05 / €5.54</td><td><button>Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td>Clamic Bread</td><td>Food | Ibiribwa | Alimentaire</td><td>1,200 RWF / $0.86 / €0.79</td><td><button>Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>River Dog Shampoo 1L</strong><br><small>Brand: River Dog | SKU: 29001</small></td><td>Cosmetics | Ibisukura | Cosmétiques</td><td><strong>4,600 RWF</strong></td><td>$3.31</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>Inyange Milk 1L</strong><br><small>Brand: Inyange | SKU: 66002</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>1,600 RWF</strong></td><td>$1.15</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>Nestle Lactogen Baby Milk 400g</strong><br><small>Brand: Nestle | SKU: 58001</small></td><td>Baby | Uruhinja | Bébé</td><td><strong>9,900 RWF</strong></td><td>$7.13</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>Basso Olive Oil 250ml</strong><br><small>Brand: Basso | SKU: 65001</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>8,400 RWF</strong></td><td>$6.05</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>Clamic Bread</strong><br><small>SKU: 61005</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>1,200 RWF</strong></td><td>$0.86</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>Gorillas Coffee 500g</strong><br><small>Brand: Gorillas | SKU: 74004</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>12,600 RWF</strong></td><td>$9.07</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
   </tbody>
 </table>
 <p>Total: 789 products | Ibicuruzwa 789 | 789 produits — <a href="/shop">View All | Reba Byose | Voir Tout</a></p>
+
+<!-- PRODUCT DETAIL PAGE -->
+<h2>Product Detail Page | Urupapuro rw'Igicuruzwa | Page Produit</h2>
+<div style="border:2px solid #F47A3E;border-radius:12px;padding:20px;margin:16px 0;">
+  <h3>River Dog Shampoo 1L — Product Detail</h3>
+  <p><strong>Price: 4,600 RWF</strong> | $3.31 | €3.04 | ¥23.92</p>
+  <p><strong>Category:</strong> Cosmetics &amp; Personal Care | Ibisukura | Cosmétiques</p>
+  <p><strong>Brand:</strong> River Dog | <strong>SKU:</strong> 29001 | <strong>Stock:</strong> In Stock ✅</p>
+  <p><strong>Check stock at branch:</strong> Simba Remera: 48 units | Simba Kimironko: 50 units | Simba Kacyiru: 50 units</p>
+  <div style="display:flex;gap:8px;align-items:center;margin:12px 0;">
+    <button>−</button> <span>1</span> <button>+</button>
+    <button style="padding:10px 24px;">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
+  </div>
+  <p>🚚 Delivery in Kigali (1-2 Hrs) | 🛡️ Freshness Guarantee</p>
+</div>
 
 <!-- CART -->
 <h2>Shopping Cart | Agari | Panier</h2>
