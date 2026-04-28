@@ -16,7 +16,6 @@ export default function SmartSearchBar() {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -38,16 +37,13 @@ export default function SmartSearchBar() {
   const handleInput = (val: string) => {
     setQuery(val);
     if (!val.trim()) { setResult(null); setOpen(false); return; }
-    setOpen(true);
-    clearTimeout(debounceRef.current);
-    // Auto-trigger after 600ms of no typing
-    debounceRef.current = setTimeout(() => runSearch(val), 600);
+    // Don't auto-fire — wait for Enter or button click to save API tokens
+    setOpen(!!result); // keep open if we already have a result
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    clearTimeout(debounceRef.current);
     // Conversational answer already showing — keep it open
     if (result && result.products.length === 0 && result.message) {
       setOpen(true);

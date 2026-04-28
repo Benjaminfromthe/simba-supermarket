@@ -132,7 +132,7 @@ async function runTranslation(lang: string) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_KEY}` },
           body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
+            model: 'llama-3.1-8b-instant',
             messages: [
               { role: 'system', content: `Translate these supermarket product names into ${langName}. Keep brand names unchanged (Simba, Lentz, Inyange, Mukamira, Azam, Jambo, Crystal, Zesta, Herman, Nestle, Campari, Flora, Zima, ABK6, Basso, Kevian, Kenzy, Mila, DOLO, Sutai, River Dog, American Garden, Blue Band, Belle France, Boni, Greens, Kenton, Minimex, Toha, Sabroso, RS, Rinsun, Sinar, Smart, Clovers, Everyday, Golden Valley, Super Chef). Keep model codes and sizes unchanged. Only translate descriptive words. Return ONLY valid JSON: {"original name": "translated name"}\n\n${langHint}` },
               { role: 'user', content: JSON.stringify(batch) },
