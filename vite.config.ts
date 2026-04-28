@@ -13,7 +13,9 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         workbox: {
-          cleanupOutdatedCaches: true, // delete old chunk caches on update
+          cleanupOutdatedCaches: true,
+          skipWaiting: true,
+          clientsClaim: true,
           globPatterns: ['**/*.{js,css,html,ico,svg}'],
           // Cache product images from Cloudinary (up to 200, 30 days)
           runtimeCaching: [
