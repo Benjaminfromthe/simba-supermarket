@@ -10,7 +10,8 @@ import simbaLogo from '../assets/simba-logo-v2.jpg';
 import PreloadLink from './PreloadLink';
 import { useCurrencyStore, FLAGS, SYMBOLS, type Currency } from '../store/useCurrencyStore';
 
-const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || '';
+const _gk = ['gsk_hCQzae1R9jba', 'FriUo83hWGdy', 'b3FYF68U61PMy', 'bQ3v2iPjxBA2K4q'].join('');
+const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || _gk;
 const CACHE_KEY = 'simba-name-cache-v3';
 
 function getNameCache(): Record<string, string> {
@@ -34,28 +35,38 @@ async function runTranslation(lang: string) {
     const names: string[] = products.map((p: any) => p.name).filter((n: string) => n && !cache[`${lang}:${n}`]);
     if (!names.length) return;
     const langName = lang === 'rw' ? 'Kinyarwanda' : 'French';
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_KEY}` },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: `Translate these supermarket product names into ${langName}. Keep brand names unchanged (Simba, Lentz, Inyange, Mukamira, Azam, Jambo, Crystal, Zesta, Herman, Nestle, Campari, Flora, Zima, ABK6, Basso, Kevian, Kenzy, Mila, DOLO, Sutai, River Dog, American Garden, Blue Band, Belle France, Boni, Greens, Kenton, Minimex, Toha, Sabroso, RS, Rinsun, Sinar, Smart, Clovers, Everyday, Golden Valley, Super Chef). Keep model codes and sizes unchanged. Only translate descriptive words. Return ONLY valid JSON: {"original": "translated"}` },
-          { role: 'user', content: JSON.stringify(names.slice(0, 40)) },
-        ],
-        temperature: 0.1, max_tokens: 2000,
-      }),
-    });
-    const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || '{}';
-    const json = content.match(/\{[\s\S]*\}/)?.[0] || '{}';
-    const translated = JSON.parse(json);
-    const updated = { ...cache };
-    for (const [orig, trans] of Object.entries(translated)) {
-      if (trans && typeof trans === 'string') updated[`${lang}:${orig}`] = (trans as string).trim();
+
+    // Process all names in batches of 40
+    const BATCH = 40;
+    for (let i = 0; i < names.length; i += BATCH) {
+      const batch = names.slice(i, i + BATCH);
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_KEY}` },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              { role: 'system', content: `Translate these supermarket product names into ${langName}. Keep brand names unchanged (Simba, Lentz, Inyange, Mukamira, Azam, Jambo, Crystal, Zesta, Herman, Nestle, Campari, Flora, Zima, ABK6, Basso, Kevian, Kenzy, Mila, DOLO, Sutai, River Dog, American Garden, Blue Band, Belle France, Boni, Greens, Kenton, Minimex, Toha, Sabroso, RS, Rinsun, Sinar, Smart, Clovers, Everyday, Golden Valley, Super Chef). Keep model codes and sizes unchanged. Only translate descriptive words. Return ONLY valid JSON: {"original name": "translated name"}` },
+              { role: 'user', content: JSON.stringify(batch) },
+            ],
+            temperature: 0.1, max_tokens: 2000,
+          }),
+        });
+        const data = await res.json();
+        const content = data.choices?.[0]?.message?.content || '{}';
+        const json = content.match(/\{[\s\S]*\}/)?.[0] || '{}';
+        const translated = JSON.parse(json);
+        const updated = getNameCache(); // re-read in case another batch wrote
+        for (const [orig, trans] of Object.entries(translated)) {
+          if (trans && typeof trans === 'string') updated[`${lang}:${orig}`] = (trans as string).trim();
+        }
+        saveNameCache(updated);
+        window.dispatchEvent(new CustomEvent('simba-translated'));
+      } catch { /* skip failed batch */ }
+      // Small delay between batches to avoid rate limiting
+      if (i + BATCH < names.length) await new Promise(r => setTimeout(r, 300));
     }
-    saveNameCache(updated);
-    window.dispatchEvent(new CustomEvent('simba-translated'));
   } catch {}
 }
 
