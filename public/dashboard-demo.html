@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord — Simba Supermarket</title>
+  <meta name="description" content="Branch Manager Dashboard. Manager assigns incoming orders to staff. Staff marks orders as preparing and ready for pick-up. Real-time Firestore. Per-branch inventory.">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9fafb; }
+    .header { background: #F47A3E; color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .header h1 { margin: 0; font-size: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    h2 { color: #F47A3E; border-bottom: 2px solid #F47A3E; padding-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    th { background: #F47A3E; color: white; padding: 12px 16px; text-align: left; }
+    td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; }
+    .badge-pending { background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .badge-accepted { background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .badge-preparing { background: #ede9fe; color: #5b21b6; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .badge-ready { background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .badge-completed { background: #f3f4f6; color: #374151; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    button { background: #F47A3E; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; margin: 2px; }
+    button.blue { background: #3b82f6; }
+    button.green { background: #22c55e; }
+    button.gray { background: #6b7280; }
+    select { padding: 6px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+    .stat { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .stat-num { font-size: 36px; font-weight: black; }
+    .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .note { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px; margin: 8px 0; }
+    a.btn { background: white; color: #F47A3E; padding: 8px 20px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🏪 Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord</h1>
+    <p style="margin:4px 0 0;font-size:13px;opacity:0.9;">Simba Supermarket Remera — Manager View | Icyerekezo cy'Umuyobozi | Vue Gérant</p>
+  </div>
+  <a href="https://simba-google-ai.vercel.app/branch-dashboard" class="btn">→ Open Live Dashboard</a>
+</div>
+
+<div class="container">
+
+  <div class="note">
+    <strong>Live dashboard:</strong> <a href="https://simba-google-ai.vercel.app/branch-dashboard">simba-google-ai.vercel.app/branch-dashboard</a> |
+    Login: manager@simba.rw / manager123 &nbsp;|&nbsp; staff@simba.rw / staff123
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" style="color:#d97706;">3</div>
+      <div class="stat-label">Pending | Bitegerejwe | En attente</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" style="color:#7c3aed;">2</div>
+      <div class="stat-label">Preparing | Birategurwa | En préparation</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" style="color:#059669;">1</div>
+      <div class="stat-label">Ready | Birateguye | Prêt</div>
+    </div>
+  </div>
+
+  <!-- INCOMING ORDERS -->
+  <h2>Incoming Orders | Amakomande Ashya | Commandes Entrantes</h2>
+  <p>Real-time updates via Firestore onSnapshot — orders appear instantly when customer places order. New order alert with sound (Web Audio API beep).</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Status | Uko Imeze | Statut</th>
+        <th>Customer | Umukiriya</th>
+        <th>Items | Ibicuruzwa</th>
+        <th>Pick-up | Gufata | Retrait</th>
+        <th>Total</th>
+        <th>Assign to Staff | Ha Umukozi | Assigner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>#HA5LH8XT</strong></td>
+        <td><span class="badge-pending">Pending | Bitegerejwe | En attente</span></td>
+        <td>customer1@gmail.com</td>
+        <td>River Dog Shampoo ×2, Inyange Milk ×1</td>
+        <td>Today 12:00-13:00</td>
+        <td><strong>10,800 RWF</strong></td>
+        <td>
+          <select aria-label="Assign to staff">
+            <option>Assign to staff | Ha umukozi | Assigner</option>
+            <option>Alice K.</option>
+            <option>Bob M.</option>
+            <option>Claire U.</option>
+            <option>David N.</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>#JJ1GRZRX</strong></td>
+        <td><span class="badge-pending">Pending | Bitegerejwe | En attente</span></td>
+        <td>user2@gmail.com</td>
+        <td>Nestle Baby Milk ×1, Olive Oil ×2</td>
+        <td>Today 14:00-15:00</td>
+        <td><strong>26,700 RWF</strong></td>
+        <td>
+          <select>
+            <option>Assign to staff | Ha umukozi</option>
+            <option>Alice K.</option>
+            <option>Bob M.</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>#VB1GRZRX</strong></td>
+        <td><span class="badge-accepted">Accepted | Byemewe | Acceptée</span></td>
+        <td>user3@gmail.com</td>
+        <td>Clamic Bread ×3, Salt Bread ×2</td>
+        <td>Tomorrow 09:00-10:00</td>
+        <td><strong>6,400 RWF</strong></td>
+        <td><span style="font-size:12px;color:#059669;">✓ Assigned to: Alice K.</span></td>
+      </tr>
+      <tr>
+        <td><strong>#KM2HXPQR</strong></td>
+        <td><span class="badge-preparing">Preparing | Birategurwa | En préparation</span></td>
+        <td>user4@gmail.com</td>
+        <td>River Dog Shampoo 5L ×1</td>
+        <td>Today 16:00-17:00</td>
+        <td><strong>9,100 RWF</strong></td>
+        <td><button class="green">Mark Ready | Tangaza ko Biteguye | Marquer Prêt</button></td>
+      </tr>
+      <tr>
+        <td><strong>#NX3WQMST</strong></td>
+        <td><span class="badge-ready">Ready for Pick-up | Birateguye | Prêt</span></td>
+        <td>user5@gmail.com</td>
+        <td>Basso Olive Oil ×1, Bread ×2</td>
+        <td>Today 11:00-12:00</td>
+        <td><strong>10,800 RWF</strong></td>
+        <td><button class="gray">Complete | Rangiza | Terminer</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ORDER STATUS FLOW -->
+  <h2>Order Status Flow | Inzira y'Uko Komande Igenda | Flux des Statuts</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0;">
+    <span class="badge-pending">1. Pending | Bitegerejwe | En attente</span>
+    <span>→</span>
+    <span class="badge-accepted">2. Accepted | Byemewe | Acceptée</span>
+    <span>→</span>
+    <span class="badge-preparing">3. Preparing | Birategurwa | En préparation</span>
+    <span>→</span>
+    <span class="badge-ready">4. Ready | Birateguye | Prêt</span>
+    <span>→</span>
+    <span class="badge-completed">5. Completed | Byarangiye | Terminée</span>
+  </div>
+  <ul>
+    <li><strong>Manager:</strong> Sees ALL orders → assigns to named staff member → monitors readiness</li>
+    <li><strong>Staff:</strong> Sees ONLY assigned orders → clicks "Start Preparing" → clicks "Mark Ready"</li>
+    <li><strong>Customer:</strong> Gets real-time notification when order is ready for pick-up</li>
+    <li><strong>No-show:</strong> Staff flags customer → 2+ flags = deposit increases 500→1000 RWF automatically</li>
+  </ul>
+
+  <!-- INVENTORY -->
+  <h2>Per-Branch Inventory | Ibicuruzwa ku Ishami | Inventaire par Succursale</h2>
+  <p>Each branch has independent stock. Ordering from Remera does NOT affect Kimironko stock.</p>
+  <table>
+    <thead>
+      <tr><th>Product | Igicuruzwa | Produit</th><th>Remera Stock</th><th>Kimironko Stock</th><th>Kacyiru Stock</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>River Dog Shampoo 1L</td><td>46 ✅</td><td>50 ✅</td><td>50 ✅</td><td><button>Mark Out of Stock</button></td></tr>
+      <tr><td>Inyange Milk 1L</td><td>3 ⚠️ Low</td><td>50 ✅</td><td>48 ✅</td><td><button>Mark Out of Stock</button></td></tr>
+      <tr><td>Nestle Baby Milk 400g</td><td>0 ❌ Out</td><td>50 ✅</td><td>50 ✅</td><td><span style="color:red;font-size:12px;">Out of Stock</span></td></tr>
+      <tr><td>Basso Olive Oil 250ml</td><td>44 ✅</td><td>50 ✅</td><td>50 ✅</td><td><button>Mark Out of Stock</button></td></tr>
+    </tbody>
+  </table>
+
+  <!-- STAFF PANEL -->
+  <h2>Staff Panel | Icyerekezo cy'Umukozi | Vue Personnel</h2>
+  <p>Staff member: Alice K. — sees only her assigned orders</p>
+  <table>
+    <thead><tr><th>Order ID</th><th>Status</th><th>Items</th><th>Pick-up Time</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>#VB1GRZRX</td>
+        <td><span class="badge-accepted">Accepted | Byemewe</span></td>
+        <td>Clamic Bread ×3, Salt Bread ×2</td>
+        <td>Tomorrow 09:00-10:00</td>
+        <td><button class="blue">Start Preparing | Tangira Gutegura | Commencer</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- MULTILINGUAL -->
+  <h2>Multi-language | Indimi Eshatu | Trois Langues</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:16px 0;">
+    <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:12px;padding:16px;" lang="rw">
+      <h3 style="color:#15803d;margin-top:0;">🇷🇼 Kinyarwanda</h3>
+      <p>Ahabanza | Guhaha | Amakomande | Ikibaho | Isuzuma | Injira | Iyandikishe</p>
+      <p>Bitegerejwe | Byemewe | Birategurwa | Birateguye | Byarangiye</p>
+      <p>Ongeraho mu Kagari | Hitamo Ishami | Kwishyura na MoMo</p>
+    </div>
+    <div style="background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;padding:16px;" lang="fr">
+      <h3 style="color:#1d4ed8;margin-top:0;">🇫🇷 Français</h3>
+      <p>Accueil | Boutique | Commandes | Tableau de Bord | Avis | Connexion | S'inscrire</p>
+      <p>En attente | Acceptée | En préparation | Prête | Terminée</p>
+      <p>Ajouter au Panier | Choisir Succursale | Payer MoMo</p>
+    </div>
+    <div style="background:#fff7ed;border:2px solid #F47A3E;border-radius:12px;padding:16px;" lang="en">
+      <h3 style="color:#c2410c;margin-top:0;">🇺🇸 English</h3>
+      <p>Home | Shop | Orders | Dashboard | Reviews | Login | Sign Up</p>
+      <p>Pending | Accepted | Preparing | Ready | Completed</p>
+      <p>Add to Cart | Select Branch | Pay MoMo</p>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:32px;">
+    <a href="https://simba-google-ai.vercel.app" style="background:#F47A3E;color:white;padding:14px 32px;border-radius:12px;font-weight:bold;text-decoration:none;font-size:16px;">🚀 Open Full Live Site → simba-google-ai.vercel.app</a>
+  </p>
+
+</div>
+</body>
+</html>

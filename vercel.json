@@ -5,6 +5,7 @@
     { "source": "/admin", "destination": "/index.html" },
     { "source": "/manager", "destination": "/index.html" },
     { "source": "/demo", "destination": "/demo.html" },
+    { "source": "/dashboard-demo", "destination": "/dashboard-demo.html" },
     { "source": "/((?!demo\\.html$).*)", "destination": "/index.html" }
   ],
   "headers": [
