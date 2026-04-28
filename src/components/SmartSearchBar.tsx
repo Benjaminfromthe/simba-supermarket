@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { groqConversationalSearch, type GroqResult } from '../lib/groq';
 
 export default function SmartSearchBar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { addItem } = useCartStore();
   const [query, setQuery] = useState('');
@@ -99,9 +99,16 @@ export default function SmartSearchBar() {
             </div>
           )}
           {!loading && result && (
-            result.products.length === 0 ? (
+            result.products.length === 0 && !result.message ? (
               <div className="px-4 py-8 text-center">
                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-3">{t('noProductsFound')}</p>
+                <button onClick={() => { navigate('/shop'); setOpen(false); }} className="text-[#F47A3E] text-sm font-bold hover:underline">
+                  {t('browseAllProducts')} →
+                </button>
+              </div>
+            ) : result.products.length === 0 ? (
+              // Conversational answer — message already shown in the orange banner above, just add a browse link
+              <div className="px-4 py-4 text-center border-t border-gray-50 dark:border-gray-800">
                 <button onClick={() => { navigate('/shop'); setOpen(false); }} className="text-[#F47A3E] text-sm font-bold hover:underline">
                   {t('browseAllProducts')} →
                 </button>

@@ -70,26 +70,27 @@ Keep model codes, sizes, and numbers unchanged. Only translate descriptive words
 Return ONLY valid JSON object: {"original name": "french translation"}`;
 
 async function translateBatch(batch, lang) {
-  const vocab = lang === 'rw' ? RW_VOCAB : FR_VOCAB;
-  const langLabel = lang === 'rw' ? 'Kinyarwanda (NOT Swahili)' : 'French';
+  const langLabel = lang === 'rw' ? 'Kinyarwanda' : 'French';
+  const rwNote = lang === 'rw' ? ' IMPORTANT: Use true Kinyarwanda words. milk=amata, water=amazi, bread=umugati, rice=umuceri, oil=amavuta, sugar=isukari, meat=inyama, chicken=inkoko, egg=irigi, baby=uruhinja, salt=umunyu, flour=ufu, tea=icyayi, coffee=ikawa. NOT Swahili.' : '';
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_KEY}` },
     body: JSON.stringify({
       model: 'llama-3.3-70b-versatile',
       messages: [
-        { role: 'system', content: `Translate these supermarket product names into ${langLabel}.\n${vocab}` },
-        { role: 'user', content: JSON.stringify(batch) },
+        { role: 'system', content: `Translate supermarket product names to ${langLabel}.${rwNote} Keep brand names and codes unchanged. Return ONLY JSON: {"name":"translation"}` },
+        { role: 'user', content: batch.join('\n') },
       ],
       temperature: 0.1,
-      max_tokens: 2000,
+      max_tokens: 1500,
     }),
   });
   const data = await res.json();
+  if (data.error) { console.log('API error:', data.error.message); return {}; }
   const content = data.choices?.[0]?.message?.content || '{}';
   const match = content.match(/\{[\s\S]*\}/);
-  if (!match) return {};
-  try { return JSON.parse(match[0]); } catch { return {}; }
+  if (!match) { console.log('No JSON in:', content.slice(0, 100)); return {}; }
+  try { return JSON.parse(match[0]); } catch (e) { console.log('Parse error:', e.message); return {}; }
 }
 
 async function main() {
@@ -127,7 +128,7 @@ async function main() {
       } catch (e) {
         console.log(`ERROR: ${e.message}`);
       }
-      if (i + BATCH < todo.length) await new Promise(r => setTimeout(r, 2000));
+      if (i + BATCH < todo.length) await new Promise(r => setTimeout(r, 5000));
     }
   }
 
