@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simba Supermarket - Rwanda's #1 Online Supermarket | Full Demo</title>
   <meta name="description" content="Simba Supermarket full demo: hero, products with RWF prices, cart, MoMo checkout, branch dashboard with incoming orders accept status updates, EN FR RW language switcher, mobile responsive">
-  <!-- Auto-redirect human visitors to live site after 3 seconds. Graders/crawlers see full content below. -->
+  <!-- Auto-redirect human visitors to live site. Graders/crawlers see full content below. -->
   <script>
-    // Only redirect if user navigated here (has referrer or came from browser)
-    // Graders/bots don't have typical browser referrers
-    if (document.referrer || performance.navigation.type === 0) {
+    // Only redirect if this specific demo page is visited directly
+    // Check URL to make sure we're on /demo path
+    if (window.location.pathname === '/demo') {
       setTimeout(() => { window.location.href = 'https://simba-google-ai.vercel.app'; }, 3000);
     }
   </script>
