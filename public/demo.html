@@ -231,23 +231,23 @@
 
 <h2>AI Search + Conversational AI | Gushakisha na AI | Recherche IA Conversationnelle</h2>
 <form role="search"><input type="search" placeholder="Search products or ask anything... | Shakisha cyangwa Baza ikibazo cyose... | Rechercher ou poser n'importe quelle question..."> <button>AI Search | Gushakisha na AI | Recherche IA</button></form>
-<p>Dual-mode AI powered by Groq llama-3.1-8b-instant:</p>
+<p>Dual-mode AI powered by Groq llama-3.1-8b-instant. Answers ANY question — products OR general conversation.</p>
 <ul>
-  <li><strong>Product mode:</strong> "Show me milk under 1000 RWF" | "Mfite amata munsi ya 1000" | "Lait moins de 1000 FRW" → returns matching products with prices</li>
-  <li><strong>Conversational mode:</strong> "How are you?" | "Who is Kagame?" | "What time do you close?" | "How many branches?" → real AI answers any question</li>
-  <li><strong>Smart search bar:</strong> auto-detects query type, shows AI answer in dropdown without navigating away</li>
-  <li><strong>AI Chat widget</strong> (bottom right): full chat interface, answers anything, remembers context</li>
+  <li><strong>Product mode:</strong> "Show me milk under 1000 RWF" | "Mfite amata munsi ya 1000" | "Lait moins de 1000 FRW" → returns matching products with RWF prices</li>
+  <li><strong>Conversational mode:</strong> "How are you?" | "How many branches?" | "What time do you close?" → real Groq AI answers naturally</li>
+  <li><strong>AI Chat widget</strong> (bottom right "Gushakisha na AI"): full chat, answers anything in EN/FR/RW</li>
 </ul>
 <div class="box">
   <strong>Sample AI Chat (Kinyarwanda):</strong>
   <p lang="rw">Murakaza neza! Ndi umufasha wa AI wa Simba. Mbaza ikibazo cyose!</p>
   <p><em>User: "Mufite amata mashya?"</em> → AI: "Yego! Dufite Inyange Amata 1L (1,600 RWF), Mukamira Amata Yose 500ml (800 RWF)..."</p>
   <p><em>User: "Ni saa ngahe mufungura?"</em> → AI: "Simba ifungura saa moya kugeza saa ine z'ijoro buri munsi."</p>
+  <p><em>User: "How many branches?"</em> → AI: "Simba has 9 branches across Kigali: Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga and Nyanza."</p>
 </div>
 
 <h2>Currency Switcher | Guhindura Ifaranga | Changeur de Devise</h2>
 <p><button>🇷🇼 RWF</button> <button class="bb">🇺🇸 USD</button> <button class="bg">🇪🇺 EUR</button> <button>🇨🇳 CNY</button></p>
-<p>All prices convert instantly across the entire site — product cards, product detail, cart, checkout, orders page, admin dashboard, branch dashboard.</p>
+<p>All prices convert instantly across the ENTIRE site — product cards, product detail, cart, checkout, orders page, admin dashboard, branch dashboard.</p>
 <table>
   <thead><tr><th>Product</th><th>RWF</th><th>USD</th><th>EUR</th><th>CNY</th></tr></thead>
   <tbody>
@@ -260,7 +260,7 @@
 <h2>Product Name Translations | Gutunga Amazina y'Ibicuruzwa | Traduction des Noms</h2>
 <p>All 789 product names translated to Kinyarwanda and French using Groq AI, cached statically for instant display.</p>
 <table>
-  <thead><tr><th>English</th><th>Kinyarwanda</th><th>Francais</th></tr></thead>
+  <thead><tr><th>English</th><th>Kinyarwanda (amata=milk)</th><th>Francais</th></tr></thead>
   <tbody>
     <tr><td>Inyange Low Fat Milk 500ML</td><td lang="rw">Inyange amata ya mafuta make 500ML</td><td lang="fr">Inyange Lait a faible teneur en graisse 500ML</td></tr>
     <tr><td>Inyange whole milk 500ml</td><td lang="rw">Inyange amata yose 500ml</td><td lang="fr">Inyange Lait entier 500ml</td></tr>
@@ -269,6 +269,17 @@
     <tr><td>Crystal Cooking Oil Sun Flower 5L</td><td lang="rw">Crystal amavuta yo guteka izuba 5L</td><td lang="fr">Crystal Huile de Tournesol 5L</td></tr>
   </tbody>
 </table>
+
+<h2>Order Notifications | Menyesha Amakomande | Notifications</h2>
+<div class="box" style="background:#f0fdf4;border-color:#22c55e">
+  <p style="color:#065f46;font-weight:bold">🛎️ NEW ORDER ALERT — Manager sees: Branch + Order details | Staff sees: Assigned staff name</p>
+  <table>
+    <thead><tr><th>Order ID</th><th>Items</th><th>Pick-up</th><th>Total</th><th>Branch (Manager)</th><th>Assigned (Staff)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>#S3BJKM9R</strong></td><td>1 item</td><td>12:00-13:00</td><td>$7.49 / 10,400 RWF</td><td>Simba Kimironko</td><td>Alice K.</td></tr>
+    </tbody>
+  </table>
+</div>
 
 <footer style="margin-top:20px;padding-top:12px;border-top:2px solid #F47A3E;">
   <p>2026 Simba Supermarket Ltd. | Rwanda's #1 Supermarket | Isoko nziza mu Rwanda | Le meilleur supermarche du Rwanda</p>
