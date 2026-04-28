@@ -101,19 +101,18 @@ const LANG_NAMES: Record<string, string> = {
 export async function groqConversationalSearch(query: string, lang = 'en'): Promise<GroqResult> {
   const q = query.toLowerCase().trim();
 
-  // Handle greetings — respond naturally without showing products
-  const greetings = ['hi', 'hello', 'hey', 'bonjour', 'salut', 'muraho', 'mwaramutse', 'good morning', 'good afternoon', 'good evening', 'how are you', 'what can you do', 'help', 'thanks', 'thank you', 'merci', 'urakoze'];
-  if (greetings.some(g => q === g || q === g + '!' || q === g + '?')) {
+  // Handle pure greetings only — exact matches, not partial
+  const pureGreetings = ['hi', 'hello', 'hey', 'bonjour', 'salut', 'muraho', 'mwaramutse', 'hi!', 'hello!', 'hey!'];
+  if (pureGreetings.includes(q)) {
     const greetingResponses: Record<string, string> = {
-      en: "Hi there! I'm Simba's AI assistant 🛒 Ask me anything like \"Do you have fresh milk?\" or \"I need something for breakfast\" and I'll find the best products for you!",
-      fr: "Bonjour! Je suis l'assistant IA de Simba 🛒 Demandez-moi par exemple \"Avez-vous du lait frais?\" ou \"J'ai besoin de quelque chose pour le petit-déjeuner\"!",
-      rw: "Muraho! Ndi umufasha wa AI wa Simba 🛒 Mbaza nk'ati \"Mufite amata mashya?\" cyangwa \"Ndashaka ikintu cyo mu gitondo\"!",
+      en: "Hi there! I'm Simba's AI assistant 🛒 Ask me anything about our products, branches, delivery, or just say what you need!",
+      fr: "Bonjour! Je suis l'assistant IA de Simba 🛒 Posez-moi n'importe quelle question sur nos produits ou succursales!",
+      rw: "Muraho! Ndi umufasha wa AI wa Simba 🛒 Mbaza ikibazo cyose ku bicuruzwa cyangwa amashami yacu!",
     };
     return { message: greetingResponses[lang] || greetingResponses.en, products: [] };
   }
 
   const fallback = localSearch(query, 8);
-  // Always return fallback if intent found — never show 0
   const intentFallback = fallback.length > 0 ? fallback : localSearch(query.split(' ').slice(-1)[0], 8);
   const isSimple = query.length < 15 && !query.includes(' ');
   if (isSimple && fallback.length > 0) return { message: '', products: fallback };
@@ -136,20 +135,26 @@ export async function groqConversationalSearch(query: string, lang = 'en'): Prom
         messages: [
           {
             role: 'system',
-            content: `You are a smart shopping assistant for Simba Supermarket in Kigali, Rwanda. Prices are in RWF.
-IMPORTANT: Respond in ${langName}. Your "message" field must be in ${langName}.
-Catalog format per line: id|name|price|category
-Rules:
-- Understand natural language and price constraints ("milk under 1000" = price <= 1000)
-- Respond ONLY with valid JSON: {"message":"friendly 1-sentence response in ${langName}","productIds":[id1,id2,...]}
-- Max 6 IDs. Only use IDs from the catalog. If nothing matches: {"message":"apology in ${langName}","productIds":[]}
-CATALOG (${ALL_PRODUCTS.length} products):
+            content: `You are a friendly AI assistant for Simba Supermarket in Kigali, Rwanda. Always respond in ${langName}.
+
+You can answer ANY question the customer asks:
+- Product searches: find matching products from the catalog
+- Simba info: 9 branches in Kigali (Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga, Nyanza), open 7am-10pm daily, MoMo payment, 45-min pick-up, 789+ products
+- General questions (weather, math, advice): answer helpfully
+- Price constraints: "milk under 1000" = find milk with price <= 1000 RWF
+
+Always respond with valid JSON: {"message": "your response in ${langName}", "productIds": [id1, id2, ...]}
+- For product questions: include relevant product IDs (max 6), only from catalog
+- For non-product questions: set productIds to []
+- Be warm, helpful and conversational
+
+PRODUCT CATALOG (${ALL_PRODUCTS.length} products, format id|name|price|category):
 ${CATALOG}`,
           },
           { role: 'user', content: query },
         ],
-        temperature: 0.1,
-        max_tokens: 200,
+        temperature: 0.3,
+        max_tokens: 400,
       }),
     });
     const data = await res.json();
