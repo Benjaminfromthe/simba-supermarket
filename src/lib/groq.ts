@@ -160,7 +160,10 @@ ${CATALOG}`,
     });
 
     const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || '{}';
+    const content = data.choices?.[0]?.message?.content || '';
+    if (!content) {
+      return { message: "I'm here to help! Ask me about products, branches, or anything else.", products: [] };
+    }
     // Try to extract JSON — Groq sometimes wraps it in text
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
@@ -169,17 +172,18 @@ ${CATALOG}`,
         const aiProducts = (parsed.productIds || [])
           .map((id: any) => ALL_PRODUCTS.find(p => p.id === id || p.id === String(id)))
           .filter(Boolean) as Product[];
+        const msg = parsed.message || '';
         return {
-          message: parsed.message || content,
+          message: msg,
           products: aiProducts,
         };
       } catch {
-        // JSON parse failed — return the raw message
-        return { message: content.slice(0, 300), products: [] };
+        // JSON parse failed — return the raw content as message
+        return { message: content.replace(/[{}]/g, '').trim().slice(0, 400) || "Let me help you!", products: [] };
       }
     }
-    // No JSON found — Groq returned plain text (for general questions)
-    return { message: content.slice(0, 300), products: [] };
+    // No JSON — Groq returned plain text
+    return { message: content.slice(0, 400), products: [] };
 
   } catch (err) {
     console.error('Groq error:', err);
