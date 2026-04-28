@@ -4,7 +4,8 @@
     { "source": "/dashboard", "destination": "/index.html" },
     { "source": "/admin", "destination": "/index.html" },
     { "source": "/manager", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/demo", "destination": "/demo.html" },
+    { "source": "/((?!demo\\.html$).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
