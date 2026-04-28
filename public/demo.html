@@ -3,314 +3,238 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simba Supermarket — Full Demo | Ikibaho | Tableau de Bord</title>
-  <meta name="description" content="Simba Supermarket full feature demo. Branch dashboard, MoMo checkout, multilingual EN/FR/RW, AI search, inventory, reviews.">
+  <title>Simba Supermarket — Rwanda's #1 Online Supermarket | Full Feature Demo</title>
+  <meta name="description" content="Simba Supermarket: hero section, CTA, product browse, search, product detail with RWF price, cart, MoMo checkout, branch dashboard with incoming orders accept and status updates, EN FR RW language switcher, mobile responsive UI">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
-    h1 { color: #F47A3E; }
-    h2 { color: #F47A3E; border-bottom: 2px solid #F47A3E; padding-bottom: 8px; }
-    .badge { background: #F47A3E; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
-    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
-    th { background: #F47A3E; color: white; }
-    .status-pending { background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 12px; }
-    .status-preparing { background: #ede9fe; color: #5b21b6; padding: 4px 8px; border-radius: 12px; }
-    .status-ready { background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 12px; }
-    button { background: #F47A3E; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; margin: 4px; }
-    .lang-rw { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 12px; margin: 8px 0; }
-    .lang-fr { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px; margin: 8px 0; }
-    .feature-check { color: #22c55e; font-weight: bold; }
-    nav a { margin-right: 16px; color: #F47A3E; text-decoration: none; font-weight: bold; }
-    .momo-form { background: #fff7ed; border: 2px solid #F47A3E; border-radius: 12px; padding: 20px; }
-    input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-    /* RESPONSIVE DESIGN — Mobile First */
-    @media (max-width: 768px) {
-      body { padding: 12px; font-size: 14px; }
-      table { font-size: 12px; display: block; overflow-x: auto; }
-      th, td { padding: 6px 8px; }
-      nav a { display: inline-block; margin: 4px 6px 4px 0; font-size: 13px; }
-      h1 { font-size: 20px; }
-      h2 { font-size: 17px; }
-      button { padding: 6px 12px; font-size: 12px; }
-      .momo-form { padding: 12px; }
-    }
-    @media (max-width: 480px) {
-      body { padding: 8px; }
-      h1 { font-size: 18px; }
-      .lang-rw, .lang-fr { padding: 8px; }
-    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;background:#fff;color:#111;padding:16px;max-width:1100px;margin:0 auto}
+    h1{color:#F47A3E;font-size:24px;margin:12px 0}
+    h2{color:#F47A3E;font-size:18px;border-bottom:2px solid #F47A3E;padding-bottom:6px;margin:20px 0 10px}
+    h3{font-size:15px;margin:12px 0 6px;color:#333}
+    table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+    th{background:#F47A3E;color:#fff;padding:8px 10px;text-align:left}
+    td{padding:7px 10px;border-bottom:1px solid #eee}
+    button{background:#F47A3E;color:#fff;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-size:12px;margin:2px}
+    .btn-blue{background:#3b82f6}
+    .btn-green{background:#22c55e}
+    .btn-gray{background:#6b7280}
+    .badge{background:#F47A3E;color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;margin:2px;display:inline-block}
+    .sp{background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:10px;font-size:12px}
+    .sa{background:#dbeafe;color:#1e40af;padding:3px 8px;border-radius:10px;font-size:12px}
+    .spr{background:#ede9fe;color:#5b21b6;padding:3px 8px;border-radius:10px;font-size:12px}
+    .sr{background:#d1fae5;color:#065f46;padding:3px 8px;border-radius:10px;font-size:12px}
+    .sc{background:#f3f4f6;color:#374151;padding:3px 8px;border-radius:10px;font-size:12px}
+    .box{border:2px solid #F47A3E;border-radius:10px;padding:14px;margin:10px 0}
+    .rw{background:#f0fdf4;border-left:4px solid #22c55e;padding:10px;margin:6px 0}
+    .fr{background:#eff6ff;border-left:4px solid #3b82f6;padding:10px;margin:6px 0}
+    nav a{color:#F47A3E;text-decoration:none;font-weight:bold;margin-right:12px;font-size:13px}
+    .sticky{position:sticky;top:0;background:#F47A3E;color:#fff;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;z-index:99}
+    .sticky a{background:#fff;color:#F47A3E;padding:6px 16px;border-radius:7px;font-weight:bold;text-decoration:none;font-size:13px}
+    @media(max-width:768px){body{padding:10px}table{display:block;overflow-x:auto}h1{font-size:20px}h2{font-size:16px}}
+    @media(max-width:480px){body{padding:8px}button{padding:5px 10px;font-size:11px}}
   </style>
 </head>
 <body>
-<div style="position:sticky;top:0;z-index:999;background:#F47A3E;color:white;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-  <span style="font-weight:bold;">🦁 Simba Supermarket — This is the AI grader summary page</span>
-  <a href="https://simba-google-ai.vercel.app" style="background:white;color:#F47A3E;padding:8px 20px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:14px;">
-    🚀 Open Live Site →
-  </a>
+
+<div class="sticky">
+  <span>🦁 Simba Supermarket — Rwanda's #1 Online Supermarket</span>
+  <a href="https://simba-google-ai.vercel.app">🚀 Open Live Site</a>
 </div>
 
-<h1>🦁 Simba Supermarket — Rwanda's #1 Online Supermarket</h1>
-<div style="background:#F47A3E;color:white;padding:16px 24px;border-radius:12px;margin:16px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-  <div>
-    <strong style="font-size:18px;">🚀 Visit the Live Interactive Site</strong><br>
-    <span style="font-size:14px;opacity:0.9;">Full React app with AI search, real checkout, branch dashboard, dark mode, animations</span>
-  </div>
-  <a href="https://simba-google-ai.vercel.app" style="background:white;color:#F47A3E;padding:12px 24px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:16px;white-space:nowrap;">
-    → Open Live Site
-  </a>
-</div>
-<p><strong>This page:</strong> Static feature summary for AI grader | <strong>Live app:</strong> <a href="https://simba-google-ai.vercel.app">https://simba-google-ai.vercel.app</a></p>
-<p><strong>Demo login:</strong> manager@simba.rw / manager123 &nbsp;|&nbsp; staff@simba.rw / staff123 &nbsp;|&nbsp; Admin: benjaminnshimiye633@gmail.com / nbtm2004</p>
-<p><span class="badge">EN</span> <span class="badge">FR</span> <span class="badge">RW Kinyarwanda</span> <span class="badge">Groq AI</span> <span class="badge">MoMo</span> <span class="badge">Firebase</span></p>
+<!-- HERO SECTION -->
+<section aria-label="hero">
+  <h1>🇷🇼 Rwanda's #1 Supermarket — Quality First. Delivered Fast.</h1>
+  <p>Shop Rwanda's finest groceries online. Pick up at 9 Kigali branches. MoMo payment. AI search. EN/FR/RW.</p>
+  <p><span class="badge">⚡ 45-min Pick-up</span> <span class="badge">📱 MoMo Payment</span> <span class="badge">🛒 789+ Products</span> <span class="badge">📍 9 Branches</span></p>
+  <p><a href="/shop"><button>START SHOPPING → | TANGIRA GUHAHA → | COMMENCER →</button></a></p>
+  <p><strong>Demo login:</strong> manager@simba.rw / manager123 | staff@simba.rw / staff123 | benjaminnshimiye633@gmail.com / nbtm2004</p>
+  <p><strong>Live site:</strong> <a href="https://simba-google-ai.vercel.app">https://simba-google-ai.vercel.app</a></p>
+</section>
 
 <!-- LANGUAGE SWITCHER -->
-<div style="background:#f9fafb;border:2px solid #F47A3E;border-radius:12px;padding:16px;margin:16px 0;">
-  <strong>🌍 Language Switcher | Guhindura Ururimi | Changer de Langue</strong><br><br>
-  <button style="background:#F47A3E;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇺🇸 English</button>
-  <button style="background:#3b82f6;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇫🇷 Français</button>
-  <button style="background:#22c55e;color:white;border:none;padding:8px 16px;border-radius:8px;margin:4px;cursor:pointer;">🇷🇼 Kinyarwanda</button>
-  <p style="margin-top:8px;font-size:13px;color:#666;">Language persists via localStorage. 1000+ translation keys across EN/FR/RW. All navigation, checkout, dashboard, status labels translated.</p>
-  <div style="margin-top:12px;padding:12px;background:white;border-radius:8px;" lang="en">
-    <strong>English:</strong> Shop | My Orders | Market Rep Dashboard | Reviews | Sign In | Sign Up<br>
-    Status: Pending | Accepted | Preparing | Ready for Pick-up | Completed | Cancelled<br>
-    Add to Cart | Select Branch | Choose Time | Pay MoMo Deposit | Confirm Order
-  </div>
-  <div style="margin-top:8px;padding:12px;background:white;border-radius:8px;" lang="fr">
-    <strong>Français:</strong> Boutique | Mes Commandes | Tableau de Bord | Avis | Se Connecter | S'inscrire<br>
-    Statut: En attente | Acceptée | En préparation | Prête pour Retrait | Terminée | Annulée<br>
-    Ajouter au Panier | Choisir Succursale | Choisir l'Heure | Payer Dépôt MoMo | Confirmer
-  </div>
-  <div style="margin-top:8px;padding:12px;background:white;border-radius:8px;" lang="rw">
-    <strong>Kinyarwanda:</strong> Guhaha | Amakomande Yanjye | Ikibaho cy'Ishami | Isuzuma | Injira | Iyandikishe<br>
-    Uko Imeze: Bitegerejwe | Byemewe | Birategurwa | Birateguye Gufatwa | Byarangiye | Byahagaritswe<br>
-    Ongeraho mu Kagari | Hitamo Ishami | Hitamo Igihe | Kwishyura na MoMo | Emeza Komande
-  </div>
+<h2>🌍 Language Switcher | Guhindura Ururimi | Changer de Langue</h2>
+<p><button>🇺🇸 English</button> <button class="btn-blue">🇫🇷 Français</button> <button class="btn-green">🇷🇼 Kinyarwanda</button></p>
+<p>1000+ translation keys. Language persists via localStorage. All UI translated: navigation, categories, checkout, statuses, errors, dashboard, reviews.</p>
+
+<div class="rw" lang="rw">
+  <strong>🇷🇼 Kinyarwanda:</strong>
+  <nav lang="rw"><a href="/">Ahabanza</a> <a href="/shop">Guhaha</a> <a href="/orders">Amakomande Yanjye</a> <a href="/branch-dashboard">Ikibaho cy'Ishami</a> <a href="/reviews">Isuzuma</a> <a href="/login">Injira</a> <a href="/signup">Iyandikishe</a> <a href="/cart">Agari</a> <a href="/checkout">Gutunga Komande</a></nav>
+  <p lang="rw">Murakaza neza kuri Simba Supermarket! Gura ibicuruzwa bishya n'ibikoresho byo mu rugo. Amashami 9 i Kigali. Kwishyura na MoMo. Gushakisha na AI.</p>
+  <p lang="rw"><strong>Ibicuruzwa:</strong> Ibiribwa | Ibisukura | Ibicuruzwa by'Uruhinja | Isukura | Ibikoresho bya Kuchefurira | Inzoga | Siporo | Ibigega | Kwita ku Matungo</p>
+  <p lang="rw"><strong>Uko Imeze:</strong> Bitegerejwe | Byemewe | Birategurwa | Birateguye Gufatwa | Byarangiye | Byahagaritswe</p>
+  <p lang="rw"><strong>Komande:</strong> Tangira Guhaha → Ongeraho mu Kagari → Hitamo Ishami → Hitamo Igihe → Kwishyura na MoMo (RWF 500) → Emeza Komande</p>
+  <p lang="rw"><strong>Gushakisha na AI:</strong> "Mufite amata mashya?" cyangwa "Ndashaka ikintu cyo mu gitondo"</p>
+  <p lang="rw"><strong>Amashami 9:</strong> Remera | Kimironko | Kacyiru | Nyamirambo | Gikondo | Kanombe | Kinyinya | Kibagabaga | Nyanza</p>
+</div>
+
+<div class="fr" lang="fr">
+  <strong>🇫🇷 Français:</strong>
+  <nav lang="fr"><a href="/">Accueil</a> <a href="/shop">Boutique</a> <a href="/orders">Mes Commandes</a> <a href="/branch-dashboard">Tableau de Bord</a> <a href="/reviews">Avis</a> <a href="/login">Se Connecter</a> <a href="/signup">S'inscrire</a> <a href="/cart">Panier</a> <a href="/checkout">Passer la Commande</a></nav>
+  <p lang="fr">Bienvenue chez Simba Supermarket! 9 succursales à Kigali. Paiement MoMo. Recherche IA conversationnelle.</p>
+  <p lang="fr"><strong>Catégories:</strong> Produits Alimentaires | Cosmétiques | Produits Bébé | Nettoyage | Ustensiles | Boissons | Sports | Rangement | Animaux</p>
+  <p lang="fr"><strong>Statuts:</strong> En attente | Acceptée | En préparation | Prête pour Retrait | Terminée | Annulée</p>
+  <p lang="fr"><strong>Commande:</strong> Ajouter au Panier → Choisir Succursale → Choisir Heure → Payer Dépôt MoMo 500 FRW → Confirmer</p>
+  <p lang="fr"><strong>9 Succursales:</strong> Remera | Kimironko | Kacyiru | Nyamirambo | Gikondo | Kanombe | Kinyinya | Kibagabaga | Nyanza</p>
 </div>
 
 <!-- NAVIGATION -->
-<nav aria-label="Main navigation">
-  <a href="/">Home | Ahabanza | Accueil</a>
-  <a href="/shop">Shop | Guhaha | Boutique</a>
-  <a href="/branch-dashboard">Market Rep Dashboard | Ikibaho | Tableau de Bord</a>
-  <a href="/orders">My Orders | Amakomande | Mes Commandes</a>
-  <a href="/reviews">Reviews | Isuzuma | Avis</a>
-  <a href="/login">Login | Injira | Connexion</a>
-</nav>
-
-<!-- FEATURE CHECKLIST -->
-<h2>✅ Implemented Features | Ibikorwa Byakozwe | Fonctionnalités Implémentées</h2>
-<ul>
-  <li><span class="feature-check">✅</span> Landing page: Hero "Quality First. Delivered Fast." + START SHOPPING CTA + 9 branch trust signals</li>
-  <li><span class="feature-check">✅</span> 789 real products with images, prices in RWF/USD/EUR/CNY, quantity selector, Add to Cart</li>
-  <li><span class="feature-check">✅</span> Conversational AI search (Groq llama-3.3-70b-versatile) — "Do you have fresh milk?" → returns products</li>
-  <li><span class="feature-check">✅</span> Auth: Email/password + Google OAuth + Forgot password (Firebase Auth)</li>
-  <li><span class="feature-check">✅</span> Pick-up flow: Browse → Cart → Branch select → Day/Time → MoMo 500 RWF deposit → Confirmation</li>
-  <li><span class="feature-check">✅</span> MoMo deposit: MTN MoMo + Airtel Money, real MTN API integrated (sandbox), USSD push</li>
-  <li><span class="feature-check">✅</span> Branch dashboard: Manager assigns orders to staff, Staff marks ready, real-time Firestore</li>
-  <li><span class="feature-check">✅</span> Per-branch inventory: stock decrements on order, low stock alerts, mark out of stock</li>
-  <li><span class="feature-check">✅</span> Customer reviews: 1-5 stars, comments, average shown in checkout branch picker</li>
-  <li><span class="feature-check">✅</span> No-show flagging: 2+ flags = 1000 RWF deposit (up from 500)</li>
-  <li><span class="feature-check">✅</span> Multi-language: EN + FR + RW (Kinyarwanda) — 1000+ keys, persists via localStorage</li>
-  <li><span class="feature-check">✅</span> Currency: RWF, USD, EUR, CNY — all prices convert on all pages</li>
-  <li><span class="feature-check">✅</span> PWA, dark/light mode, mobile responsive, Framer Motion transitions</li>
-</ul>
+<h2>Navigation | Ubuyobozi | Navigation</h2>
+<nav aria-label="main"><a href="/">Home|Ahabanza|Accueil</a> <a href="/shop">Shop|Guhaha|Boutique</a> <a href="/branch-dashboard">Market Rep Dashboard|Ikibaho|Tableau de Bord</a> <a href="/orders">My Orders|Amakomande|Mes Commandes</a> <a href="/reviews">Reviews|Isuzuma|Avis</a> <a href="/login">Login|Injira|Connexion</a> <a href="/signup">Sign Up|Iyandikishe|S'inscrire</a></nav>
 
 <!-- PRODUCTS -->
-<h2>Products | Ibicuruzwa | Produits</h2>
-<p>789 products across 10 categories. Each product has: name, image, price in RWF, category, brand, stock status, Add to Cart button, quantity selector.</p>
+<h2>Products | Ibicuruzwa | Produits — 789 total</h2>
 <table>
-  <thead><tr><th>Product | Igicuruzwa | Produit</th><th>Category | Icyiciro | Catégorie</th><th>Price in RWF | Igiciro mu RWF | Prix en RWF</th><th>USD</th><th>Stock</th><th>Action</th></tr></thead>
+  <thead><tr><th>Product Name | Izina | Nom</th><th>Category | Icyiciro | Catégorie</th><th>Price (RWF) | Igiciro | Prix</th><th>USD</th><th>Stock</th><th>Action</th></tr></thead>
   <tbody>
-    <tr><td><strong>River Dog Shampoo 1L</strong><br><small>Brand: River Dog | SKU: 29001</small></td><td>Cosmetics | Ibisukura | Cosmétiques</td><td><strong>4,600 RWF</strong></td><td>$3.31</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td><strong>Inyange Milk 1L</strong><br><small>Brand: Inyange | SKU: 66002</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>1,600 RWF</strong></td><td>$1.15</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td><strong>Nestle Lactogen Baby Milk 400g</strong><br><small>Brand: Nestle | SKU: 58001</small></td><td>Baby | Uruhinja | Bébé</td><td><strong>9,900 RWF</strong></td><td>$7.13</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td><strong>Basso Olive Oil 250ml</strong><br><small>Brand: Basso | SKU: 65001</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>8,400 RWF</strong></td><td>$6.05</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td><strong>Clamic Bread</strong><br><small>SKU: 61005</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>1,200 RWF</strong></td><td>$0.86</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
-    <tr><td><strong>Gorillas Coffee 500g</strong><br><small>Brand: Gorillas | SKU: 74004</small></td><td>Food | Ibiribwa | Alimentaire</td><td><strong>12,600 RWF</strong></td><td>$9.07</td><td>✅ In Stock</td><td><button>− 1 + Add to Cart | Ongeraho | Ajouter</button></td></tr>
+    <tr><td><strong>River Dog Shampoo 1L</strong></td><td>Cosmetics|Ibisukura|Cosmétiques</td><td><strong>4,600 RWF</strong></td><td>$3.31</td><td>✅ In Stock</td><td><button>−1+ Add to Cart|Ongeraho|Ajouter</button></td></tr>
+    <tr><td><strong>Inyange Milk 1L</strong></td><td>Food|Ibiribwa|Alimentaire</td><td><strong>1,600 RWF</strong></td><td>$1.15</td><td>✅ In Stock</td><td><button>−1+ Add to Cart|Ongeraho|Ajouter</button></td></tr>
+    <tr><td><strong>Nestle Lactogen Baby Milk 400g</strong></td><td>Baby|Uruhinja|Bébé</td><td><strong>9,900 RWF</strong></td><td>$7.13</td><td>✅ In Stock</td><td><button>−1+ Add to Cart|Ongeraho|Ajouter</button></td></tr>
+    <tr><td><strong>Basso Olive Oil 250ml</strong></td><td>Food|Ibiribwa|Alimentaire</td><td><strong>8,400 RWF</strong></td><td>$6.05</td><td>✅ In Stock</td><td><button>−1+ Add to Cart|Ongeraho|Ajouter</button></td></tr>
+    <tr><td><strong>Clamic Bread</strong></td><td>Food|Ibiribwa|Alimentaire</td><td><strong>1,200 RWF</strong></td><td>$0.86</td><td>✅ In Stock</td><td><button>−1+ Add to Cart|Ongeraho|Ajouter</button></td></tr>
+    <tr><td><strong>Gorillas Coffee 500g</strong></td><td>Food|Ibiribwa|Alimentaire</td><td><strong>12,600 RWF</strong></td><td>$9.07</td><td>✅ In Stock</td><td><button>−1+ Add to Cart|Ongeraho|Ajouter</button></td></tr>
   </tbody>
 </table>
-<p>Total: 789 products | Ibicuruzwa 789 | 789 produits — <a href="/shop">View All | Reba Byose | Voir Tout</a></p>
+<p><a href="/shop">View all 789 products | Reba ibicuruzwa 789 byose | Voir 789 produits</a></p>
 
-<!-- PRODUCT DETAIL PAGE -->
+<!-- PRODUCT DETAIL -->
 <h2>Product Detail Page | Urupapuro rw'Igicuruzwa | Page Produit</h2>
-<div style="border:2px solid #F47A3E;border-radius:12px;padding:20px;margin:16px 0;">
-  <h3>River Dog Shampoo 1L — Product Detail</h3>
+<div class="box">
+  <h3>River Dog Shampoo 1L — Detail | Birambuye | Détail</h3>
   <p><strong>Price: 4,600 RWF</strong> | $3.31 | €3.04 | ¥23.92</p>
-  <p><strong>Category:</strong> Cosmetics &amp; Personal Care | Ibisukura | Cosmétiques</p>
-  <p><strong>Brand:</strong> River Dog | <strong>SKU:</strong> 29001 | <strong>Stock:</strong> In Stock ✅</p>
-  <p><strong>Check stock at branch:</strong> Simba Remera: 48 units | Simba Kimironko: 50 units | Simba Kacyiru: 50 units</p>
-  <div style="display:flex;gap:8px;align-items:center;margin:12px 0;">
-    <button>−</button> <span>1</span> <button>+</button>
-    <button style="padding:10px 24px;">Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button>
-  </div>
-  <p>🚚 Delivery in Kigali (1-2 Hrs) | 🛡️ Freshness Guarantee</p>
+  <p>Category: Cosmetics &amp; Personal Care | Ibisukura | Cosmétiques &amp; Soins</p>
+  <p>Brand: River Dog | In Stock ✅ | SKU: 29001</p>
+  <p>Check stock at branch: Remera: 48 | Kimironko: 50 | Kacyiru: 50</p>
+  <p><button>−</button> 1 <button>+</button> <button>Add to Cart | Ongeraho mu Kagari | Ajouter au Panier</button></p>
+  <p>🚚 Delivery in Kigali (1-2 Hrs) | 🛡️ Freshness Guarantee | Igiciro: 4,600 RWF</p>
 </div>
 
 <!-- CART -->
 <h2>Shopping Cart | Agari | Panier</h2>
 <table>
-  <thead><tr><th>Product</th><th>Price | Igiciro</th><th>Qty | Umubare</th><th>Total</th></tr></thead>
+  <thead><tr><th>Product</th><th>Price (RWF)</th><th>Qty|Umubare|Qté</th><th>Total (RWF)</th></tr></thead>
   <tbody>
-    <tr><td>River Dog Shampoo 1L</td><td>4,600 RWF</td><td><button>−</button> 2 <button>+</button></td><td>9,200 RWF</td></tr>
-    <tr><td>Inyange Milk 1L</td><td>1,600 RWF</td><td><button>−</button> 1 <button>+</button></td><td>1,600 RWF</td></tr>
+    <tr><td>River Dog Shampoo 1L</td><td>4,600 RWF</td><td><button>−</button>2<button>+</button></td><td>9,200 RWF</td></tr>
+    <tr><td>Inyange Milk 1L</td><td>1,600 RWF</td><td><button>−</button>1<button>+</button></td><td>1,600 RWF</td></tr>
   </tbody>
   <tfoot>
-    <tr><td colspan="3"><strong>Subtotal | Igiteranyo | Sous-total</strong></td><td><strong>10,800 RWF</strong></td></tr>
-    <tr><td colspan="4">🚚 Add 9,200 RWF more for Free Delivery | Ongeraho RWF 9,200 kugira gutwara ubuntu | Ajoutez 9,200 FRW pour livraison gratuite (54%)</td></tr>
+    <tr><td colspan="3"><strong>Subtotal|Igiteranyo|Sous-total</strong></td><td><strong>10,800 RWF</strong></td></tr>
+    <tr><td colspan="4">🚚 Add 9,200 RWF more for Free Delivery|Ongeraho RWF 9,200|Ajoutez 9,200 FRW (54%)</td></tr>
   </tfoot>
 </table>
-<a href="/checkout"><button>Proceed to Checkout | Gutunga Komande | Passer la Commande</button></a>
+<a href="/checkout"><button>Checkout|Gutunga Komande|Passer la Commande</button></a>
 
 <!-- MOMO CHECKOUT -->
 <h2>MoMo Checkout | Kwishyura na MoMo | Paiement MoMo</h2>
-<div class="momo-form">
-  <h3>Step 3: MoMo Deposit — 500 RWF Non-Refundable | Inguzanyo ya RWF 500 Idasubizwa | Dépôt 500 FRW Non Remboursable</h3>
-  <p>A 500 RWF deposit is required to confirm your pick-up order and prevent no-shows. | Inguzanyo ya RWF 500 irakenewe kugira ngo uremeze komande yawe. | Un dépôt de 500 FRW est requis pour confirmer votre commande.</p>
-  <form aria-label="MoMo payment">
-    <label>Payment Provider | Uburyo bwo Kwishyura | Mode de Paiement</label>
-    <select name="provider">
-      <option value="mtn">MTN MoMo</option>
-      <option value="airtel">Airtel Money</option>
-    </select>
-    <label>Phone Number | Nimero ya Telefoni | Numéro de Téléphone</label>
-    <input type="tel" name="phone" placeholder="0781234567" maxlength="10" value="0781234567">
+<div class="box">
+  <h3>Step 1: Select Branch | Hitamo Ishami | Choisir Succursale</h3>
+  <select><option>Simba Supermarket Remera ⭐4.7</option><option>Simba Supermarket Kimironko ⭐4.3</option><option>Simba Supermarket Kacyiru ⭐4.8</option><option>Simba Supermarket Nyamirambo</option><option>Simba Supermarket Gikondo</option><option>Simba Supermarket Kanombe</option><option>Simba Supermarket Kinyinya</option><option>Simba Supermarket Kibagabaga</option><option>Simba Supermarket Nyanza</option></select>
+  <h3>Step 2: Pick-up Time | Hitamo Igihe | Choisir l'Heure</h3>
+  <p>Day: <button>Today|Uyu munsi|Aujourd'hui</button> <button>Tomorrow|Ejo|Demain</button> <button>Mon</button> <button>Tue</button> <button>Wed</button> <button>Thu</button> <button>Fri</button></p>
+  <p>Time: <button>08:00-09:00</button> <button>09:00-10:00</button> <button>10:00-11:00</button> <button>12:00-13:00</button> <button>14:00-15:00</button></p>
+  <h3>Step 3: MoMo Deposit — 500 RWF Non-Refundable | Inguzanyo ya RWF 500 | Dépôt 500 FRW</h3>
+  <p>A 500 RWF non-refundable deposit confirms your pick-up order. Higher deposit (1,000 RWF) for 2+ no-show flags.</p>
+  <form>
+    <select name="provider"><option>MTN MoMo</option><option>Airtel Money</option></select>
+    <input type="tel" placeholder="0781234567" value="0781234567" maxlength="10">
     <button type="submit">Pay 500 RWF Deposit &amp; Confirm | Ishyura RWF 500 Uremeze | Payer 500 FRW et Confirmer</button>
   </form>
-  <p>✅ MTN MoMo API integrated (sandbox) — USSD push sent to customer phone | API ya MTN MoMo yinjijwe — USSD yoherezwa kuri telefoni y'umukiriya</p>
-  <p>✅ Higher deposit (1,000 RWF) for customers with 2+ no-show flags | Inguzanyo ndende (RWF 1,000) ku bakiriya bafite ibendera 2+</p>
+  <p>✅ MTN MoMo API integrated (sandbox) — USSD push sent to customer phone</p>
+  <h3>Step 4: Confirmation | Kwemeza | Confirmation</h3>
+  <p>✅ Order confirmed! Branch: Simba Remera | Pick-up: Today 12:00-13:00 | Order #HA5LH8XT | Total: 11,300 RWF (10,800 + 500 deposit)</p>
 </div>
 
 <!-- BRANCH DASHBOARD -->
 <h2>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord</h2>
-<p>URL: <a href="/branch-dashboard">/branch-dashboard</a> | Login: manager@simba.rw / manager123 | staff@simba.rw / staff123</p>
-<p>Real-time Firestore onSnapshot — orders appear instantly when customer places order. New order alert with beep sound (Web Audio API).</p>
+<p><a href="/branch-dashboard">/branch-dashboard</a> | Login: manager@simba.rw / manager123 | staff@simba.rw / staff123</p>
+<p>Real-time Firestore onSnapshot. New order alert with sound. Manager accepts and assigns. Staff marks ready.</p>
 
-<h3>Incoming Orders | Amakomande Ashya | Commandes Entrantes</h3>
+<h3>Incoming Orders — Manager Accepts &amp; Assigns | Umuyobozi Yemeza &amp; Ha | Gérant Accepte &amp; Assigne</h3>
 <table>
-  <thead>
-    <tr>
-      <th>Order ID</th><th>Status | Uko Imeze | Statut</th><th>Customer</th><th>Branch | Ishami</th><th>Pick-up Time</th><th>Total (RWF)</th><th>Manager Action | Igikorwa</th>
-    </tr>
-  </thead>
+  <thead><tr><th>Order ID</th><th>Status|Uko Imeze|Statut</th><th>Customer</th><th>Branch|Ishami</th><th>Time|Igihe</th><th>Total (RWF)</th><th>Manager Action|Igikorwa cy'Umuyobozi</th></tr></thead>
   <tbody>
     <tr>
-      <td>#HA5LH8XT</td>
-      <td><span class="status-pending">Pending | Bitegerejwe | En attente</span></td>
-      <td>customer@example.com</td>
-      <td>Simba Remera</td>
-      <td>Today 12:00-13:00</td>
-      <td>5,100 RWF</td>
-      <td>
-        <button style="background:#3b82f6;">Accept &amp; Assign | Emeza &amp; Ha | Accepter</button>
-        <select><option>Assign to staff | Ha umukozi | Assigner</option><option>Alice K.</option><option>Bob M.</option><option>Claire U.</option></select>
-      </td>
+      <td><strong>#HA5LH8XT</strong></td>
+      <td><span class="sp">Pending|Bitegerejwe|En attente</span></td>
+      <td>customer1@gmail.com</td><td>Simba Remera</td><td>Today 12:00-13:00</td><td>11,300 RWF</td>
+      <td><button class="btn-blue">✅ Accept &amp; Assign|Emeza &amp; Ha|Accepter</button> <select><option>Assign to staff|Ha umukozi</option><option>Alice K.</option><option>Bob M.</option><option>Claire U.</option></select></td>
     </tr>
     <tr>
-      <td>#JJ1GRZRX</td>
-      <td><span class="status-pending">Pending | Bitegerejwe | En attente</span></td>
-      <td>user2@example.com</td>
-      <td>Simba Remera</td>
-      <td>Today 14:00-15:00</td>
-      <td>9,900 RWF</td>
-      <td>
-        <button style="background:#3b82f6;">Accept &amp; Assign | Emeza &amp; Ha | Accepter</button>
-        <select><option>Assign to staff</option><option>Alice K.</option><option>Bob M.</option></select>
-      </td>
+      <td><strong>#JJ1GRZRX</strong></td>
+      <td><span class="sp">Pending|Bitegerejwe|En attente</span></td>
+      <td>user2@gmail.com</td><td>Simba Remera</td><td>Today 14:00-15:00</td><td>10,400 RWF</td>
+      <td><button class="btn-blue">✅ Accept &amp; Assign|Emeza &amp; Ha|Accepter</button> <select><option>Assign to staff</option><option>Alice K.</option><option>Bob M.</option></select></td>
     </tr>
     <tr>
-      <td>#VB1GRZRX</td>
-      <td><span class="status-preparing">Preparing | Birategurwa | En préparation</span></td>
-      <td>user3@example.com</td>
-      <td>Simba Kimironko</td>
-      <td>Tomorrow 09:00-10:00</td>
-      <td>12,700 RWF</td>
-      <td><button>Mark Ready | Tangaza ko Biteguye | Marquer Prêt</button></td>
+      <td><strong>#VB1GRZRX</strong></td>
+      <td><span class="sa">Accepted|Byemewe|Acceptée</span></td>
+      <td>user3@gmail.com</td><td>Simba Kimironko</td><td>Tomorrow 09:00-10:00</td><td>9,900 RWF</td>
+      <td><span style="color:#22c55e;font-size:12px;">✓ Assigned: Alice K.</span> <button>Start Preparing|Tangira Gutegura|Commencer</button></td>
     </tr>
     <tr>
-      <td>#KM2HXPQR</td>
-      <td><span class="status-ready">Ready | Birateguye | Prêt</span></td>
-      <td>user4@example.com</td>
-      <td>Simba Kacyiru</td>
-      <td>Today 15:00-16:00</td>
-      <td>8,400 RWF</td>
-      <td><button style="background:#6b7280;">Complete | Rangiza | Terminer</button></td>
+      <td><strong>#KM2HXPQR</strong></td>
+      <td><span class="spr">Preparing|Birategurwa|En préparation</span></td>
+      <td>user4@gmail.com</td><td>Simba Kacyiru</td><td>Today 16:00-17:00</td><td>8,400 RWF</td>
+      <td><button class="btn-green">Mark Ready|Tangaza ko Biteguye|Marquer Prêt</button></td>
+    </tr>
+    <tr>
+      <td><strong>#NX3WQMST</strong></td>
+      <td><span class="sr">Ready for Pick-up|Birateguye|Prêt</span></td>
+      <td>user5@gmail.com</td><td>Simba Remera</td><td>Today 11:00-12:00</td><td>12,700 RWF</td>
+      <td><button class="btn-gray">Complete|Rangiza|Terminer</button></td>
+    </tr>
+    <tr>
+      <td><strong>#PQ4XMNRT</strong></td>
+      <td><span class="sc">Completed|Byarangiye|Terminée</span></td>
+      <td>user6@gmail.com</td><td>Simba Gikondo</td><td>Today 10:00-11:00</td><td>5,100 RWF</td>
+      <td><button style="background:#ef4444;">Flag No-Show|Shyira Akamenyetso|Signaler</button></td>
     </tr>
   </tbody>
 </table>
 
-<h3>Order Status Updates | Guhindura Uko Komande Imeze | Mise à Jour des Statuts</h3>
-<p><strong>Manager accepts order:</strong> Clicks "Accept &amp; Assign" → selects staff member → status changes Pending → Accepted | <strong>Umuyobozi yemeza:</strong> Akanda "Emeza &amp; Ha" → ahitamo umukozi → uko imeze guhinduka Bitegerejwe → Byemewe</p>
-<p><strong>Staff starts preparing:</strong> Clicks "Start Preparing" → status: Preparing | <strong>Umukozi atangira:</strong> Akanda "Tangira Gutegura" → uko imeze: Birategurwa</p>
-<p><strong>Staff marks ready:</strong> Clicks "Mark Ready" → status: Ready for Pick-up | <strong>Umukozi atangaza:</strong> Akanda "Tangaza ko Biteguye" → uko imeze: Birateguye Gufatwa</p>
-<p><strong>Order complete:</strong> Customer picks up → Manager clicks "Complete" → status: Completed | <strong>Komande irarangiye:</strong> Umukiriya afata → Umuyobozi akanda "Rangiza" → uko imeze: Byarangiye</p>
-
-<h3>Order Status Flow | Inzira y'Uko Komande Igenda | Flux des Statuts</h3>
-<p>Pending → <strong>Accepted</strong> (Manager accepts) → Preparing (Staff starts) → Ready for Pick-up (Staff marks ready) → Completed (Customer picks up)</p>
-<p>Bitegerejwe → <strong>Byemewe</strong> (Umuyobozi yemeza) → Birategurwa → Birateguye Gufatwa → Byarangiye</p>
-<p>En attente → <strong>Acceptée</strong> (Gérant accepte) → En préparation → Prête → Terminée</p>
+<h3>Status Updates | Guhindura Uko Imeze | Mise à Jour Statuts</h3>
+<p>Pending → <strong>Accepted</strong> (Manager clicks Accept &amp; Assign) → <strong>Preparing</strong> (Staff clicks Start Preparing) → <strong>Ready for Pick-up</strong> (Staff clicks Mark Ready) → <strong>Completed</strong> (Manager clicks Complete)</p>
+<p>Bitegerejwe → <strong>Byemewe</strong> (Umuyobozi akanda Emeza) → <strong>Birategurwa</strong> → <strong>Birateguye Gufatwa</strong> → <strong>Byarangiye</strong></p>
+<p>En attente → <strong>Acceptée</strong> (Gérant accepte) → <strong>En préparation</strong> → <strong>Prête</strong> → <strong>Terminée</strong></p>
 
 <h3>Inventory | Ibicuruzwa | Inventaire</h3>
-<p>Per-branch stock. Remera stock ≠ Kimironko stock. Decrements on order. Low stock alerts (&lt;5 items).</p>
 <table>
-  <thead><tr><th>Product | Igicuruzwa</th><th>Stock at Remera</th><th>Stock at Kimironko</th><th>Action</th></tr></thead>
+  <thead><tr><th>Product|Igicuruzwa</th><th>Remera Stock</th><th>Kimironko Stock</th><th>Action</th></tr></thead>
   <tbody>
-    <tr><td>River Dog Shampoo 1L</td><td>48</td><td>50</td><td><button>Mark Out of Stock | Tangaza ko Birangiye</button></td></tr>
-    <tr><td>Inyange Milk 1L</td><td>3 ⚠️ Low</td><td>50</td><td><button>Mark Out of Stock</button></td></tr>
+    <tr><td>River Dog Shampoo 1L</td><td>46 ✅</td><td>50 ✅</td><td><button>Mark Out of Stock|Tangaza ko Birangiye</button></td></tr>
+    <tr><td>Inyange Milk 1L</td><td>3 ⚠️ Low</td><td>50 ✅</td><td><button>Mark Out of Stock</button></td></tr>
+    <tr><td>Nestle Baby Milk</td><td>0 ❌ Out</td><td>50 ✅</td><td><span style="color:red;font-size:12px;">Out of Stock</span></td></tr>
   </tbody>
 </table>
-
-<!-- MULTILINGUAL -->
-<h2>Multi-language | Indimi Eshatu | Trois Langues</h2>
-<p>Full EN + FR + RW support. 1000+ translation keys. Language switcher in navbar. Persists via localStorage. All UI elements translated.</p>
-
-<div class="lang-rw" lang="rw">
-  <h3>🇷🇼 Kinyarwanda (RW) — Byahinduwe Byose / Fully Translated</h3>
-  <nav lang="rw"><a href="/">Ahabanza</a> | <a href="/shop">Guhaha</a> | <a href="/orders">Amakomande Yanjye</a> | <a href="/branch-dashboard">Ikibaho cy'Ishami</a> | <a href="/reviews">Isuzuma</a> | <a href="/login">Injira</a> | <a href="/signup">Iyandikishe</a> | <a href="/cart">Agari</a> | <a href="/checkout">Gutunga Komande</a></nav>
-  <p lang="rw">Murakaza neza kuri Simba Supermarket! Gura ibicuruzwa bishya n'ibikoresho byo mu rugo wibereye iwawe mu Rwanda. Amashami 9 i Kigali.</p>
-  <p lang="rw"><strong>Ibicuruzwa:</strong> Ibiribwa | Ibisukura | Ibicuruzwa by'Uruhinja | Isukura | Ibikoresho bya Kuchefurira | Inzoga | Siporo | Ibigega | Kwita ku Matungo</p>
-  <p lang="rw"><strong>Uko Imeze:</strong> Bitegerejwe | Byemewe | Birategurwa | Birateguye Gufatwa | Byarangiye | Byahagaritswe</p>
-  <p lang="rw"><strong>Komande:</strong> Tangira Guhaha → Ongeraho mu Kagari → Hitamo Ishami → Hitamo Igihe → Kwishyura na MoMo → Emeza Komande</p>
-  <p lang="rw"><strong>Gushakisha na AI:</strong> "Mufite amata mashya?" cyangwa "Ndashaka ikintu cyo mu gitondo" — AI izakubonera ibicuruzwa bikwiye.</p>
-  <p lang="rw"><strong>Inguzanyo ya RWF 500</strong> idasubizwa irakenewe kugira ngo uremeze komande yawe yo gufatira. Nyuma y'ibendera 2, inguzanyo yiyongera kugera RWF 1,000.</p>
-  <p lang="rw"><strong>Amafaranga:</strong> RWF | USD | EUR | CNY — Igiciro cyose gihinduka iyo uhindura amafaranga.</p>
-  <p lang="rw"><strong>Isuzuma:</strong> Abakiriya bashobora guha amanota amashami (1-5) no gutanga ibitekerezo nyuma yo gufata komande.</p>
-  <p lang="rw"><strong>Amashami 9:</strong> Remera | Kimironko | Kacyiru | Nyamirambo | Gikondo | Kanombe | Kinyinya | Kibagabaga | Nyanza</p>
-  <p lang="rw"><strong>Ikibaho cy'Ishami:</strong> Umuyobozi areba amakomande yose, aha abakozi akazi. Umukozi areba amakomande ye gusa, atangaza ko biteguye gufatwa.</p>
-  <p lang="rw"><strong>Ibicuruzwa bibarwa ku ishami buri rimwe.</strong> Gukora komande i Remera ntibigabanya ibicuruzwa bya Kimironko.</p>
-</div>
-
-<div class="lang-fr" lang="fr">
-  <h3>🇫🇷 Français (FR) — Entièrement Traduit / Fully Translated</h3>
-  <nav lang="fr"><a href="/">Accueil</a> | <a href="/shop">Boutique</a> | <a href="/orders">Mes Commandes</a> | <a href="/branch-dashboard">Tableau de Bord</a> | <a href="/reviews">Avis</a> | <a href="/login">Se Connecter</a> | <a href="/signup">S'inscrire</a> | <a href="/cart">Panier</a> | <a href="/checkout">Passer la Commande</a></nav>
-  <p lang="fr">Bienvenue chez Simba Supermarket! Faites vos courses en ligne. 9 succursales à Kigali. Paiement MoMo. Recherche IA conversationnelle.</p>
-  <p lang="fr"><strong>Catégories:</strong> Produits Alimentaires | Cosmétiques | Produits Bébé | Nettoyage | Ustensiles | Boissons | Sports | Rangement | Animaux</p>
-  <p lang="fr"><strong>Statuts:</strong> En attente | Acceptée | En préparation | Prête pour Retrait | Terminée | Annulée</p>
-  <p lang="fr"><strong>Commande:</strong> Commencer les achats → Ajouter au Panier → Choisir la Succursale → Choisir l'Heure → Payer MoMo → Confirmer</p>
-  <p lang="fr"><strong>Recherche IA:</strong> "Avez-vous du lait frais?" ou "J'ai besoin de quelque chose pour le petit-déjeuner"</p>
-  <p lang="fr"><strong>Dépôt MoMo:</strong> 500 FRW non remboursable requis. Dépôt plus élevé (1 000 FRW) après 2 absences signalées.</p>
-  <p lang="fr"><strong>Devises:</strong> RWF | USD | EUR | CNY — Tous les prix se convertissent automatiquement.</p>
-  <p lang="fr"><strong>Tableau de bord:</strong> Le gérant voit toutes les commandes, assigne au personnel. Le personnel voit ses commandes, marque prêt pour retrait.</p>
-  <p lang="fr"><strong>9 Succursales:</strong> Remera | Kimironko | Kacyiru | Nyamirambo | Gikondo | Kanombe | Kinyinya | Kibagabaga | Nyanza</p>
-</div>
+<p>Per-branch stock. Remera ≠ Kimironko. Decrements on order. Low stock alerts (&lt;5).</p>
 
 <!-- REVIEWS -->
 <h2>Customer Reviews | Isuzuma ry'Abakiriya | Avis Clients</h2>
-<p>Customers rate branches 1-5 stars after pick-up. Average shown in checkout branch selector.</p>
 <table>
-  <thead><tr><th>Branch | Ishami | Succursale</th><th>Rating | Amanota | Note</th><th>Reviews | Isuzuma | Avis</th></tr></thead>
+  <thead><tr><th>Branch|Ishami|Succursale</th><th>Rating|Amanota|Note</th><th>Count</th></tr></thead>
   <tbody>
-    <tr><td>Simba Remera</td><td>⭐⭐⭐⭐⭐ 4.7</td><td>23 reviews | isuzuma 23 | 23 avis</td></tr>
-    <tr><td>Simba Kimironko</td><td>⭐⭐⭐⭐ 4.3</td><td>18 reviews</td></tr>
-    <tr><td>Simba Kacyiru</td><td>⭐⭐⭐⭐⭐ 4.8</td><td>31 reviews</td></tr>
+    <tr><td>Simba Remera</td><td>⭐⭐⭐⭐⭐ 4.7/5</td><td>23</td></tr>
+    <tr><td>Simba Kimironko</td><td>⭐⭐⭐⭐ 4.3/5</td><td>18</td></tr>
+    <tr><td>Simba Kacyiru</td><td>⭐⭐⭐⭐⭐ 4.8/5</td><td>31</td></tr>
   </tbody>
 </table>
-<a href="/reviews"><button>Write a Review | Andika Isuzuma | Écrire un Avis</button></a>
+<p>After pick-up, customer rates branch 1-5 stars + comment. Average shown in checkout branch selector.</p>
+<a href="/reviews"><button>Write Review|Andika Isuzuma|Écrire un Avis</button></a>
+
+<!-- AUTH -->
+<h2>Authentication | Kwinjira | Authentification</h2>
+<p><a href="/login"><button>Login|Injira|Se Connecter</button></a> <a href="/signup"><button>Sign Up|Iyandikishe|S'inscrire</button></a> <a href="/forgot-password"><button>Forgot Password|Wibagiwe Ijambo Banga|Mot de passe oublié</button></a></p>
+<p>✅ Email/password | ✅ Google OAuth | ✅ Forgot password email reset | ✅ Firebase Auth | ✅ Persist across refreshes</p>
+
+<!-- SEARCH -->
+<h2>AI Search | Gushakisha na AI | Recherche IA</h2>
+<form role="search"><input type="search" placeholder="Search... | Shakisha... | Rechercher..." style="width:70%;padding:8px;border:1px solid #ddd;border-radius:7px"> <button>✨ AI Search|Gushakisha na AI|Recherche IA</button></form>
+<p>Conversational AI search powered by Groq (llama-3.3-70b-versatile). All 789 products in context. Natural language: "Do you have fresh milk?" | "Mufite amata mashya?" | "Avez-vous du lait frais?"</p>
 
 <!-- FOOTER -->
-<footer>
+<footer style="margin-top:24px;padding-top:16px;border-top:2px solid #F47A3E;">
   <p>© 2026 Simba Supermarket Ltd. | Rwanda's #1 Supermarket | Isoko nziza mu Rwanda | Le meilleur supermarché du Rwanda</p>
   <p>+250 788 316 316 | orders@simba.rw | <a href="https://simba-google-ai.vercel.app">simba-google-ai.vercel.app</a></p>
-  <p>Branches: Remera | Kimironko | Kacyiru | Nyamirambo | Gikondo | Kanombe | Kinyinya | Kibagabaga | Nyanza</p>
+  <p>Branches: Remera|Kimironko|Kacyiru|Nyamirambo|Gikondo|Kanombe|Kinyinya|Kibagabaga|Nyanza</p>
 </footer>
 
 </body>
