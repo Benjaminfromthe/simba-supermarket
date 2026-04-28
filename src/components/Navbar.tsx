@@ -14,6 +14,10 @@ const _gk = ['gsk_hCQzae1R9jba', 'FriUo83hWGdy', 'b3FYF68U61PMy', 'bQ3v2iPjxBA2K
 const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY || _gk;
 const CACHE_KEY = 'simba-name-cache-v5'; // bumped to clear bad Swahili translations
 
+import translationsData from '../data/product_translations.json';
+
+const STATIC_TRANSLATIONS: Record<string, Record<string, string>> = translationsData as any;
+
 function getNameCache(): Record<string, string> {
   try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } catch { return {}; }
 }
@@ -23,6 +27,10 @@ function saveNameCache(c: Record<string, string>) {
 
 export function getCachedProductName(name: string, lang: string): string {
   if (lang === 'en' || !name) return name;
+  // 1. Check static pre-generated translations first (instant)
+  const staticTrans = STATIC_TRANSLATIONS[lang]?.[name];
+  if (staticTrans && staticTrans !== name) return staticTrans;
+  // 2. Fall back to runtime cache
   try { return getNameCache()[`${lang}:${name}`] || name; } catch { return name; }
 }
 
