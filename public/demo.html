@@ -10,7 +10,7 @@
     // Only redirect if this specific demo page is visited directly
     // Check URL to make sure we're on /demo path
     if (window.location.pathname === '/demo') {
-      setTimeout(() => { window.location.href = 'https://simba-google-ai.vercel.app'; }, 3000);
+      window.location.replace('https://simba-google-ai.vercel.app');
     }
   </script>
   <style>
@@ -46,11 +46,7 @@
   <span>Simba Supermarket - Rwanda's #1 Online Supermarket</span>
   <a href="https://simba-google-ai.vercel.app">Open Live Site</a>
 </div>
-<!-- Redirect notice for human visitors -->
-<div id="redirect-notice" style="background:#1a1a1a;color:#fff;padding:10px 16px;text-align:center;font-size:13px;">
-  Redirecting you to the live site in 3 seconds... | <a href="https://simba-google-ai.vercel.app" style="color:#F47A3E;font-weight:bold;">Click here to go now</a>
-  <script>document.getElementById('redirect-notice').style.display='block';</script>
-</div>
+
 
 <h1>Simba Supermarket - Rwanda's #1 Online Supermarket</h1>
 <p><span class="badge">EN</span> <span class="badge">FR</span> <span class="badge">RW Kinyarwanda</span> <span class="badge">Groq AI</span> <span class="badge">MoMo</span> <span class="badge">Firebase</span></p>
