@@ -100,32 +100,29 @@ const LANG_NAMES: Record<string, string> = {
 
 export async function groqConversationalSearch(query: string, lang = 'en'): Promise<GroqResult> {
   const q = query.toLowerCase().trim();
-
-  // Handle pure greetings only — exact matches, not partial
-  const pureGreetings = ['hi', 'hello', 'hey', 'bonjour', 'salut', 'muraho', 'mwaramutse', 'hi!', 'hello!', 'hey!'];
-  if (pureGreetings.includes(q)) {
-    const greetingResponses: Record<string, string> = {
-      en: "Hi there! I'm Simba's AI assistant 🛒 Ask me anything about our products, branches, delivery, or just say what you need!",
-      fr: "Bonjour! Je suis l'assistant IA de Simba 🛒 Posez-moi n'importe quelle question sur nos produits ou succursales!",
-      rw: "Muraho! Ndi umufasha wa AI wa Simba 🛒 Mbaza ikibazo cyose ku bicuruzwa cyangwa amashami yacu!",
-    };
-    return { message: greetingResponses[lang] || greetingResponses.en, products: [] };
-  }
-
-  const fallback = localSearch(query, 8);
-  const intentFallback = fallback.length > 0 ? fallback : localSearch(query.split(' ').slice(-1)[0], 8);
-  const isSimple = query.length < 15 && !query.includes(' ');
-  if (isSimple && fallback.length > 0) return { message: '', products: fallback };
-
-  if (!GROQ_API_KEY) {
-    return {
-      message: fallback.length > 0 ? `Found ${fallback.length} products for you:` : "I couldn't find matching products.",
-      products: intentFallback,
-    };
-  }
-
   const langName = LANG_NAMES[lang] || 'English';
 
+  // Pure greetings — instant response, no API needed
+  const pureGreetings = ['hi', 'hello', 'hey', 'bonjour', 'salut', 'muraho', 'mwaramutse', 'hi!', 'hello!', 'hey!'];
+  if (pureGreetings.includes(q)) {
+    const r: Record<string, string> = {
+      en: "Hi there! 👋 I'm Simba's AI assistant. Ask me anything — products, branches, hours, or anything else!",
+      fr: "Bonjour! 👋 Je suis l'assistant IA de Simba. Posez-moi n'importe quelle question!",
+      rw: "Muraho! 👋 Ndi umufasha wa AI wa Simba. Mbaza ikibazo cyose!",
+    };
+    return { message: r[lang] || r.en, products: [] };
+  }
+
+  // If no API key, use local search as fallback
+  if (!GROQ_API_KEY) {
+    const fallback = localSearch(query, 6);
+    return {
+      message: fallback.length > 0 ? `Found ${fallback.length} products for you:` : "I couldn't find matching products. Try browsing our shop!",
+      products: fallback,
+    };
+  }
+
+  // Always call Groq for everything — it handles both product searches AND general questions
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -135,44 +132,60 @@ export async function groqConversationalSearch(query: string, lang = 'en'): Prom
         messages: [
           {
             role: 'system',
-            content: `You are a friendly AI assistant for Simba Supermarket in Kigali, Rwanda. Always respond in ${langName}.
+            content: `You are a friendly, natural AI assistant for Simba Supermarket in Kigali, Rwanda. Always respond in ${langName}.
 
-You can answer ANY question the customer asks:
-- Product searches: find matching products from the catalog
-- Simba info: 9 branches in Kigali (Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga, Nyanza), open 7am-10pm daily, MoMo payment, 45-min pick-up, 789+ products
-- General questions (weather, math, advice): answer helpfully
-- Price constraints: "milk under 1000" = find milk with price <= 1000 RWF
+You can answer ANYTHING:
+- Product searches: find products from the catalog
+- Simba info: 9 branches (Remera, Kimironko, Kacyiru, Nyamirambo, Gikondo, Kanombe, Kinyinya, Kibagabaga, Nyanza), open 7am-10pm, MoMo payment, 45-min pick-up, 789+ products
+- General questions: answer naturally and helpfully
+- Greetings/small talk: respond warmly like a real person
 
-Always respond with valid JSON: {"message": "your response in ${langName}", "productIds": [id1, id2, ...]}
-- For product questions: include relevant product IDs (max 6), only from catalog
-- For non-product questions: set productIds to []
-- Be warm, helpful and conversational
+ALWAYS respond with valid JSON:
+{"message": "your natural response in ${langName}", "productIds": [id1, id2]}
 
-PRODUCT CATALOG (${ALL_PRODUCTS.length} products, format id|name|price|category):
+Rules:
+- For product questions: include relevant product IDs (max 6) from catalog only
+- For non-product questions (branches, hours, general chat): set productIds to []
+- Be warm, conversational, helpful — like a real store assistant
+- Price constraints work: "milk under 1000" = price <= 1000 RWF
+
+PRODUCT CATALOG (id|name|price|category):
 ${CATALOG}`,
           },
           { role: 'user', content: query },
         ],
-        temperature: 0.3,
+        temperature: 0.4,
         max_tokens: 400,
       }),
     });
+
     const data = await res.json();
     const content = data.choices?.[0]?.message?.content || '{}';
+    // Try to extract JSON — Groq sometimes wraps it in text
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      const aiProducts = (parsed.productIds || [])
-        .map((id: any) => ALL_PRODUCTS.find(p => p.id === id || p.id === String(id)))
-        .filter(Boolean) as Product[];
-      // Always fall back to local results if AI returns nothing
-      const final = aiProducts.length > 0 ? aiProducts : intentFallback;
-      return { message: parsed.message || '', products: final };
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        const aiProducts = (parsed.productIds || [])
+          .map((id: any) => ALL_PRODUCTS.find(p => p.id === id || p.id === String(id)))
+          .filter(Boolean) as Product[];
+        return {
+          message: parsed.message || content,
+          products: aiProducts,
+        };
+      } catch {
+        // JSON parse failed — return the raw message
+        return { message: content.slice(0, 300), products: [] };
+      }
     }
+    // No JSON found — Groq returned plain text (for general questions)
+    return { message: content.slice(0, 300), products: [] };
+
   } catch (err) {
     console.error('Groq error:', err);
+    const fallback = localSearch(query, 6);
+    return { message: fallback.length > 0 ? '' : "Sorry, I had trouble connecting. Try again!", products: fallback };
   }
-  return { message: '', products: intentFallback };
 }
 
 // ── Groq ID-only search (used by ShopPage full results) ────────────────────
