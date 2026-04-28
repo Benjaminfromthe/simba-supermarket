@@ -163,14 +163,14 @@
 
 <!-- BRANCH DASHBOARD -->
 <h2>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord</h2>
-<p>URL: <a href="/branch-dashboard">/branch-dashboard</a> (login: manager@simba.rw / manager123) | Full demo: <a href="/dashboard-demo">/dashboard-demo</a></p>
-<p>Real-time Firestore onSnapshot — orders appear instantly. New order alert with beep sound.</p>
+<p>URL: <a href="/branch-dashboard">/branch-dashboard</a> | Login: manager@simba.rw / manager123 | staff@simba.rw / staff123</p>
+<p>Real-time Firestore onSnapshot — orders appear instantly when customer places order. New order alert with beep sound (Web Audio API).</p>
 
 <h3>Incoming Orders | Amakomande Ashya | Commandes Entrantes</h3>
 <table>
   <thead>
     <tr>
-      <th>Order ID</th><th>Status | Uko Imeze | Statut</th><th>Customer</th><th>Branch | Ishami</th><th>Pick-up Time</th><th>Total</th><th>Action | Igikorwa</th>
+      <th>Order ID</th><th>Status | Uko Imeze | Statut</th><th>Customer</th><th>Branch | Ishami</th><th>Pick-up Time</th><th>Total (RWF)</th><th>Manager Action | Igikorwa</th>
     </tr>
   </thead>
   <tbody>
@@ -182,32 +182,53 @@
       <td>Today 12:00-13:00</td>
       <td>5,100 RWF</td>
       <td>
+        <button style="background:#3b82f6;">Accept &amp; Assign | Emeza &amp; Ha | Accepter</button>
         <select><option>Assign to staff | Ha umukozi | Assigner</option><option>Alice K.</option><option>Bob M.</option><option>Claire U.</option></select>
       </td>
     </tr>
     <tr>
       <td>#JJ1GRZRX</td>
-      <td><span class="status-preparing">Preparing | Birategurwa | En préparation</span></td>
+      <td><span class="status-pending">Pending | Bitegerejwe | En attente</span></td>
       <td>user2@example.com</td>
+      <td>Simba Remera</td>
+      <td>Today 14:00-15:00</td>
+      <td>9,900 RWF</td>
+      <td>
+        <button style="background:#3b82f6;">Accept &amp; Assign | Emeza &amp; Ha | Accepter</button>
+        <select><option>Assign to staff</option><option>Alice K.</option><option>Bob M.</option></select>
+      </td>
+    </tr>
+    <tr>
+      <td>#VB1GRZRX</td>
+      <td><span class="status-preparing">Preparing | Birategurwa | En préparation</span></td>
+      <td>user3@example.com</td>
       <td>Simba Kimironko</td>
       <td>Tomorrow 09:00-10:00</td>
       <td>12,700 RWF</td>
       <td><button>Mark Ready | Tangaza ko Biteguye | Marquer Prêt</button></td>
     </tr>
     <tr>
-      <td>#VB1GRZRX</td>
+      <td>#KM2HXPQR</td>
       <td><span class="status-ready">Ready | Birateguye | Prêt</span></td>
-      <td>user3@example.com</td>
+      <td>user4@example.com</td>
       <td>Simba Kacyiru</td>
       <td>Today 15:00-16:00</td>
       <td>8,400 RWF</td>
-      <td><button>Complete | Rangiza | Terminer</button></td>
+      <td><button style="background:#6b7280;">Complete | Rangiza | Terminer</button></td>
     </tr>
   </tbody>
 </table>
 
+<h3>Order Status Updates | Guhindura Uko Komande Imeze | Mise à Jour des Statuts</h3>
+<p><strong>Manager accepts order:</strong> Clicks "Accept &amp; Assign" → selects staff member → status changes Pending → Accepted | <strong>Umuyobozi yemeza:</strong> Akanda "Emeza &amp; Ha" → ahitamo umukozi → uko imeze guhinduka Bitegerejwe → Byemewe</p>
+<p><strong>Staff starts preparing:</strong> Clicks "Start Preparing" → status: Preparing | <strong>Umukozi atangira:</strong> Akanda "Tangira Gutegura" → uko imeze: Birategurwa</p>
+<p><strong>Staff marks ready:</strong> Clicks "Mark Ready" → status: Ready for Pick-up | <strong>Umukozi atangaza:</strong> Akanda "Tangaza ko Biteguye" → uko imeze: Birateguye Gufatwa</p>
+<p><strong>Order complete:</strong> Customer picks up → Manager clicks "Complete" → status: Completed | <strong>Komande irarangiye:</strong> Umukiriya afata → Umuyobozi akanda "Rangiza" → uko imeze: Byarangiye</p>
+
 <h3>Order Status Flow | Inzira y'Uko Komande Igenda | Flux des Statuts</h3>
-<p>Pending → Accepted → Preparing → Ready for Pick-up → Completed | Bitegerejwe → Byemewe → Birategurwa → Birateguye → Byarangiye | En attente → Acceptée → En préparation → Prête → Terminée</p>
+<p>Pending → <strong>Accepted</strong> (Manager accepts) → Preparing (Staff starts) → Ready for Pick-up (Staff marks ready) → Completed (Customer picks up)</p>
+<p>Bitegerejwe → <strong>Byemewe</strong> (Umuyobozi yemeza) → Birategurwa → Birateguye Gufatwa → Byarangiye</p>
+<p>En attente → <strong>Acceptée</strong> (Gérant accepte) → En préparation → Prête → Terminée</p>
 
 <h3>Inventory | Ibicuruzwa | Inventaire</h3>
 <p>Per-branch stock. Remera stock ≠ Kimironko stock. Decrements on order. Low stock alerts (&lt;5 items).</p>
