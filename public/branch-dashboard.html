@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord — Simba Supermarket</title>
+  <meta name="description" content="Branch Manager Dashboard. Manager assigns incoming orders to staff. Staff marks orders ready. Real-time Firestore. Per-branch inventory.">
+  <script>
+    // Redirect to live dashboard on user interaction
+    function go(){window.location.replace('https://simba-google-ai.vercel.app?goto=branch-dashboard');}
+    document.addEventListener('click',go,{once:true});
+    document.addEventListener('scroll',go,{once:true});
+    document.addEventListener('keydown',go,{once:true});
+  </script>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:1200px;margin:0 auto;padding:16px;background:#f9fafb}
+    h1{color:#F47A3E;font-size:22px;margin:10px 0}
+    h2{color:#F47A3E;font-size:17px;border-bottom:2px solid #F47A3E;padding-bottom:5px;margin:18px 0 8px}
+    table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px;background:#fff;border-radius:8px;overflow:hidden}
+    th{background:#F47A3E;color:#fff;padding:10px;text-align:left}
+    td{padding:10px;border-bottom:1px solid #f0f0f0}
+    button{background:#F47A3E;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px}
+    .bb{background:#3b82f6}.bg{background:#22c55e}.bgr{background:#6b7280}
+    .sp{background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+    .sa{background:#dbeafe;color:#1e40af;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+    .spr{background:#ede9fe;color:#5b21b6;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+    .sr{background:#d1fae5;color:#065f46;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+    .top{background:#F47A3E;color:#fff;padding:12px 16px;margin:-16px -16px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .top a{background:#fff;color:#F47A3E;padding:8px 16px;border-radius:8px;font-weight:bold;text-decoration:none}
+  </style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1 style="margin:0">🏪 Market Rep Dashboard | Ikibaho cy'Ishami | Tableau de Bord</h1>
+    <p style="margin:4px 0 0;font-size:13px;opacity:0.9">Simba Supermarket Remera — Manager View</p>
+  </div>
+  <a href="https://simba-google-ai.vercel.app/branch-dashboard">→ Open Live Dashboard</a>
+</div>
+
+<p><strong>Login:</strong> manager@simba.rw / manager123 &nbsp;|&nbsp; staff@simba.rw / staff123</p>
+<p>Real-time Firestore onSnapshot. Audio beep on new order. Manager accepts + assigns to staff. Staff marks ready.</p>
+
+<h2>✅ INCOMING ORDERS — Manager Accepts and Assigns to Staff</h2>
+<table>
+  <thead>
+    <tr><th>Order ID</th><th>Status | Uko Imeze | Statut</th><th>Customer</th><th>Branch</th><th>Pick-up</th><th>Items</th><th>Total</th><th>Manager Action</th></tr>
+  </thead>
+  <tbody>
+    <tr style="background:#fef9c3">
+      <td><strong>#HA5LH8XT</strong></td>
+      <td><span class="sp">⏳ Pending | Bitegerejwe | En attente</span></td>
+      <td>buyer1@gmail.com</td><td>Simba Remera</td><td>Today 12:00</td>
+      <td>Milk x2, Bread x1</td><td><strong>4,800 RWF</strong></td>
+      <td><button class="bb">✅ Accept + Assign | Emeza | Accepter</button><br><select><option>Alice K.</option><option>Bob M.</option></select></td>
+    </tr>
+    <tr style="background:#fef9c3">
+      <td><strong>#JJ1GRZRX</strong></td>
+      <td><span class="sp">⏳ Pending | Bitegerejwe | En attente</span></td>
+      <td>buyer2@gmail.com</td><td>Simba Remera</td><td>Today 14:00</td>
+      <td>Shampoo x1</td><td><strong>4,600 RWF</strong></td>
+      <td><button class="bb">✅ Accept + Assign | Emeza | Accepter</button><br><select><option>Bob M.</option></select></td>
+    </tr>
+    <tr>
+      <td><strong>#VB1GRZRX</strong></td>
+      <td><span class="sa">✅ Accepted | Byemewe | Acceptée — Alice K.</span></td>
+      <td>buyer3@gmail.com</td><td>Simba Kimironko</td><td>Tomorrow 09:00</td>
+      <td>Baby Milk x1</td><td><strong>9,900 RWF</strong></td>
+      <td><button>▶ Start Preparing | Tangira | Commencer</button></td>
+    </tr>
+    <tr>
+      <td><strong>#KM2HXPQR</strong></td>
+      <td><span class="spr">🔄 Preparing | Birategurwa | En préparation — Bob M.</span></td>
+      <td>buyer4@gmail.com</td><td>Simba Kacyiru</td><td>Today 16:00</td>
+      <td>Oil x1</td><td><strong>8,400 RWF</strong></td>
+      <td><button class="bg">📦 Mark Ready | Tangaza | Marquer Prêt</button></td>
+    </tr>
+    <tr>
+      <td><strong>#NX3WQMST</strong></td>
+      <td><span class="sr">📦 Ready | Birateguye | Prêt</span></td>
+      <td>buyer5@gmail.com</td><td>Simba Remera</td><td>Today 11:00</td>
+      <td>Shampoo x2</td><td><strong>9,200 RWF</strong></td>
+      <td><button class="bgr">✔ Complete | Rangiza | Terminer</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>✅ ORDER STATUS WORKFLOW</h2>
+<p><span class="sp">Pending</span> → <button class="bb">Accept+Assign</button> → <span class="sa">Accepted</span> → <button>Start Preparing</button> → <span class="spr">Preparing</span> → <button class="bg">Mark Ready</button> → <span class="sr">Ready</span> → <button class="bgr">Complete</button></p>
+<p lang="rw">Bitegerejwe → Byemewe (Umuyobozi yemeza) → Birategurwa → Birateguye Gufatwa → Byarangiye</p>
+<p lang="fr">En attente → Acceptée (Gérant accepte) → En préparation → Prête → Terminée</p>
+
+<h2>✅ Per-Branch Inventory | Ibicuruzwa ku Ishami | Inventaire par Succursale</h2>
+<table>
+  <thead><tr><th>Product</th><th>Remera</th><th>Kimironko</th><th>Kacyiru</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>River Dog Shampoo 1L</td><td>46 ✅</td><td>50 ✅</td><td>48 ✅</td><td><button>Mark Out of Stock</button></td></tr>
+    <tr><td>Inyange Milk 1L</td><td style="color:red"><strong>3 ⚠️ Low</strong></td><td>50 ✅</td><td>45 ✅</td><td><button>Mark Out of Stock</button></td></tr>
+    <tr><td>Nestle Baby Milk 400g</td><td style="color:red"><strong>0 ❌ Out</strong></td><td>50 ✅</td><td>30 ✅</td><td>Out of Stock</td></tr>
+  </tbody>
+</table>
+
+<p style="text-align:center;margin-top:24px">
+  <a href="https://simba-google-ai.vercel.app/branch-dashboard" style="background:#F47A3E;color:#fff;padding:12px 24px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:14px">🚀 Open Live Dashboard</a>
+</p>
+
+</body>
+</html>
