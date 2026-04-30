@@ -430,13 +430,16 @@ export default function CheckoutPage() {
                     </button>
                   ))}
                 </div>
-                <button
-                  onClick={() => setStep('payment')}
-                  disabled={!selectedTime}
-                  className="mt-6 w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
-                >
-                  {t('continue')} <ChevronRight className="w-4 h-4" />
-                </button>
+                {/* Sticky Continue button — always visible */}
+                <div className="sticky bottom-0 bg-white dark:bg-card pt-3 pb-2 -mx-6 px-6 border-t border-gray-100 dark:border-gray-800 mt-4">
+                  <button
+                    onClick={() => setStep('payment')}
+                    disabled={!selectedTime}
+                    className="w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
+                  >
+                    {t('continue')} <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             )}
 
@@ -486,18 +489,20 @@ export default function CheckoutPage() {
                   <p className="text-xs text-gray-400 mt-1">{t('enterTenDigitPhone')}</p>
                 </div>
 
-                <button
-                  onClick={handlePlaceOrder}
-                  disabled={isProcessing || momoPhone.length < 9}
-                  className="btn-glow btn-shimmer w-full disabled:opacity-40 disabled:cursor-not-allowed py-4 rounded-xl flex items-center justify-center gap-2 text-lg"
-                  onMouseMove={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    e.currentTarget.style.setProperty('--x', `${e.clientX - rect.left}px`);
-                    e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
-                  }}
-                >
-                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `${t('payDepositConfirm', { amount: formatPrice(depositAmount, currency) })}`}
-                </button>
+                <div className="sticky bottom-0 bg-white dark:bg-card pt-3 pb-2 -mx-6 px-6 border-t border-gray-100 dark:border-gray-800">
+                  <button
+                    onClick={handlePlaceOrder}
+                    disabled={isProcessing || momoPhone.length < 9}
+                    className="btn-glow btn-shimmer w-full disabled:opacity-40 disabled:cursor-not-allowed py-4 rounded-xl flex items-center justify-center gap-2 text-lg"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      e.currentTarget.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                      e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`);
+                    }}
+                  >
+                    {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `${t('payDepositConfirm', { amount: formatPrice(depositAmount, currency) })}`}
+                  </button>
+                </div>
               </div>
             )}
           </div>
