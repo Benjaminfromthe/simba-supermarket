@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Loader2, MapPin, Clock, Phone, ChevronRight, Store, ArrowLeft, Star } from 'lucide-react';
+import { CheckCircle2, Loader2, MapPin, Clock, Phone, ChevronRight, Store, ArrowLeft, Star, AlertTriangle } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { getLocalizedProductName } from '../lib/localize';
-import { decrementStock } from '../lib/inventory';
+import { decrementStock, branchHasStock } from '../lib/inventory';
 import { getDepositAmount } from '../lib/noshow';
 import branches from '../data/branches.json';
 import PageTransition from '../components/PageTransition';
@@ -58,6 +58,9 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState('');
   const [depositAmount, setDepositAmount] = useState(500);
   const [branchRatings, setBranchRatings] = useState<Record<string, { avg: number; count: number }>>({});
+  // Track which branches have sufficient stock for the current cart
+  const [branchStock, setBranchStock] = useState<Record<string, boolean>>({});
+  const [stockLoading, setStockLoading] = useState(false);
 
   // Scroll to top of page whenever step changes so user sees the new step title
   useEffect(() => {
@@ -99,6 +102,24 @@ export default function CheckoutPage() {
     }
     fetchRatings();
   }, []);
+
+  // Check stock availability for each branch based on current cart items
+  useEffect(() => {
+    if (items.length === 0) return;
+    setStockLoading(true);
+    const cartItems = items.map(i => ({ id: i.id, quantity: i.quantity }));
+    Promise.all(
+      branches.map(async b => ({
+        id: b.id,
+        hasStock: await branchHasStock(b.id, cartItems),
+      }))
+    ).then(results => {
+      const map: Record<string, boolean> = {};
+      results.forEach(r => { map[r.id] = r.hasStock; });
+      setBranchStock(map);
+      setStockLoading(false);
+    });
+  }, [items]);
 
   if (items.length === 0 && step !== 'success') {
     return (
@@ -284,11 +305,21 @@ export default function CheckoutPage() {
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">{t('choosePickupBranchHelp')}</p>
                 <div className="space-y-3">
-                  {branches.map((branch) => (
+                  {branches.map((branch) => {
+                    const hasStock = branchStock[branch.id] !== false; // default true while loading
+                    const isOutOfStock = !stockLoading && branchStock[branch.id] === false;
+                    return (
                     <button
                       key={branch.id}
-                      onClick={() => setSelectedBranch(branch)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${selectedBranch?.id === branch.id ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'}`}
+                      onClick={() => !isOutOfStock && setSelectedBranch(branch)}
+                      disabled={isOutOfStock}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                        isOutOfStock
+                          ? 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800/50'
+                          : selectedBranch?.id === branch.id
+                            ? 'border-[#F47A3E] bg-orange-50 dark:bg-orange-950/30'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'
+                      }`}
                     >
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
@@ -296,7 +327,18 @@ export default function CheckoutPage() {
                             {selectedBranch?.id === branch.id && <div className="w-2 h-2 rounded-full bg-[#F47A3E]" />}
                           </div>
                           <div>
-                            <p className="font-bold dark:text-white">{branch.name}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold dark:text-white">{branch.name}</p>
+                              {stockLoading ? (
+                                <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-400 px-2 py-0.5 rounded-full">checking...</span>
+                              ) : isOutOfStock ? (
+                                <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full flex items-center gap-1 font-bold">
+                                  <AlertTriangle className="w-2.5 h-2.5" /> Out of stock
+                                </span>
+                              ) : (
+                                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">✓ In stock</span>
+                              )}
+                            </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
                               <MapPin className="w-3 h-3" /> {branch.locationNote}
                             </p>
@@ -332,7 +374,8 @@ export default function CheckoutPage() {
                         </button>
                       </div>
                     </button>
-                  ))}
+                    );
+                  })}
                 </div>
                 <button
                   onClick={() => setStep('timeslot')}

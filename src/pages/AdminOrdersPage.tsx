@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, query, orderBy, getDocs, Timestamp, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, onSnapshot, Timestamp, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Package, Clock, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
+import { Loader2, Package, Clock, CheckCircle2, XCircle, ShieldCheck, Bell, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrencyStore, formatPrice } from '../store/useCurrencyStore';
 
@@ -34,30 +34,46 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
 
+  // Pop-up notification state
+  const [popups, setPopups] = useState<{ id: string; message: string; type: 'new_order' | 'status_change' }[]>([]);
+  const prevOrderIds = useRef<Set<string>>(new Set());
+  const prevStatuses = useRef<Record<string, string>>({});
+
+  const addPopup = (message: string, type: 'new_order' | 'status_change') => {
+    const id = Math.random().toString(36).slice(2);
+    setPopups(p => [...p, { id, message, type }]);
+    setTimeout(() => setPopups(p => p.filter(x => x.id !== id)), 5000);
+  };
+
   useEffect(() => {
     if (!currentUser) return;
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
+    if (!isAdmin) { navigate('/'); return; }
 
-    async function fetchAllOrders() {
-      try {
-        const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const fetchedOrders: Order[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedOrders.push({ id: doc.id, ...doc.data() } as Order);
-        });
-        setOrders(fetchedOrders);
-      } catch (error) {
-        console.error('Error fetching admin orders:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    // Real-time listener instead of one-time fetch
+    const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, (snap) => {
+      const fetched: Order[] = snap.docs.map(d => ({ id: d.id, ...d.data() } as Order));
+      setOrders(fetched);
+      setLoading(false);
 
-    fetchAllOrders();
+      // Detect new orders
+      fetched.forEach(o => {
+        if (!prevOrderIds.current.has(o.id) && prevOrderIds.current.size > 0) {
+          addPopup(`🛎️ New order #${o.id.slice(0,8).toUpperCase()} — ${o.status}`, 'new_order');
+        }
+        // Detect status changes
+        if (prevStatuses.current[o.id] && prevStatuses.current[o.id] !== o.status) {
+          addPopup(`📦 Order #${o.id.slice(0,8).toUpperCase()} → ${o.status.toUpperCase()}`, 'status_change');
+        }
+      });
+      prevOrderIds.current = new Set(fetched.map(o => o.id));
+      prevStatuses.current = Object.fromEntries(fetched.map(o => [o.id, o.status]));
+    }, (err) => {
+      console.error('Admin orders listener error:', err);
+      setLoading(false);
+    });
+
+    return () => unsub();
   }, [currentUser, isAdmin, navigate]);
 
   const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
@@ -97,6 +113,26 @@ export default function AdminOrdersPage() {
 
   return (
     <div className=" min-h-screen py-10 md:py-16 text-foreground">
+      {/* Pop-up notifications — fixed top-right */}
+      <div className="fixed top-20 right-4 z-[999] flex flex-col gap-2 pointer-events-none">
+        {popups.map(popup => (
+          <div
+            key={popup.id}
+            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-white text-sm font-bold animate-bounce-in max-w-xs ${
+              popup.type === 'new_order' ? 'bg-green-600' : 'bg-blue-600'
+            }`}
+          >
+            <Bell className="w-4 h-4 shrink-0" />
+            <span className="flex-1">{popup.message}</span>
+            <button
+              onClick={() => setPopups(p => p.filter(x => x.id !== popup.id))}
+              className="hover:opacity-70 transition"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex items-center gap-3 mb-8 bg-black dark:bg-card text-white p-6 rounded-2xl shadow-lg border border-gray-800">
           <ShieldCheck className="w-10 h-10 text-[#F47A3E]" />

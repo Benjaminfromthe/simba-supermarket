@@ -34,3 +34,23 @@ export async function getLowStock(branchId: string): Promise<{ productId: string
     return snap.docs.map(d => ({ productId: d.data().productId, stock: d.data().stock }));
   } catch { return []; }
 }
+
+/** Check if a branch has sufficient stock for all cart items.
+ *  Returns true if the branch can fulfil the entire cart.
+ *  Items not yet in Firestore are assumed to have DEFAULT_STOCK (50). */
+export async function branchHasStock(
+  branchId: string,
+  items: { id: string | number; quantity: number }[]
+): Promise<boolean> {
+  try {
+    for (const item of items) {
+      const ref = doc(db, 'inventory', invId(branchId, item.id));
+      const snap = await getDoc(ref);
+      const stock = snap.exists() ? (snap.data().stock ?? DEFAULT_STOCK) : DEFAULT_STOCK;
+      if (stock < item.quantity) return false;
+    }
+    return true;
+  } catch {
+    return true; // fail open — don't block checkout on network error
+  }
+}

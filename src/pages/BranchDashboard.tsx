@@ -140,8 +140,31 @@ export default function BranchDashboard() {
     loadLowStock();
   }, [selectedBranchId, orders.length]);
 
+  // Toast popup state for BranchDashboard
+  const [toasts, setToasts] = useState<{ id: string; message: string; color: string }[]>([]);
+  const addToast = (message: string, color = 'bg-[#F47A3E]') => {
+    const id = Math.random().toString(36).slice(2);
+    setToasts(p => [...p, { id, message, color }]);
+    setTimeout(() => setToasts(p => p.filter(x => x.id !== id)), 4000);
+  };
+
   const updateOrder = async (orderId: string, data: Record<string, any>) => {
     await updateDoc(doc(db, 'orders', orderId), { ...data, updatedAt: new Date() });
+    // Show popup for status changes
+    if (data.status) {
+      const statusMessages: Record<string, string> = {
+        accepted:   '✅ Order accepted & assigned',
+        preparing:  '🔄 Order is being prepared',
+        ready:      '📦 Order ready for pick-up!',
+        completed:  '✔ Order completed',
+        cancelled:  '❌ Order cancelled',
+      };
+      addToast(statusMessages[data.status] || `Order → ${data.status}`,
+        data.status === 'ready' ? 'bg-green-600' :
+        data.status === 'cancelled' ? 'bg-red-600' :
+        data.status === 'completed' ? 'bg-gray-700' : 'bg-[#F47A3E]'
+      );
+    }
   };
 
   const staffFilteredOrders = useMemo(() => {
@@ -176,6 +199,18 @@ export default function BranchDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
+      {/* Toast notifications — fixed top-right */}
+      <div className="fixed top-20 right-4 z-[999] flex flex-col gap-2 pointer-events-none">
+        {toasts.map(toast => (
+          <div key={toast.id} className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-white text-sm font-bold max-w-xs ${toast.color}`}>
+            <Bell className="w-4 h-4 shrink-0" />
+            <span className="flex-1">{toast.message}</span>
+            <button onClick={() => setToasts(p => p.filter(x => x.id !== toast.id))} className="hover:opacity-70">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
       <div className="bg-[#F47A3E] text-white py-4 px-4">
         <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">          <div className="flex items-center gap-3">
             <Store className="w-6 h-6" />
