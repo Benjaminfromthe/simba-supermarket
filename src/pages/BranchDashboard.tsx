@@ -45,7 +45,15 @@ export default function BranchDashboard() {
   const [selectedStaff, setSelectedStaff] = useState(userProfile?.staffName || STAFF_MEMBERS[0]);
   const [lowStock, setLowStock] = useState<InventoryAlert[]>([]);
   const [loadingInventory, setLoadingInventory] = useState(true);
-  const branchLocked = !!userProfile?.branchId && isStaff; // only lock staff, managers can switch
+  const branchLocked = !!userProfile?.branchId && isStaff;
+
+  // Toast popups — defined first so they can be used in all effects below
+  const [toasts, setToasts] = useState<{ id: string; message: string; color: string }[]>([]);
+  const addToast = useCallback((message: string, color = 'bg-[#F47A3E]') => {
+    const id = Math.random().toString(36).slice(2);
+    setToasts(p => [...p, { id, message, color }]);
+    setTimeout(() => setToasts(p => p.filter(x => x.id !== id)), 4000);
+  }, []);
 
   // New-order alert state
   const [newOrderAlert, setNewOrderAlert] = useState(false);
@@ -142,20 +150,12 @@ export default function BranchDashboard() {
     loadLowStock();
   }, [selectedBranchId, orders.length]);
 
-  // Toast popup state for BranchDashboard
-  const [toasts, setToasts] = useState<{ id: string; message: string; color: string }[]>([]);
-  const addToast = useCallback((message: string, color = 'bg-[#F47A3E]') => {
-    const id = Math.random().toString(36).slice(2);
-    setToasts(p => [...p, { id, message, color }]);
-    setTimeout(() => setToasts(p => p.filter(x => x.id !== id)), 4000);
-  }, []);
-
   const updateOrder = async (orderId: string, data: Record<string, any>) => {
     await updateDoc(doc(db, 'orders', orderId), { ...data, updatedAt: new Date() });
     // Show popup for status changes
     if (data.status) {
       const statusMessages: Record<string, string> = {
-        accepted:   '✅ Order accepted & assigned',
+        accepted:   '✅ Order accepted',
         preparing:  '🔄 Order is being prepared',
         ready:      '📦 Order ready for pick-up!',
         completed:  '✔ Order completed',
@@ -441,10 +441,21 @@ export default function BranchDashboard() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className="text-sm font-bold text-[#F47A3E]">{formatPrice(order.totalAmount ?? 0, currency)}</span>
 
-                      {dashboardRole === 'manager' && (order.status === 'pending' || order.status === 'accepted') && (
+                      {/* MANAGER: Accept button for pending orders */}
+                      {dashboardRole === 'manager' && order.status === 'pending' && (
+                        <button
+                          onClick={() => updateOrder(order.id, { status: 'accepted' })}
+                          className="flex items-center gap-1 bg-[#F47A3E] hover:bg-[#D46A2E] text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> Accept Order
+                        </button>
+                      )}
+
+                      {/* MANAGER: Assign to staff dropdown (for accepted orders) */}
+                      {dashboardRole === 'manager' && order.status === 'accepted' && (
                         <select
                           defaultValue={order.assignedTo || ''}
-                          onChange={e => updateOrder(order.id, { assignedTo: e.target.value, status: 'accepted' })}
+                          onChange={e => updateOrder(order.id, { assignedTo: e.target.value })}
                           className="text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#F47A3E]"
                         >
                           <option value="">{t('assignToStaff')}</option>
