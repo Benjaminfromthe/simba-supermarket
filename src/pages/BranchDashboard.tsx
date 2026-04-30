@@ -119,6 +119,8 @@ export default function BranchDashboard() {
         // Capture the actual new orders for rich notification
         const incoming = fetched.filter(o => o.status === 'pending' && !prevOrderIds.current.has(o.id));
         setNewOrders(incoming);
+        // Also show a toast
+        addToast(`🛎️ ${diff} new order${diff > 1 ? 's' : ''} arrived!`, 'bg-green-600');
       }
       prevPendingCount.current = pendingNow;
       prevOrderIds.current = new Set(fetched.map((o: any) => o.id));
@@ -142,11 +144,11 @@ export default function BranchDashboard() {
 
   // Toast popup state for BranchDashboard
   const [toasts, setToasts] = useState<{ id: string; message: string; color: string }[]>([]);
-  const addToast = (message: string, color = 'bg-[#F47A3E]') => {
+  const addToast = useCallback((message: string, color = 'bg-[#F47A3E]') => {
     const id = Math.random().toString(36).slice(2);
     setToasts(p => [...p, { id, message, color }]);
     setTimeout(() => setToasts(p => p.filter(x => x.id !== id)), 4000);
-  };
+  }, []);
 
   const updateOrder = async (orderId: string, data: Record<string, any>) => {
     await updateDoc(doc(db, 'orders', orderId), { ...data, updatedAt: new Date() });
@@ -159,11 +161,14 @@ export default function BranchDashboard() {
         completed:  '✔ Order completed',
         cancelled:  '❌ Order cancelled',
       };
-      addToast(statusMessages[data.status] || `Order → ${data.status}`,
-        data.status === 'ready' ? 'bg-green-600' :
-        data.status === 'cancelled' ? 'bg-red-600' :
-        data.status === 'completed' ? 'bg-gray-700' : 'bg-[#F47A3E]'
+      addToast(
+        statusMessages[data.status] || `Order → ${data.status}`,
+        data.status === 'ready'     ? 'bg-green-600' :
+        data.status === 'cancelled' ? 'bg-red-600'   :
+        data.status === 'completed' ? 'bg-gray-700'  : 'bg-[#F47A3E]'
       );
+    } else if (data.assignedTo) {
+      addToast(`👤 Assigned to ${data.assignedTo}`, 'bg-blue-600');
     }
   };
 

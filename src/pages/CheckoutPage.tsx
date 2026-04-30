@@ -308,8 +308,7 @@ export default function CheckoutPage() {
                   {branches.map((branch) => {
                     const hasStock = branchStock[branch.id] !== false; // default true while loading
                     const isOutOfStock = !stockLoading && branchStock[branch.id] === false;
-                    return (
-                    <button
+                    return (                    <button
                       key={branch.id}
                       onClick={() => !isOutOfStock && setSelectedBranch(branch)}
                       disabled={isOutOfStock}
@@ -377,13 +376,16 @@ export default function CheckoutPage() {
                     );
                   })}
                 </div>
-                <button
-                  onClick={() => setStep('timeslot')}
-                  disabled={!selectedBranch}
-                  className="mt-6 w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
-                >
-                  {t('continue')} <ChevronRight className="w-4 h-4" />
-                </button>
+                {/* Sticky Continue button — always visible */}
+                <div className="sticky bottom-0 bg-white dark:bg-card pt-3 pb-2 -mx-6 px-6 border-t border-gray-100 dark:border-gray-800 mt-4">
+                  <button
+                    onClick={() => setStep('timeslot')}
+                    disabled={!selectedBranch}
+                    className="w-full bg-[#F47A3E] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition"
+                  >
+                    {t('continue')} <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             )}
 
